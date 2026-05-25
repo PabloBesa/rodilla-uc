@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Rotación — Rodilla UC</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744; --navy-mid: #243560; --gold: #c8973a; --gold-light: #e8c47a;
+    --gold-pale: #f5e9cc; --cream: #faf8f3; --warm-gray: #f0ece3;
+    --text: #2c2c2c; --text-muted: #5a5a5a; --border: #d4c9b0;
+    --green: #2a6041; --green-light: #e8f2ec;
+    --red-accent: #8b2e2e; --red-light: #f5eaea;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Serif 4', Georgia, serif; background: var(--cream); color: var(--text); font-size: 15px; line-height: 1.75; }
+  .page { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
+
+  /* APP SWITCHER */
+  .app-switch { background: var(--cream); border-bottom: 1px solid var(--border); padding: 8px 20px; display: flex; gap: 6px; }
+  .app-btn { flex: 1; border: 1.5px solid var(--border); border-radius: 6px; padding: 7px 4px; font-family: 'Source Serif 4', serif; font-size: 11px; cursor: pointer; background: white; color: var(--text-muted); text-align: center; transition: all 0.2s; }
+  .app-btn.active { background: var(--navy); color: white; border-color: var(--navy); font-weight: 600; }
+
+  /* APP PANELS */
+  .app { display: none; }
+  .app.active { display: block; }
+
+  /* HEADER */
+  .header { background: var(--navy); padding: 28px 24px 20px; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; bottom: 0; right: 0; width: 160px; height: 100%; background: linear-gradient(135deg, transparent 50%, rgba(200,151,58,0.12) 100%); pointer-events: none; }
+  .header-tag { font-size: 9px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: white; line-height: 1.2; }
+  .header h1 span { color: var(--gold-light); }
+  .header-sub { font-size: 11px; color: rgba(255,255,255,0.55); font-style: italic; margin-top: 4px; }
+  .gold-rule { width: 40px; height: 3px; background: var(--gold); margin: 12px 0 0; }
+
+  /* STEPS */
+  .steps { background: var(--navy-mid); padding: 10px 20px; display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .steps::-webkit-scrollbar { display: none; }
+  .step { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .step-dot { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Playfair Display', serif; }
+  .step-dot.active { background: var(--gold); color: var(--navy); }
+  .step-dot.done { background: var(--green); color: white; }
+  .step-label { font-size: 9.5px; color: rgba(255,255,255,0.5); }
+  .step-label.active { color: var(--gold-light); font-weight: 600; }
+  .step-sep { color: rgba(255,255,255,0.2); font-size: 10px; }
+
+  /* NAV */
+  .nav-bar { background: var(--navy-mid); padding: 10px 16px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-pill { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); border: none; border-radius: 20px; padding: 5px 12px; font-family: 'Source Serif 4', serif; font-size: 11px; white-space: nowrap; cursor: pointer; transition: background 0.2s; }
+  .nav-pill:hover, .nav-pill.active { background: var(--gold); color: var(--navy); font-weight: 600; }
+
+  .content { padding: 20px 20px 80px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .dsection { display: none; }
+  .dsection.active { display: block; }
+
+  /* SHARED COMPONENTS */
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1.5px solid var(--border); margin-top: 20px; }
+  .section-header:first-of-type { margin-top: 0; }
+  .section-num { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold); opacity: 0.7; line-height: 1; flex-shrink: 0; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: var(--navy); }
+  .section-title em { display: block; font-family: 'Source Serif 4', serif; font-size: 10px; font-weight: 400; font-style: italic; color: var(--text-muted); margin-top: 1px; }
+  .highlight { border-left: 4px solid var(--gold); background: var(--warm-gray); padding: 11px 14px; border-radius: 0 6px 6px 0; margin-bottom: 14px; font-size: 12px; line-height: 1.7; }
+  .highlight strong { color: var(--navy); }
+  .highlight-green { border-left: 4px solid var(--green); background: var(--green-light); padding: 11px 14px; border-radius: 0 6px 6px 0; margin-bottom: 14px; font-size: 12px; line-height: 1.7; }
+  .highlight-green strong { color: var(--green); }
+  .btn-primary { width: 100%; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 13px; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: background 0.2s; }
+  .btn-primary:hover { background: var(--navy-mid); }
+  .btn-secondary { width: 100%; background: white; color: var(--navy); border: 1.5px solid var(--border); border-radius: 8px; padding: 11px; font-family: 'Source Serif 4', serif; font-size: 13px; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: var(--gold); background: var(--gold-pale); }
+  .footer { background: var(--warm-gray); border-top: 1px solid var(--border); padding: 14px 20px; text-align: center; font-size: 10px; color: var(--text-muted); font-style: italic; }
+
+  /* FORM SPECIFIC */
+  .tool-card { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 14px; overflow: hidden; }
+  .tool-header { background: var(--navy); padding: 10px 14px; }
+  .tool-name { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 600; color: white; }
+  .tool-desc { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .tool-body { padding: 12px 14px; }
+  .stars-row { display: flex; align-items: center; gap: 4px; margin-bottom: 10px; }
+  .stars-label { font-size: 11px; color: var(--text-muted); margin-right: 4px; min-width: 60px; }
+  .star { font-size: 22px; cursor: pointer; color: #d4c9b0; transition: color 0.1s; line-height: 1; }
+  .star.lit { color: var(--gold); }
+  .star:hover { color: var(--gold-light); }
+  .radio-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .radio-opt { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .radio-opt input { accent-color: var(--gold); width: 15px; height: 15px; flex-shrink: 0; }
+  .radio-opt span { font-size: 12.5px; color: var(--text); }
+  .q-note { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-family: 'Source Serif 4', serif; font-size: 12px; color: var(--text); background: var(--cream); resize: none; min-height: 60px; line-height: 1.6; transition: border-color 0.2s; }
+  .q-note:focus { outline: none; border-color: var(--gold); background: white; }
+  .q-note::placeholder { color: var(--text-muted); font-style: italic; }
+  .q-label { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-style: italic; }
+  .level-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .level-btn { border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 6px; cursor: pointer; background: white; text-align: center; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--navy); transition: all 0.2s; }
+  .level-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+  .level-btn.selected { border-color: var(--navy); background: var(--navy); color: var(--gold-light); }
+  .level-sub { font-family: 'Source Serif 4', serif; font-size: 9px; font-weight: 400; color: var(--text-muted); display: block; margin-top: 2px; }
+  .level-btn.selected .level-sub { color: rgba(255,255,255,0.5); }
+  .code-box { background: var(--navy); border-radius: 12px; padding: 28px 20px; text-align: center; margin: 20px 0; }
+  .code-label { font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .code-val { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: var(--gold-light); letter-spacing: 6px; }
+  .code-instruction { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 12px; line-height: 1.6; }
+
+  /* PIN */
+  .pin-wrap { padding: 60px 30px; text-align: center; }
+  .pin-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .pin-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 28px; }
+  .pin-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 24px; }
+  .pin-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); background: white; transition: all 0.15s; }
+  .pin-dot.filled { background: var(--navy); border-color: var(--navy); }
+  .pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 240px; margin: 0 auto; }
+  .pin-key { border: 1.5px solid var(--border); border-radius: 10px; padding: 14px; font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--navy); background: white; cursor: pointer; transition: all 0.15s; }
+  .pin-key:hover { background: var(--gold-pale); border-color: var(--gold); }
+  .pin-key.del { font-size: 14px; color: var(--text-muted); }
+  .pin-error { color: var(--red-accent); font-size: 12px; margin-top: 12px; min-height: 18px; }
+
+  /* DASHBOARD */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat-card { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 14px 12px; text-align: center; }
+  .stat-val { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--navy); line-height: 1; }
+  .stat-val.gold { color: var(--gold); }
+  .stat-label { font-size: 10.5px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+  .star-metric { margin-bottom: 14px; }
+  .star-metric-label { font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+  .star-metric-avg { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--gold); font-weight: 700; }
+  .star-bar-wrap { background: var(--warm-gray); border-radius: 20px; height: 8px; overflow: hidden; }
+  .star-bar-fill { background: var(--gold); height: 100%; border-radius: 20px; transition: width 0.5s; }
+  .star-count { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+  .radio-breakdown { margin-bottom: 14px; }
+  .rb-label { font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 7px; }
+  .rb-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .rb-option { font-size: 11px; color: var(--text-muted); min-width: 140px; flex-shrink: 0; }
+  .rb-bar-wrap { flex: 1; background: var(--warm-gray); border-radius: 20px; height: 7px; overflow: hidden; }
+  .rb-bar-fill { background: var(--navy); height: 100%; border-radius: 20px; transition: width 0.5s; }
+  .rb-pct { font-size: 10px; color: var(--text-muted); min-width: 30px; text-align: right; }
+  .response-item { background: var(--cream); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; font-size: 12px; line-height: 1.65; color: var(--text); }
+  .response-meta { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+  .log-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 11.5px; }
+  .log-row:last-child { border-bottom: none; }
+  .log-code { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--navy); }
+  .log-meta { color: var(--text-muted); font-size: 10.5px; }
+  .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filter-btn { border: 1.5px solid var(--border); border-radius: 20px; padding: 4px 12px; font-family: 'Source Serif 4', serif; font-size: 11px; cursor: pointer; background: white; color: var(--text); transition: all 0.2s; }
+  .filter-btn:hover { border-color: var(--gold); }
+  .filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px; font-style: italic; }
+  .loading { text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px; font-style: italic; }
+  .copy-btn { width: 100%; background: var(--gold); color: var(--navy); border: none; border-radius: 8px; padding: 13px; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- APP SWITCHER -->
+  <div class="app-switch">
+    <button class="app-btn active" onclick="switchApp('form', this)">Evaluación</button>
+    <button class="app-btn" onclick="switchApp('pin', this)">Dashboard →</button>
+  </div>
+
+  <!-- ══════════════════ FORM APP ══════════════════ -->
+  <div class="app active" id="app-form">
+    <div class="header">
+      <div class="header-tag">Evaluación Anónima · Rodilla UC</div>
+      <h1>Evaluación de <span>Rotación</span></h1>
+      <p class="header-sub">Tus respuestas son anónimas y nos ayudan a mejorar el programa</p>
+      <div class="gold-rule"></div>
+    </div>
+
+    <div class="steps" id="f-steps-bar">
+      <div class="step"><div class="step-dot active" id="f-dot-1">1</div><div class="step-label active" id="f-lbl-1">Inicio</div></div>
+      <div class="step-sep">›</div>
+      <div class="step"><div class="step-dot" id="f-dot-2">2</div><div class="step-label" id="f-lbl-2">Herramientas</div></div>
+      <div class="step-sep">›</div>
+      <div class="step"><div class="step-dot" id="f-dot-3">3</div><div class="step-label" id="f-lbl-3">Simulación</div></div>
+      <div class="step-sep">›</div>
+      <div class="step"><div class="step-dot" id="f-dot-4">4</div><div class="step-label" id="f-lbl-4">Comentarios</div></div>
+      <div class="step-sep">›</div>
+      <div class="step"><div class="step-dot" id="f-dot-5">5</div><div class="step-label" id="f-lbl-5">Código</div></div>
+    </div>
+
+    <div class="content">
+      <!-- SCREEN 1 -->
+      <div class="screen active" id="screen-1">
+        <div class="highlight"><p>Esta evaluación es <strong>completamente anónima</strong>. Al terminar recibirás un código de confirmación para mostrarle al Dr. Besa — él sabrá que respondiste, pero no podrá ver tus respuestas individuales.</p></div>
+        <div class="section-header" style="margin-top:0;">
+          <div class="section-num">01</div>
+          <div class="section-title">Tu nivel de residencia<em>Solo para contextualizar las respuestas</em></div>
+        </div>
+        <div class="level-selector">
+          <button class="level-btn" onclick="selectLevel('R1',this)">R1<span class="level-sub">Primer año</span></button>
+          <button class="level-btn" onclick="selectLevel('R2',this)">R2<span class="level-sub">Segundo año</span></button>
+          <button class="level-btn" onclick="selectLevel('R3',this)">R3<span class="level-sub">Tercer año</span></button>
+        </div>
+        <button class="btn-primary" onclick="fGoTo(2)">Comenzar →</button>
+      </div>
+
+      <!-- SCREEN 2 -->
+      <div class="screen" id="screen-2">
+        <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:16px;line-height:1.7;">Evalúa cada herramienta del programa. Debes completar todas las preguntas para continuar.</p>
+        <div class="tool-card">
+          <div class="tool-header"><div class="tool-name">Guía del Residente</div><div class="tool-desc">El documento HTML que recibiste al inicio de la rotación</div></div>
+          <div class="tool-body">
+            <div class="stars-row"><span class="stars-label">Utilidad</span><span class="star" onclick="setStars('guia-util',1)">★</span><span class="star" onclick="setStars('guia-util',2)">★</span><span class="star" onclick="setStars('guia-util',3)">★</span><span class="star" onclick="setStars('guia-util',4)">★</span><span class="star" onclick="setStars('guia-util',5)">★</span></div>
+            <div class="stars-row"><span class="stars-label">Claridad</span><span class="star" onclick="setStars('guia-clar',1)">★</span><span class="star" onclick="setStars('guia-clar',2)">★</span><span class="star" onclick="setStars('guia-clar',3)">★</span><span class="star" onclick="setStars('guia-clar',4)">★</span><span class="star" onclick="setStars('guia-clar',5)">★</span></div>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-header"><div class="tool-name">Pautas de Evaluación</div><div class="tool-desc">Pabellón, policlínico, visitas y presentación</div></div>
+          <div class="tool-body">
+            <div class="stars-row"><span class="stars-label">Utilidad</span><span class="star" onclick="setStars('pautas-util',1)">★</span><span class="star" onclick="setStars('pautas-util',2)">★</span><span class="star" onclick="setStars('pautas-util',3)">★</span><span class="star" onclick="setStars('pautas-util',4)">★</span><span class="star" onclick="setStars('pautas-util',5)">★</span></div>
+            <div class="stars-row"><span class="stars-label">Claridad</span><span class="star" onclick="setStars('pautas-clar',1)">★</span><span class="star" onclick="setStars('pautas-clar',2)">★</span><span class="star" onclick="setStars('pautas-clar',3)">★</span><span class="star" onclick="setStars('pautas-clar',4)">★</span><span class="star" onclick="setStars('pautas-clar',5)">★</span></div>
+            <div class="q-label" style="margin-top:8px;">¿Los evaluadores conversaron contigo después de completar la pauta?</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="pautas-conv" value="siempre" onchange="fState.pautasConv=this.value"><span>Siempre</span></label>
+              <label class="radio-opt"><input type="radio" name="pautas-conv" value="aveces" onchange="fState.pautasConv=this.value"><span>A veces</span></label>
+              <label class="radio-opt"><input type="radio" name="pautas-conv" value="nunca" onchange="fState.pautasConv=this.value"><span>Nunca</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-header"><div class="tool-name">Sesiones de Feedback</div><div class="tool-desc">Instancias formales con el Dr. Besa a la mitad y al final</div></div>
+          <div class="tool-body">
+            <div class="stars-row"><span class="stars-label">Utilidad</span><span class="star" onclick="setStars('feedback-util',1)">★</span><span class="star" onclick="setStars('feedback-util',2)">★</span><span class="star" onclick="setStars('feedback-util',3)">★</span><span class="star" onclick="setStars('feedback-util',4)">★</span><span class="star" onclick="setStars('feedback-util',5)">★</span></div>
+            <div class="q-label" style="margin-top:8px;">¿Te sentiste cómodo/a siendo honesto/a durante la sesión?</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="feedback-hon" value="si" onchange="fState.feedbackHon=this.value"><span>Sí, completamente</span></label>
+              <label class="radio-opt"><input type="radio" name="feedback-hon" value="parcial" onchange="fState.feedbackHon=this.value"><span>Parcialmente</span></label>
+              <label class="radio-opt"><input type="radio" name="feedback-hon" value="no" onchange="fState.feedbackHon=this.value"><span>No del todo</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-header"><div class="tool-name">Tiempo Protegido</div><div class="tool-desc">Un módulo semanal reservado para ti</div></div>
+          <div class="tool-body">
+            <div class="q-label">¿Tuviste tu tiempo protegido todas las semanas?</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="tp-tuvo" value="siempre" onchange="fState.tpTuvo=this.value"><span>Sí, todas las semanas</span></label>
+              <label class="radio-opt"><input type="radio" name="tp-tuvo" value="casi" onchange="fState.tpTuvo=this.value"><span>La mayoría de las semanas</span></label>
+              <label class="radio-opt"><input type="radio" name="tp-tuvo" value="pocas" onchange="fState.tpTuvo=this.value"><span>Pocas semanas</span></label>
+              <label class="radio-opt"><input type="radio" name="tp-tuvo" value="nunca" onchange="fState.tpTuvo=this.value"><span>Casi nunca</span></label>
+            </div>
+            <div class="stars-row" style="margin-top:10px;"><span class="stars-label">Utilidad</span><span class="star" onclick="setStars('tp-util',1)">★</span><span class="star" onclick="setStars('tp-util',2)">★</span><span class="star" onclick="setStars('tp-util',3)">★</span><span class="star" onclick="setStars('tp-util',4)">★</span><span class="star" onclick="setStars('tp-util',5)">★</span></div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="fGoTo(3)">Continuar →</button>
+        <button class="btn-secondary" onclick="fGoTo(1)">← Volver</button>
+      </div>
+
+      <!-- SCREEN 3 -->
+      <div class="screen" id="screen-3">
+        <div class="tool-card">
+          <div class="tool-header"><div class="tool-name">Simulación Artroscópica</div><div class="tool-desc">Modelo FAST con los fellows de simulación</div></div>
+          <div class="tool-body">
+            <div class="q-label">¿Tuviste acceso a las instalaciones de simulación?</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="sim-acceso" value="si" onchange="fState.simAcceso=this.value"><span>Sí, regularmente</span></label>
+              <label class="radio-opt"><input type="radio" name="sim-acceso" value="limitado" onchange="fState.simAcceso=this.value"><span>Sí, pero con dificultades</span></label>
+              <label class="radio-opt"><input type="radio" name="sim-acceso" value="no" onchange="fState.simAcceso=this.value"><span>No tuve acceso</span></label>
+            </div>
+            <div class="stars-row" style="margin-top:10px;"><span class="stars-label">Utilidad</span><span class="star" onclick="setStars('sim-util',1)">★</span><span class="star" onclick="setStars('sim-util',2)">★</span><span class="star" onclick="setStars('sim-util',3)">★</span><span class="star" onclick="setStars('sim-util',4)">★</span><span class="star" onclick="setStars('sim-util',5)">★</span></div>
+            <div class="q-label" style="margin-top:10px;">¿Qué facilitó o dificultó el uso de la simulación?</div>
+            <textarea class="q-note" id="note-sim" placeholder="Horarios, coordinación, acceso al modelo, apoyo de los fellows…"></textarea>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="fGoTo(4)">Continuar →</button>
+        <button class="btn-secondary" onclick="fGoTo(2)">← Volver</button>
+      </div>
+
+      <!-- SCREEN 4 -->
+      <div class="screen" id="screen-4">
+        <div class="section-header" style="margin-top:0;"><div class="section-num">04</div><div class="section-title">Comentarios finales<em>Tu opinión sobre el programa</em></div></div>
+        <div class="stars-row" style="margin-bottom:16px;">
+          <span class="stars-label" style="min-width:120px;font-size:12px;color:var(--text);">Rotación en general</span>
+          <span class="star" onclick="setStars('general',1)">★</span><span class="star" onclick="setStars('general',2)">★</span><span class="star" onclick="setStars('general',3)">★</span><span class="star" onclick="setStars('general',4)">★</span><span class="star" onclick="setStars('general',5)">★</span>
+        </div>
+        <div class="q-label">¿Qué mejorarías del programa?</div>
+        <textarea class="q-note" id="note-mejoras" placeholder="Actividades, herramientas, organización, cualquier sugerencia…" style="margin-bottom:14px;"></textarea>
+        <div class="q-label">¿Algo que funcionó especialmente bien y quieras destacar?</div>
+        <textarea class="q-note" id="note-destaca" placeholder="Lo que más valoras de esta rotación…"></textarea>
+        <button class="btn-primary" onclick="submitForm()">Enviar evaluación →</button>
+        <button class="btn-secondary" onclick="fGoTo(3)">← Volver</button>
+      </div>
+
+      <!-- SCREEN 5 -->
+      <div class="screen" id="screen-5">
+        <div class="highlight-green"><p>Tu evaluación ha sido registrada. <strong>Muéstrale este código al Dr. Besa</strong> para confirmar que respondiste — él no podrá ver tus respuestas individuales.</p></div>
+        <div class="code-box">
+          <div class="code-label">Código de confirmación</div>
+          <div class="code-val" id="confirm-code">—</div>
+          <div class="code-instruction">Muestra esta pantalla o anota el código.<br>No es necesario que lo recuerdes después.</div>
+        </div>
+        <div class="highlight"><p>Gracias por tomarte el tiempo. Tu feedback es fundamental para que esta rotación siga mejorando.</p></div>
+      </div>
+    </div>
+
+    <div class="footer">Evaluación anónima — Rotación Rodilla UC · Dr. Pablo Besa · Dr. Cristián Ruz</div>
+  </div>
+
+  <!-- ══════════════════ PIN APP ══════════════════ -->
+  <div class="app" id="app-pin">
+    <div class="header">
+      <div class="header-tag">Acceso Restringido · Rodilla UC</div>
+      <h1>Dashboard <span>Evaluaciones</span></h1>
+      <p class="header-sub">Dr. Pablo Besa · Dr. Cristián Ruz</p>
+      <div class="gold-rule"></div>
+    </div>
+    <div class="pin-wrap">
+      <div class="pin-title">Ingresa el PIN</div>
+      <div class="pin-sub">Acceso exclusivo para coordinadores de rotación</div>
+      <div class="pin-dots">
+        <div class="pin-dot" id="pd-0"></div>
+        <div class="pin-dot" id="pd-1"></div>
+        <div class="pin-dot" id="pd-2"></div>
+        <div class="pin-dot" id="pd-3"></div>
+      </div>
+      <div class="pin-keypad">
+        <button class="pin-key" onclick="pinPress('1')">1</button>
+        <button class="pin-key" onclick="pinPress('2')">2</button>
+        <button class="pin-key" onclick="pinPress('3')">3</button>
+        <button class="pin-key" onclick="pinPress('4')">4</button>
+        <button class="pin-key" onclick="pinPress('5')">5</button>
+        <button class="pin-key" onclick="pinPress('6')">6</button>
+        <button class="pin-key" onclick="pinPress('7')">7</button>
+        <button class="pin-key" onclick="pinPress('8')">8</button>
+        <button class="pin-key" onclick="pinPress('9')">9</button>
+        <button class="pin-key del" onclick="pinDel()">⌫</button>
+        <button class="pin-key" onclick="pinPress('0')">0</button>
+        <button class="pin-key" onclick="pinSubmit()">→</button>
+      </div>
+      <div class="pin-error" id="pin-error"></div>
+    </div>
+    <div class="footer">Uso interno — Dr. Pablo Besa · Dr. Cristián Ruz</div>
+  </div>
+
+  <!-- ══════════════════ DASHBOARD APP ══════════════════ -->
+  <div class="app" id="app-dash">
+    <div class="header">
+      <div class="header-tag">Uso Interno · Dr. Besa · Dr. Ruz</div>
+      <h1>Dashboard <span>Evaluaciones</span></h1>
+      <p class="header-sub">Rotación Rodilla UC — Datos agregados y anónimos</p>
+      <div class="gold-rule"></div>
+    </div>
+    <div class="nav-bar">
+      <button class="nav-pill active" onclick="showDsec('resumen',this)">Resumen</button>
+      <button class="nav-pill" onclick="showDsec('herramientas',this)">Herramientas</button>
+      <button class="nav-pill" onclick="showDsec('simulacion',this)">Simulación</button>
+      <button class="nav-pill" onclick="showDsec('comentarios',this)">Comentarios</button>
+      <button class="nav-pill" onclick="showDsec('submisiones',this)">Submisiones</button>
+    </div>
+    <div class="content">
+
+      <!-- RESUMEN -->
+      <div class="dsection active" id="dsec-resumen">
+        <div class="loading" id="d-loading">Cargando datos...</div>
+        <div id="d-resumen-content" style="display:none;">
+          <div class="filter-bar" id="month-filters"></div>
+          <div class="section-header" style="margin-top:0;"><div class="section-num">01</div><div class="section-title">Visión general</div></div>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-val" id="stat-total">0</div><div class="stat-label">Evaluaciones recibidas</div></div>
+            <div class="stat-card"><div class="stat-val gold" id="stat-general">—</div><div class="stat-label">Promedio rotación general</div></div>
+          </div>
+          <div class="section-header"><div class="section-num">02</div><div class="section-title">Por nivel de residencia</div></div>
+          <div id="level-breakdown" class="radio-breakdown"></div>
+          <div class="section-header"><div class="section-num">03</div><div class="section-title">Tiempo protegido<em>¿Lo tuvieron?</em></div></div>
+          <div id="tp-breakdown" class="radio-breakdown"></div>
+          <button class="btn-secondary" style="margin-top:20px;" onclick="lockDash()">Cerrar sesión →</button>
+        </div>
+      </div>
+
+      <!-- HERRAMIENTAS -->
+      <div class="dsection" id="dsec-herramientas">
+        <div class="section-header" style="margin-top:0;"><div class="section-num">01</div><div class="section-title">Guía del Residente</div></div>
+        <div id="stars-guia"></div>
+        <div class="section-header"><div class="section-num">02</div><div class="section-title">Pautas de Evaluación</div></div>
+        <div id="stars-pautas"></div>
+        <div class="radio-breakdown" style="margin-top:10px;"><div class="rb-label">¿Evaluadores conversaron después de la pauta?</div><div id="pautas-conv-breakdown"></div></div>
+        <div class="section-header"><div class="section-num">03</div><div class="section-title">Sesiones de Feedback</div></div>
+        <div id="stars-feedback"></div>
+        <div class="radio-breakdown" style="margin-top:10px;"><div class="rb-label">¿Se sintieron cómodos siendo honestos?</div><div id="feedback-hon-breakdown"></div></div>
+        <div class="section-header"><div class="section-num">04</div><div class="section-title">Tiempo Protegido</div></div>
+        <div id="stars-tp"></div>
+      </div>
+
+      <!-- SIMULACIÓN -->
+      <div class="dsection" id="dsec-simulacion">
+        <div class="section-header" style="margin-top:0;"><div class="section-num">01</div><div class="section-title">Acceso a simulación</div></div>
+        <div id="sim-acceso-breakdown" class="radio-breakdown"></div>
+        <div class="section-header"><div class="section-num">02</div><div class="section-title">Utilidad</div></div>
+        <div id="stars-sim"></div>
+        <div class="section-header"><div class="section-num">03</div><div class="section-title">Comentarios abiertos</div></div>
+        <div id="sim-notas"></div>
+      </div>
+
+      <!-- COMENTARIOS -->
+      <div class="dsection" id="dsec-comentarios">
+        <div class="section-header" style="margin-top:0;"><div class="section-num">01</div><div class="section-title">Sugerencias de mejora</div></div>
+        <div id="mejoras-list"></div>
+        <div class="section-header"><div class="section-num">02</div><div class="section-title">Lo que funcionó bien</div></div>
+        <div id="destaca-list"></div>
+      </div>
+
+      <!-- SUBMISIONES -->
+      <div class="dsection" id="dsec-submisiones">
+        <div class="section-header" style="margin-top:0;"><div class="section-num">01</div><div class="section-title">Códigos de confirmación<em>Para verificar que respondieron</em></div></div>
+        <div class="highlight"><p>Solo muestra que se recibió una respuesta. <strong>No identifica al residente</strong> ni revela sus respuestas individuales.</p></div>
+        <div id="submission-log"></div>
+      </div>
+
+    </div>
+    <div class="footer">Dashboard interno — Dr. Pablo Besa · Dr. Cristián Ruz · Rodilla UC 2026</div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════ APP SWITCHER ═══════════
+function switchApp(id, btn) {
+  document.querySelectorAll('.app-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.app').forEach(a => a.classList.remove('active'));
+  document.getElementById('app-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════ FORM ═══════════
+const fState = { level:'', stars:{}, pautasConv:'', feedbackHon:'', tpTuvo:'', simAcceso:'' };
+
+function selectLevel(val, btn) {
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  fState.level = val;
+}
+
+function setStars(key, n) {
+  fState.stars[key] = n;
+  document.querySelectorAll('.star').forEach(star => {
+    const oc = star.getAttribute('onclick');
+    if (oc && oc.includes("'" + key + "'")) {
+      const idx = parseInt(oc.match(/,(\d+)\)/)[1]);
+      star.classList.toggle('lit', idx <= n);
+    }
+  });
+}
+
+function showError(msg) {
+  let err = document.getElementById('validation-error');
+  if (!err) { err = document.createElement('div'); err.id = 'validation-error'; err.style.cssText = 'background:var(--red-light);border-left:4px solid var(--red-accent);padding:10px 14px;border-radius:0 6px 6px 0;font-size:12px;color:var(--red-accent);margin-bottom:12px;font-weight:600;'; }
+  err.textContent = '⚠ ' + msg;
+  const screen = document.querySelector('#app-form .screen.active');
+  const btn = screen.querySelector('.btn-primary');
+  if (btn) screen.insertBefore(err, btn);
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function clearError() { const e = document.getElementById('validation-error'); if (e) e.remove(); }
+
+function validateScreen(n) {
+  clearError();
+  if (n === 1 && !fState.level) { showError('Por favor selecciona tu nivel de residencia.'); return false; }
+  if (n === 2) {
+    for (const k of ['guia-util','guia-clar','pautas-util','pautas-clar','feedback-util','tp-util']) {
+      if (!fState.stars[k]) { showError('Por favor completa todas las calificaciones con estrellas.'); return false; }
+    }
+    if (!fState.pautasConv) { showError('Por favor responde si los evaluadores conversaron contigo después de la pauta.'); return false; }
+    if (!fState.feedbackHon) { showError('Por favor responde si te sentiste cómodo/a siendo honesto/a.'); return false; }
+    if (!fState.tpTuvo) { showError('Por favor responde sobre tu tiempo protegido.'); return false; }
+  }
+  if (n === 3) {
+    if (!fState.simAcceso) { showError('Por favor selecciona una opción sobre el acceso a simulación.'); return false; }
+    if (!fState.stars['sim-util']) { showError('Por favor califica la utilidad de la simulación.'); return false; }
+  }
+  if (n === 4 && !fState.stars['general']) { showError('Por favor califica la rotación en general.'); return false; }
+  return true;
+}
+
+function fGoTo(n) {
+  const cur = parseInt(document.querySelector('#app-form .screen.active').id.replace('screen-',''));
+  if (n > cur && !validateScreen(cur)) return;
+  document.querySelectorAll('#app-form .screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  fUpdateDots(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function fUpdateDots(n) {
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById('f-dot-' + i);
+    const lbl = document.getElementById('f-lbl-' + i);
+    if (!dot) continue;
+    dot.className = 'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+    dot.textContent = i < n ? '✓' : i;
+    if (lbl) lbl.className = 'step-label' + (i === n ? ' active' : '');
+  }
+}
+
+function generateCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let c = 'RR-';
+  for (let i = 0; i < 4; i++) c += chars[Math.floor(Math.random() * chars.length)];
+  return c;
+}
+
+const BACKEND = 'https://script.google.com/macros/s/AKfycbxU5QVGKjUX0bOBer0GnSVJ5tcGH2XYEO0C1em9M-y9GNgPAMLN1UZyfzm5Q3F5c49dYw/exec';
+
+  async function submitForm() {
+  if (!validateScreen(4)) return;
+  const code = generateCode();
+  const year = new Date().getFullYear();
+  const month = new Date().toLocaleString('es-CL', { month: 'long' });
+  const s = fState.stars;
+  const params = new URLSearchParams({
+    code, month, year, level: fState.level,
+    guia_util: s['guia-util']||'', guia_clar: s['guia-clar']||'',
+    pautas_util: s['pautas-util']||'', pautas_clar: s['pautas-clar']||'',
+    pautasConv: fState.pautasConv, feedback_util: s['feedback-util']||'',
+    feedbackHon: fState.feedbackHon, tpTuvo: fState.tpTuvo,
+    tp_util: s['tp-util']||'', simAcceso: fState.simAcceso,
+    sim_util: s['sim-util']||'',
+    simNota: document.getElementById('note-sim').value.trim(),
+    mejoras: document.getElementById('note-mejoras').value.trim(),
+    destaca: document.getElementById('note-destaca').value.trim(),
+    general: s['general']||'',
+    ts: new Date().toISOString()
+  });
+  try {
+    await fetch(BACKEND + '?' + params.toString());
+  } catch(e) { console.error(e); }
+  document.getElementById('confirm-code').textContent = code;
+  document.querySelectorAll('#app-form .screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-5').classList.add('active');
+  fUpdateDots(5);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════ PIN ═══════════
+let pinVal = '';
+const CORRECT_PIN = '6174';
+
+function pinPress(d) {
+  if (pinVal.length >= 4) return;
+  pinVal += d;
+  document.getElementById('pd-' + (pinVal.length - 1)).classList.add('filled');
+  document.getElementById('pin-error').textContent = '';
+  if (pinVal.length === 4) setTimeout(pinSubmit, 150);
+}
+
+function pinDel() {
+  if (!pinVal.length) return;
+  pinVal = pinVal.slice(0, -1);
+  document.getElementById('pd-' + pinVal.length).classList.remove('filled');
+}
+
+function pinSubmit() {
+  if (pinVal === CORRECT_PIN) {
+    document.querySelectorAll('.app').forEach(a => a.classList.remove('active'));
+    document.getElementById('app-dash').classList.add('active');
+    loadDashData();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    document.getElementById('pin-error').textContent = 'PIN incorrecto. Inténtalo de nuevo.';
+    pinVal = '';
+    for (let i = 0; i < 4; i++) document.getElementById('pd-' + i).classList.remove('filled');
+  }
+}
+
+function lockDash() {
+  pinVal = '';
+  for (let i = 0; i < 4; i++) document.getElementById('pd-' + i).classList.remove('filled');
+  document.getElementById('pin-error').textContent = '';
+  document.querySelectorAll('.app').forEach(a => a.classList.remove('active'));
+  document.getElementById('app-pin').classList.add('active');
+  document.querySelectorAll('.app-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.app-btn')[1].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════ DASHBOARD ═══════════
+let allData = [], filteredData = [];
+
+async function loadDashData() {
+  try {
+    const res = await fetch(BACKEND + '?action=read');
+    const json = await res.json();
+    const entries = (json.data || []).map(row => ({
+      code: row['Código'], month: row['Mes'], year: row['Año'], level: row['Nivel'],
+      ts: row['Timestamp'],
+      stars: {
+        'guia-util': Number(row['Guía Utilidad'])||0,
+        'guia-clar': Number(row['Guía Claridad'])||0,
+        'pautas-util': Number(row['Pautas Utilidad'])||0,
+        'pautas-clar': Number(row['Pautas Claridad'])||0,
+        'feedback-util': Number(row['Feedback Utilidad'])||0,
+        'tp-util': Number(row['TP Utilidad'])||0,
+        'sim-util': Number(row['Sim Utilidad'])||0,
+        'general': Number(row['General'])||0,
+      },
+      pautasConv: row['Pautas Conversación'],
+      feedbackHon: row['Feedback Honestidad'],
+      tpTuvo: row['TP Tuvo'],
+      simAcceso: row['Sim Acceso'],
+      simNota: row['Sim Nota'],
+      mejoras: row['Mejoras'],
+      destaca: row['Destaca'],
+    }));
+    allData = entries; filteredData = entries;
+    buildMonthFilters();
+    renderAll();
+    document.getElementById('d-loading').style.display = 'none';
+    document.getElementById('d-resumen-content').style.display = 'block';
+  } catch(e) { document.getElementById('d-loading').textContent = 'No se pudieron cargar los datos. Verifica tu conexión.'; }
+}
+
+function buildMonthFilters() {
+  const months = [...new Set(allData.map(d => d.month))].filter(Boolean);
+  const bar = document.getElementById('month-filters');
+  bar.innerHTML = '';
+  const all = document.createElement('button');
+  all.className = 'filter-btn active'; all.textContent = 'Todos';
+  all.onclick = () => filterBy('todos', all);
+  bar.appendChild(all);
+  months.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn'; btn.textContent = m;
+    btn.onclick = () => filterBy(m, btn);
+    bar.appendChild(btn);
+  });
+}
+
+function filterBy(month, btn) {
+  filteredData = month === 'todos' ? allData : allData.filter(d => d.month === month);
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+function sAvg(key) {
+  const v = filteredData.map(d => (d.stars && d.stars[key]) || 0).filter(v => v > 0);
+  return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : null;
+}
+
+function renderStarMetric(containerId, items) {
+  const el = document.getElementById(containerId); if (!el) return;
+  if (!filteredData.length) { el.innerHTML = '<div class="empty-state">Sin datos aún</div>'; return; }
+  el.innerHTML = '';
+  items.forEach(({ label, key }) => {
+    const a = sAvg(key); const pct = a ? parseFloat(a)/5*100 : 0;
+    const n = filteredData.filter(d => d.stars && d.stars[key] > 0).length;
+    el.innerHTML += `<div class="star-metric"><div class="star-metric-label">${label}<span class="star-metric-avg">${a ? '★ '+a : '—'}</span></div><div class="star-bar-wrap"><div class="star-bar-fill" style="width:${pct}%"></div></div><div class="star-count">${n} respuesta${n!==1?'s':''}</div></div>`;
+  });
+}
+
+function renderRadio(containerId, fieldKey, options) {
+  const el = document.getElementById(containerId); if (!el) return;
+  const total = filteredData.filter(d => d[fieldKey]).length;
+  if (!total) { el.innerHTML = '<div style="font-size:11px;color:var(--text-muted);font-style:italic;">Sin datos aún</div>'; return; }
+  el.innerHTML = '';
+  options.forEach(({ value, label }) => {
+    const count = filteredData.filter(d => d[fieldKey] === value).length;
+    const pct = Math.round(count/total*100);
+    el.innerHTML += `<div class="rb-row"><div class="rb-option">${label}</div><div class="rb-bar-wrap"><div class="rb-bar-fill" style="width:${pct}%"></div></div><div class="rb-pct">${pct}%</div></div>`;
+  });
+}
+
+function renderText(containerId, fieldKey) {
+  const el = document.getElementById(containerId); if (!el) return;
+  const responses = filteredData.filter(d => d[fieldKey] && d[fieldKey].trim());
+  if (!responses.length) { el.innerHTML = '<div class="empty-state">Sin comentarios aún</div>'; return; }
+  el.innerHTML = '';
+  responses.forEach(d => { el.innerHTML += `<div class="response-item"><div class="response-meta">${d.level||'?'} · ${d.month||''} ${d.year||''}</div>${d[fieldKey]}</div>`; });
+}
+
+async function renderSubmissionLog() {
+  const el = document.getElementById('submission-log'); if (!el) return;
+  el.innerHTML = '<div class="loading">Cargando...</div>';
+  try {
+    const res = await fetch(BACKEND + '?action=read');
+    const json = await res.json();
+    const rows = json.data || [];
+    if (!rows.length) { el.innerHTML = '<div class="empty-state">Sin submisiones aún</div>'; return; }
+    el.innerHTML = '';
+    [...rows].reverse().forEach(r => {
+      const d = new Date(r['Timestamp']);
+      const f = isNaN(d) ? '—' : d.toLocaleDateString('es-CL', { day:'numeric', month:'short', year:'numeric' });
+      el.innerHTML += `<div class="log-row"><div class="log-code">${r['Código']||'—'}</div><div class="log-meta">${r['Mes']||''} ${r['Año']||''} · ${f}</div></div>`;
+    });
+  } catch(e) { el.innerHTML = '<div class="empty-state">No se pudo cargar el registro.</div>'; }
+}
+
+function renderAll() {
+  document.getElementById('stat-total').textContent = filteredData.length;
+  const ga = sAvg('general');
+  document.getElementById('stat-general').textContent = ga ? '★ '+ga : '—';
+  renderRadio('level-breakdown','level',[{value:'R1',label:'R1'},{value:'R2',label:'R2'},{value:'R3',label:'R3'}]);
+  renderRadio('tp-breakdown','tpTuvo',[{value:'siempre',label:'Todas las semanas'},{value:'casi',label:'La mayoría'},{value:'pocas',label:'Pocas semanas'},{value:'nunca',label:'Casi nunca'}]);
+  renderStarMetric('stars-guia',[{label:'Utilidad',key:'guia-util'},{label:'Claridad',key:'guia-clar'}]);
+  renderStarMetric('stars-pautas',[{label:'Utilidad',key:'pautas-util'},{label:'Claridad',key:'pautas-clar'}]);
+  renderRadio('pautas-conv-breakdown','pautasConv',[{value:'siempre',label:'Siempre'},{value:'aveces',label:'A veces'},{value:'nunca',label:'Nunca'}]);
+  renderStarMetric('stars-feedback',[{label:'Utilidad',key:'feedback-util'}]);
+  renderRadio('feedback-hon-breakdown','feedbackHon',[{value:'si',label:'Sí, completamente'},{value:'parcial',label:'Parcialmente'},{value:'no',label:'No del todo'}]);
+  renderStarMetric('stars-tp',[{label:'Utilidad',key:'tp-util'}]);
+  renderRadio('sim-acceso-breakdown','simAcceso',[{value:'si',label:'Sí, regularmente'},{value:'limitado',label:'Con dificultades'},{value:'no',label:'Sin acceso'}]);
+  renderStarMetric('stars-sim',[{label:'Utilidad',key:'sim-util'}]);
+  renderText('sim-notas','simNota');
+  renderText('mejoras-list','mejoras');
+  renderText('destaca-list','destaca');
+}
+
+function showDsec(id, btn) {
+  document.querySelectorAll('.dsection').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('dsec-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'submisiones') renderSubmissionLog();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
