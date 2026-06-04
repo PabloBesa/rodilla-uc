@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Feedback — Dr. Besa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744; --navy-mid: #243560; --gold: #c8973a; --gold-light: #e8c47a;
+    --gold-pale: #f5e9cc; --cream: #faf8f3; --warm-gray: #f0ece3; --text: #2c2c2c;
+    --text-muted: #5a5a5a; --border: #d4c9b0; --green: #2a6041; --green-light: #e8f2ec;
+    --red-accent: #8b2e2e; --red-light: #f5eaea; --blue: #1a4a7a; --blue-light: #e8f0f8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Serif 4', Georgia, serif; background: var(--cream); color: var(--text); font-size: 15px; line-height: 1.75; }
+  .page { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
+  .header { background: var(--navy); padding: 28px 24px 20px; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; bottom: 0; right: 0; width: 160px; height: 100%; background: linear-gradient(135deg, transparent 50%, rgba(200,151,58,0.12) 100%); pointer-events: none; }
+  .header-tag { font-size: 9px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: white; line-height: 1.2; }
+  .header h1 span { color: var(--gold-light); }
+  .header-sub { font-size: 11px; color: rgba(255,255,255,0.55); font-style: italic; margin-top: 4px; }
+  .gold-rule { width: 40px; height: 3px; background: var(--gold); margin: 12px 0 0; }
+  .steps { background: var(--navy-mid); padding: 10px 20px; display: flex; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .steps::-webkit-scrollbar { display: none; }
+  .step { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .step-dot { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.2s; font-family: 'Playfair Display', serif; }
+  .step-dot.active { background: var(--gold); color: var(--navy); }
+  .step-dot.done { background: var(--green); color: white; }
+  .step-label { font-size: 9.5px; color: rgba(255,255,255,0.5); }
+  .step-label.active { color: var(--gold-light); font-weight: 600; }
+  .step-sep { color: rgba(255,255,255,0.2); font-size: 10px; }
+  .content { padding: 20px 20px 80px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .resident-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .resident-btn { border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 12px; cursor: pointer; background: white; text-align: left; transition: all 0.2s; font-family: 'Source Serif 4', serif; }
+  .resident-btn.selected { border-color: var(--gold); background: var(--gold-pale); }
+  .resident-btn .r-name { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .resident-btn .r-level { font-size: 10px; color: var(--text-muted); }
+  .session-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .session-btn { border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 12px; cursor: pointer; background: white; text-align: left; transition: all 0.2s; font-family: 'Source Serif 4', serif; }
+  .session-btn.selected { border-color: var(--navy); background: var(--navy); }
+  .session-btn .s-type { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .session-btn.selected .s-type { color: var(--gold-light); }
+  .session-btn .s-date { font-size: 10px; color: var(--text-muted); }
+  .session-btn.selected .s-date { color: rgba(255,255,255,0.5); }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 7px; border-bottom: 1.5px solid var(--border); margin-top: 20px; }
+  .section-header:first-of-type { margin-top: 0; }
+  .section-num { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold); opacity: 0.7; line-height: 1; flex-shrink: 0; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: var(--navy); }
+  .section-title em { display: block; font-family: 'Source Serif 4', serif; font-size: 10px; font-weight: 400; font-style: italic; color: var(--text-muted); margin-top: 1px; }
+  .q-block { margin-bottom: 14px; }
+  .q-label { font-size: 12.5px; font-weight: 600; color: var(--navy); margin-bottom: 5px; display: flex; align-items: flex-start; gap: 7px; }
+  .q-marker { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 5px; }
+  .q-note { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-family: 'Source Serif 4', serif; font-size: 12px; color: var(--text); background: var(--cream); resize: none; min-height: 52px; line-height: 1.6; transition: border-color 0.2s; }
+  .q-note:focus { outline: none; border-color: var(--gold); background: white; }
+  .q-note::placeholder { color: var(--text-muted); font-style: italic; }
+  .pauta-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .pauta-row:last-child { border-bottom: none; }
+  .pauta-name { color: var(--text); }
+  .pauta-counter { display: flex; align-items: center; gap: 8px; }
+  .counter-btn { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border); background: white; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--navy); font-weight: 700; transition: all 0.15s; line-height: 1; }
+  .counter-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+  .counter-val { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--navy); min-width: 20px; text-align: center; }
+  .btn-primary { width: 100%; background: var(--navy); color: white; border: none; border-radius: 8px; padding: 13px; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: background 0.2s; letter-spacing: 0.3px; }
+  .btn-primary:hover { background: var(--navy-mid); }
+  .btn-secondary { width: 100%; background: white; color: var(--navy); border: 1.5px solid var(--border); border-radius: 8px; padding: 11px; font-family: 'Source Serif 4', serif; font-size: 13px; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: var(--gold); background: var(--gold-pale); }
+  .summary-box { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .summary-header { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .summary-sub { font-size: 10.5px; color: var(--text-muted); font-style: italic; margin-bottom: 12px; }
+  .summary-item { margin-bottom: 10px; }
+  .summary-item-label { font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .summary-item-val { font-size: 12.5px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+  .summary-item-val.empty { color: var(--text-muted); font-style: italic; }
+  .copy-btn { width: 100%; background: var(--gold); color: var(--navy); border: none; border-radius: 8px; padding: 13px; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: opacity 0.2s; }
+  .copy-btn:hover { opacity: 0.85; }
+  .copy-confirm { text-align: center; font-size: 11px; color: var(--green); margin-top: 6px; display: none; }
+  .highlight { border-left: 4px solid var(--gold); background: var(--warm-gray); padding: 11px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 12px; line-height: 1.7; }
+  .highlight strong { color: var(--navy); }
+  .highlight-green { border-left: 4px solid var(--green); background: var(--green-light); padding: 11px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 12px; line-height: 1.7; }
+  .highlight-green strong { color: var(--green); }
+  .pauta-auto-badge { display: inline-block; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 10px; background: var(--green-light); color: var(--green); margin-left: 6px; vertical-align: middle; }
+  .pauta-auto-badge.manual { background: var(--warm-gray); color: var(--text-muted); }
+  .pauta-loading { font-size: 11px; color: var(--text-muted); font-style: italic; padding: 8px 0; }
+  .footer { background: var(--warm-gray); border-top: 1px solid var(--border); padding: 14px 20px; text-align: center; font-size: 10px; color: var(--text-muted); font-style: italic; }
+</style>
+</head>
+<body>
+<div id="pinScreen" style="max-width:480px;margin:0 auto;padding:52px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;min-height:100vh;background:var(--cream);">
+  <div style="width:64px;height:64px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🔐</div>
+  <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--navy);text-align:center;">Acceso privado</h2>
+  <p style="font-size:0.82rem;color:rgba(26,39,68,0.5);text-align:center;font-style:italic;">Solo para coordinadores del programa</p>
+  <input type="password" id="pinInput" placeholder="····" maxlength="4" inputmode="numeric"
+    style="width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:white;font-family:'Source Serif 4',serif;font-size:1.6rem;color:var(--navy);text-align:center;letter-spacing:0.4em;outline:none;"
+    onkeydown="if(event.key==='Enter')checkPin()">
+  <div id="pinError" style="font-size:0.8rem;color:var(--red-accent);font-style:italic;display:none;">PIN incorrecto</div>
+  <button onclick="checkPin()" style="width:100%;padding:14px;background:var(--navy);color:var(--gold);border:none;border-radius:10px;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;cursor:pointer;">Ingresar</button>
+</div>
+
+<div id="mainApp" style="display:none;">
+<div class="page">
+  <div class="header">
+    <div class="header-tag">Uso Interno · Dr. Pablo Besa</div>
+    <h1>Guía de <span>Feedback</span></h1>
+    <p class="header-sub">Rotación Rodilla UC · Sesiones de retroalimentación</p>
+    <div class="gold-rule"></div>
+  </div>
+
+  <div class="steps" id="steps-bar">
+    <div class="step"><div class="step-dot active" id="dot-1">1</div><div class="step-label active" id="lbl-1">Inicio</div></div>
+    <div class="step-sep">›</div>
+    <div class="step"><div class="step-dot" id="dot-2">2</div><div class="step-label" id="lbl-2">Pautas</div></div>
+    <div class="step-sep">›</div>
+    <div class="step"><div class="step-dot" id="dot-3">3</div><div class="step-label" id="lbl-3">Bienestar</div></div>
+    <div class="step-sep">›</div>
+    <div class="step"><div class="step-dot" id="dot-4">4</div><div class="step-label" id="lbl-4">Académico</div></div>
+    <div class="step-sep">›</div>
+    <div class="step"><div class="step-dot" id="dot-5">5</div><div class="step-label" id="lbl-5">Cierre</div></div>
+    <div class="step-sep">›</div>
+    <div class="step"><div class="step-dot" id="dot-6">6</div><div class="step-label" id="lbl-6">Resumen</div></div>
+  </div>
+
+  <div class="content">
+
+    <!-- SCREEN 1: SETUP -->
+    <div class="screen active" id="screen-1">
+      <div class="section-header" style="margin-top:0;">
+        <div class="section-num">01</div>
+        <div class="section-title">Residente<em>¿Con quién es esta sesión?</em></div>
+      </div>
+      <div class="resident-grid">
+        <button class="resident-btn" onclick="selectResident('Bernardita Vicuña', 'R3', this)">
+          <div class="r-name">Bernardita Vicuña</div><div class="r-level">R3</div>
+        </button>
+        <button class="resident-btn" onclick="selectResident('Mateo Ferrer', 'R1', this)">
+          <div class="r-name">Mateo Ferrer</div><div class="r-level">R1</div>
+        </button>
+        <button class="resident-btn" onclick="selectResident('Raimundo Poblete', 'R1', this)">
+          <div class="r-name">Raimundo Poblete</div><div class="r-level">R1</div>
+        </button>
+        <button class="resident-btn" onclick="selectResident('Otro residente', '', this)">
+          <div class="r-name">Otro</div><div class="r-level">Ingresar nombre</div>
+        </button>
+      </div>
+      <div id="other-name-wrap" style="display:none; margin-bottom:14px;">
+        <input type="text" id="other-name" placeholder="Nombre del residente" style="width:100%; border:1px solid var(--border); border-radius:6px; padding:9px 12px; font-family:'Source Serif 4',serif; font-size:13px; background:var(--cream); color:var(--text);" oninput="state.residentName=this.value">
+      </div>
+      <div class="section-header">
+        <div class="section-num">02</div>
+        <div class="section-title">Tipo de sesión<em>¿Mitad o final de rotación?</em></div>
+      </div>
+      <div class="session-grid">
+        <button class="session-btn" onclick="selectSession('mitad', this)">
+          <div class="s-type">Mitad</div><div class="s-date">Mar 10 jun · 12:00–12:40</div>
+        </button>
+        <button class="session-btn" onclick="selectSession('final', this)">
+          <div class="s-type">Final</div><div class="s-date">Mar 30 jun · 12:00–12:40</div>
+        </button>
+      </div>
+      <button class="btn-primary" onclick="goTo(2)">Comenzar sesión →</button>
+    </div>
+
+    <!-- SCREEN 2: PAUTAS -->
+    <div class="screen" id="screen-2">
+      <div class="highlight-green">
+        <p><strong>Pautas cargadas automáticamente.</strong> Ajusta manualmente si hay diferencias con lo que trajo el residente.</p>
+      </div>
+      <div class="section-header" style="margin-top:0;">
+        <div class="section-num">02</div>
+        <div class="section-title">
+          Pautas acumuladas
+          <em id="pautas-source-label">Cargando desde Google Sheets…</em>
+        </div>
+      </div>
+      <div class="summary-box" style="padding:12px 16px;">
+        <div class="pauta-row">
+          <div class="pauta-name">Pabellón</div>
+          <div class="pauta-counter">
+            <button class="counter-btn" onclick="changeCount('pabellon',-1)">−</button>
+            <div class="counter-val" id="cnt-pabellon">0</div>
+            <button class="counter-btn" onclick="changeCount('pabellon',1)">+</button>
+          </div>
+        </div>
+        <div class="pauta-row">
+          <div class="pauta-name">Policlínico</div>
+          <div class="pauta-counter">
+            <button class="counter-btn" onclick="changeCount('policlinico',-1)">−</button>
+            <div class="counter-val" id="cnt-policlinico">0</div>
+            <button class="counter-btn" onclick="changeCount('policlinico',1)">+</button>
+          </div>
+        </div>
+        <div class="pauta-row">
+          <div class="pauta-name">Visitas</div>
+          <div class="pauta-counter">
+            <button class="counter-btn" onclick="changeCount('visitas',-1)">−</button>
+            <div class="counter-val" id="cnt-visitas">0</div>
+            <button class="counter-btn" onclick="changeCount('visitas',1)">+</button>
+          </div>
+        </div>
+        <div class="pauta-row">
+          <div class="pauta-name">Presentación</div>
+          <div class="pauta-counter">
+            <button class="counter-btn" onclick="changeCount('presentacion',-1)">−</button>
+            <div class="counter-val" id="cnt-presentacion">0</div>
+            <button class="counter-btn" onclick="changeCount('presentacion',1)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>Notas sobre las pautas revisadas</div>
+        <textarea class="q-note" id="note-pautas" placeholder="Observaciones generales, patrones, áreas destacadas…" oninput="state.notes.pautas=this.value"></textarea>
+      </div>
+      <button class="btn-primary" onclick="goTo(3)">Continuar →</button>
+      <button class="btn-secondary" onclick="goTo(1)">← Volver</button>
+    </div>
+
+    <!-- SCREEN 3: BIENESTAR -->
+    <div class="screen" id="screen-3">
+      <div class="section-header" style="margin-top:0;">
+        <div class="section-num">03</div>
+        <div class="section-title">Bienestar<em>¿Cómo está el residente?</em></div>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>¿Cómo estás? ¿Cómo te has sentido durante la rotación?</div>
+        <textarea class="q-note" id="note-bienestar" placeholder="Notas…" oninput="state.notes.bienestar=this.value"></textarea>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>¿Has podido usar tu tiempo protegido?</div>
+        <textarea class="q-note" id="note-protegido" placeholder="¿Lo ha tenido? ¿Hubo algún problema?" oninput="state.notes.protegido=this.value"></textarea>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>¿Hay algo que necesites de nosotros?</div>
+        <textarea class="q-note" id="note-necesidades" placeholder="Notas…" oninput="state.notes.necesidades=this.value"></textarea>
+      </div>
+      <button class="btn-primary" onclick="goTo(4)">Continuar →</button>
+      <button class="btn-secondary" onclick="goTo(2)">← Volver</button>
+    </div>
+
+    <!-- SCREEN 4: ACADÉMICO -->
+    <div class="screen" id="screen-4">
+      <div class="section-header" style="margin-top:0;">
+        <div class="section-num">04</div>
+        <div class="section-title">Progreso académico<em>Aprendizaje y desarrollo clínico</em></div>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>¿Qué está funcionando bien en tu formación?</div>
+        <textarea class="q-note" id="note-bien" placeholder="Notas…" oninput="state.notes.bien=this.value"></textarea>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>¿En qué área sientes que necesitas más trabajo o apoyo?</div>
+        <textarea class="q-note" id="note-trabajo" placeholder="Notas…" oninput="state.notes.trabajo=this.value"></textarea>
+      </div>
+      <div class="q-block" id="wrap-mid" style="display:none;">
+        <div class="q-label"><div class="q-marker"></div>¿Qué te gustaría lograr en la segunda mitad de la rotación?</div>
+        <textarea class="q-note" id="note-segunda" placeholder="Objetivos, instancias específicas, cirugías…" oninput="state.notes.segunda=this.value"></textarea>
+      </div>
+      <div class="q-block" id="wrap-final" style="display:none;">
+        <div class="q-label"><div class="q-marker"></div>¿Hay algo del programa que podríamos mejorar?</div>
+        <textarea class="q-note" id="note-programa" placeholder="Sugerencias del residente sobre la rotación…" oninput="state.notes.programa=this.value"></textarea>
+      </div>
+      <button class="btn-primary" onclick="goTo(5)">Continuar →</button>
+      <button class="btn-secondary" onclick="goTo(3)">← Volver</button>
+    </div>
+
+    <!-- SCREEN 5: CIERRE -->
+    <div class="screen" id="screen-5">
+      <div class="section-header" style="margin-top:0;">
+        <div class="section-num">05</div>
+        <div class="section-title">Cierre<em>Nota global y próximos pasos</em></div>
+      </div>
+      <div id="wrap-nota-global" style="display:none;">
+        <div class="highlight">
+          <p><strong>Sesión final:</strong> entregar nota global y formulario de evaluación de la rotación.</p>
+        </div>
+        <div class="q-block">
+          <div class="q-label"><div class="q-marker"></div>Nota global asignada</div>
+          <textarea class="q-note" id="note-nota" placeholder="Nota y comentarios para el residente…" style="min-height:40px;" oninput="state.notes.nota=this.value"></textarea>
+        </div>
+        <div class="q-block">
+          <div class="q-label"><div class="q-marker"></div>¿Se entregó el formulario de evaluación de la rotación?</div>
+          <div style="display:flex; gap:10px; margin-top:4px;">
+            <button id="btn-si" onclick="setFormulario(true)" style="flex:1; padding:8px; border:1.5px solid var(--border); border-radius:6px; background:white; font-family:'Source Serif 4',serif; font-size:12px; cursor:pointer;">Sí ✓</button>
+            <button id="btn-no" onclick="setFormulario(false)" style="flex:1; padding:8px; border:1.5px solid var(--border); border-radius:6px; background:white; font-family:'Source Serif 4',serif; font-size:12px; cursor:pointer;">No ✗</button>
+          </div>
+        </div>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>Compromisos o acciones a tomar</div>
+        <textarea class="q-note" id="note-compromisos" placeholder="¿Qué te comprometiste a hacer como resultado de esta conversación?" oninput="state.notes.compromisos=this.value"></textarea>
+      </div>
+      <div class="q-block">
+        <div class="q-label"><div class="q-marker"></div>Notas adicionales</div>
+        <textarea class="q-note" id="note-adicional" placeholder="Cualquier cosa que quieras registrar…" oninput="state.notes.adicional=this.value"></textarea>
+      </div>
+      <button class="btn-primary" onclick="goTo(6)">Ver resumen →</button>
+      <button class="btn-secondary" onclick="goTo(4)">← Volver</button>
+    </div>
+
+    <!-- SCREEN 6: SUMMARY -->
+    <div class="screen" id="screen-6">
+      <div class="highlight-green" style="margin-bottom:16px;">
+        <p>Sesión completada. Copia el resumen para guardarlo donde prefieras.</p>
+      </div>
+      <div class="summary-box" id="summary-content">
+        <div class="summary-header" id="sum-title">—</div>
+        <div class="summary-sub" id="sum-sub">—</div>
+        <div class="summary-item">
+          <div class="summary-item-label">Pautas presentadas</div>
+          <div class="summary-item-val" id="sum-pautas">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">Notas sobre pautas</div>
+          <div class="summary-item-val" id="sum-pautas-n">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">Bienestar</div>
+          <div class="summary-item-val" id="sum-bienestar">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">Tiempo protegido</div>
+          <div class="summary-item-val" id="sum-protegido">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">Necesidades</div>
+          <div class="summary-item-val" id="sum-necesidades">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">Lo que está funcionando bien</div>
+          <div class="summary-item-val" id="sum-bien">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">Áreas de trabajo</div>
+          <div class="summary-item-val" id="sum-trabajo">—</div>
+        </div>
+        <div class="summary-item" id="sum-wrap-segunda">
+          <div class="summary-item-label">Objetivos segunda mitad</div>
+          <div class="summary-item-val" id="sum-segunda">—</div>
+        </div>
+        <div class="summary-item" id="sum-wrap-programa">
+          <div class="summary-item-label">Sugerencias al programa</div>
+          <div class="summary-item-val" id="sum-programa">—</div>
+        </div>
+        <div class="summary-item" id="sum-wrap-nota">
+          <div class="summary-item-label">Nota global</div>
+          <div class="summary-item-val" id="sum-nota">—</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-item-label">Compromisos</div>
+          <div class="summary-item-val" id="sum-compromisos">—</div>
+        </div>
+        <div class="summary-item" id="sum-wrap-adicional">
+          <div class="summary-item-label">Notas adicionales</div>
+          <div class="summary-item-val" id="sum-adicional">—</div>
+        </div>
+      </div>
+      <button class="copy-btn" onclick="copySummary()">Copiar resumen</button>
+      <div class="copy-confirm" id="copy-confirm">✓ Copiado al portapapeles</div>
+      <button class="btn-secondary" onclick="goTo(5)">← Volver</button>
+      <button class="btn-secondary" onclick="resetAll()" style="margin-top:6px;">Iniciar nueva sesión</button>
+    </div>
+
+  </div>
+  <div class="footer">Uso interno — Dr. Pablo Besa · Rotación Rodilla UC 2026</div>
+</div>
+</div><!-- end mainApp -->
+
+<script>
+const PIN = '6174';
+function checkPin() {
+  const val = document.getElementById('pinInput').value.trim();
+  const input = document.getElementById('pinInput');
+  const err = document.getElementById('pinError');
+  if (val === PIN) {
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+  } else {
+    input.style.borderColor = 'var(--red-accent)';
+    input.style.background = 'var(--red-light)';
+    err.style.display = 'block';
+    input.value = '';
+    setTimeout(() => { input.style.borderColor = ''; input.style.background = 'white'; err.style.display = 'none'; }, 2500);
+  }
+}
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU5QVGKjUX0bOBer0GnSVJ5tcGH2XYEO0C1em9M-y9GNgPAMLN1UZyfzm5Q3F5c49dYw/exec';
+
+const PAUTA_TIPOS = {
+  'Pabellón': 'pabellon',
+  'Policlínico Primero': 'policlinico',
+  'Policlínico Avanzado': 'policlinico',
+  'Presentación': 'presentacion',
+  'Visitas': 'visitas'
+};
+
+const state = {
+  residentName: '', residentLevel: '', sessionType: '',
+  counts: { pabellon: 0, policlinico: 0, visitas: 0, presentacion: 0 },
+  formulario: null,
+  notes: { pautas:'', bienestar:'', protegido:'', necesidades:'', bien:'', trabajo:'', segunda:'', programa:'', nota:'', compromisos:'', adicional:'' }
+};
+
+function selectResident(name, level, btn) {
+  document.querySelectorAll('.resident-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.residentName = name;
+  state.residentLevel = level;
+  document.getElementById('other-name-wrap').style.display = (name === 'Otro residente') ? 'block' : 'none';
+}
+
+function selectSession(type, btn) {
+  document.querySelectorAll('.session-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.sessionType = type;
+}
+
+function changeCount(key, delta) {
+  state.counts[key] = Math.max(0, state.counts[key] + delta);
+  document.getElementById('cnt-' + key).textContent = state.counts[key];
+}
+
+function setFormulario(val) {
+  state.formulario = val;
+  document.getElementById('btn-si').style.background = val ? '#e8f2ec' : 'white';
+  document.getElementById('btn-si').style.borderColor = val ? 'var(--green)' : 'var(--border)';
+  document.getElementById('btn-no').style.background = !val ? 'var(--red-light)' : 'white';
+  document.getElementById('btn-no').style.borderColor = !val ? 'var(--red-accent)' : 'var(--border)';
+}
+
+async function loadPautasFromSheet(residentName) {
+  const label = document.getElementById('pautas-source-label');
+  label.textContent = 'Cargando desde Google Sheets…';
+  try {
+    const firstName = residentName.split(' ')[0];
+    const res = await fetch(SCRIPT_URL + '?action=readPautas&residente=' + encodeURIComponent(firstName));
+    const data = await res.json();
+    if (!data.ok) {
+      label.textContent = 'Error al leer el sheet — ajusta manualmente';
+      label.style.color = 'var(--red-accent)';
+      return;
+    }
+    if (!data.rows || data.rows.length === 0) {
+      label.textContent = 'Sin pautas registradas este mes — ajusta manualmente';
+      label.style.color = 'var(--text-muted)';
+      return;
+    }
+    // Count unique evaluations per tipo (by fecha+evaluador key)
+    const counts = { pabellon: 0, policlinico: 0, visitas: 0, presentacion: 0 };
+    const seen = {};
+    data.rows.forEach(row => {
+      const tipo = row['Tipo de Pauta'] || '';
+      const key = tipo + '||' + (row['Fecha'] || '') + '||' + (row['Evaluador'] || '');
+      if (!seen[key] && row['Calificación General']) {
+        seen[key] = true;
+        const countKey = PAUTA_TIPOS[tipo];
+        if (countKey) counts[countKey]++;
+      }
+    });
+    // Update state and UI
+    Object.keys(counts).forEach(k => {
+      state.counts[k] = counts[k];
+      document.getElementById('cnt-' + k).textContent = counts[k];
+    });
+    label.textContent = 'Cargado desde Google Sheets ✓';
+    label.style.color = 'var(--green)';
+  } catch(err) {
+    label.textContent = 'Sin conexión — ajusta manualmente';
+  }
+}
+
+function goTo(n) {
+  if (n === 2) { loadPautasFromSheet(state.residentName); }
+  if (n === 4) { updateAcademico(); }
+  if (n === 5) { updateCierre(); }
+  if (n === 6) { buildSummary(); }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  for (let i = 1; i <= 6; i++) {
+    const dot = document.getElementById('dot-' + i);
+    const lbl = document.getElementById('lbl-' + i);
+    dot.className = 'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+    lbl.className = 'step-label' + (i === n ? ' active' : '');
+    dot.textContent = i < n ? '✓' : i;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateAcademico() {
+  document.getElementById('wrap-mid').style.display = state.sessionType === 'mitad' ? 'block' : 'none';
+  document.getElementById('wrap-final').style.display = state.sessionType === 'final' ? 'block' : 'none';
+}
+
+function updateCierre() {
+  document.getElementById('wrap-nota-global').style.display = state.sessionType === 'final' ? 'block' : 'none';
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function buildSummary() {
+  const now = new Date();
+  const fecha = now.toLocaleDateString('es-CL', { day:'numeric', month:'long', year:'numeric' });
+  const tipo = state.sessionType === 'mitad' ? 'Feedback de mitad de rotación' : 'Feedback final de rotación';
+  document.getElementById('sum-title').textContent = (state.residentName || '—') + (state.residentLevel ? ' · ' + state.residentLevel : '');
+  document.getElementById('sum-sub').textContent = tipo + ' · ' + fecha;
+  const c = state.counts;
+  document.getElementById('sum-pautas').textContent = `Pabellón: ${c.pabellon} · Policlínico: ${c.policlinico} · Visitas: ${c.visitas} · Presentación: ${c.presentacion}`;
+  setVal('sum-pautas-n', val('note-pautas'));
+  setVal('sum-bienestar', val('note-bienestar'));
+  setVal('sum-protegido', val('note-protegido'));
+  setVal('sum-necesidades', val('note-necesidades'));
+  setVal('sum-bien', val('note-bien'));
+  setVal('sum-trabajo', val('note-trabajo'));
+  setVal('sum-compromisos', val('note-compromisos'));
+  setVal('sum-adicional', val('note-adicional'));
+  const wSeg = document.getElementById('sum-wrap-segunda');
+  const wProg = document.getElementById('sum-wrap-programa');
+  const wNota = document.getElementById('sum-wrap-nota');
+  if (state.sessionType === 'mitad') {
+    wSeg.style.display = 'block'; wProg.style.display = 'none'; wNota.style.display = 'none';
+    setVal('sum-segunda', val('note-segunda'));
+  } else {
+    wSeg.style.display = 'none'; wProg.style.display = 'block'; wNota.style.display = 'block';
+    setVal('sum-programa', val('note-programa'));
+    setVal('sum-nota', val('note-nota') + (state.formulario !== null ? (state.formulario ? ' · Formulario entregado ✓' : ' · Formulario NO entregado') : ''));
+  }
+}
+
+function setVal(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text || '—';
+  el.className = 'summary-item-val' + (!text ? ' empty' : '');
+}
+
+function copySummary() {
+  const box = document.getElementById('summary-content');
+  let text = '';
+  box.querySelectorAll('.summary-item').forEach(item => {
+    if (item.style.display === 'none') return;
+    const label = item.querySelector('.summary-item-label');
+    const v = item.querySelector('.summary-item-val');
+    if (label && v) text += label.textContent + ':\n' + v.textContent + '\n\n';
+  });
+  const header = document.getElementById('sum-title').textContent + '\n' + document.getElementById('sum-sub').textContent + '\n\n';
+  navigator.clipboard.writeText(header + text).then(() => {
+    const conf = document.getElementById('copy-confirm');
+    conf.style.display = 'block';
+    setTimeout(() => conf.style.display = 'none', 2500);
+  });
+}
+
+function resetAll() {
+  state.residentName = ''; state.residentLevel = ''; state.sessionType = '';
+  state.counts = { pabellon:0, policlinico:0, visitas:0, presentacion:0 };
+  state.formulario = null;
+  state.notes = { pautas:'',bienestar:'',protegido:'',necesidades:'',bien:'',trabajo:'',segunda:'',programa:'',nota:'',compromisos:'',adicional:'' };
+  ['cnt-pabellon','cnt-policlinico','cnt-visitas','cnt-presentacion'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.textContent = '0';
+  });
+  document.querySelectorAll('.q-note').forEach(t => t.value = '');
+  document.querySelectorAll('.resident-btn, .session-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('other-name-wrap').style.display = 'none';
+  document.getElementById('other-name').value = '';
+  ['btn-si','btn-no'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) { b.style.background = 'white'; b.style.borderColor = 'var(--border)'; }
+  });
+  const label = document.getElementById('pautas-source-label');
+  if (label) { label.textContent = 'Cargando desde Google Sheets…'; label.style.color = ''; }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-1').classList.add('active');
+  for (let i = 1; i <= 6; i++) {
+    const dot = document.getElementById('dot-' + i);
+    const lbl = document.getElementById('lbl-' + i);
+    if (dot) { dot.className = 'step-dot' + (i === 1 ? ' active' : ''); dot.textContent = i; }
+    if (lbl) { lbl.className = 'step-label' + (i === 1 ? ' active' : ''); }
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
