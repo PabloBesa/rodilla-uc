@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil de Conocimientos — Rodilla UC</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#1a2744; --navy-mid:#243560; --gold:#c8973a; --gold-light:#e8c47a;
+    --gold-pale:#f5e9cc; --cream:#faf8f3; --warm-gray:#f0ece3; --text:#2c2c2c;
+    --text-muted:#5a5a5a; --border:#d4c9b0; --green:#2a6041; --green-light:#e8f2ec;
+    --red-accent:#8b2e2e; --red-light:#f5eaea;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Source Serif 4',Georgia,serif; background:var(--cream); color:var(--text); font-size:15px; line-height:1.75; }
+  .page { max-width:480px; margin:0 auto; background:white; min-height:100vh; }
+
+  .header { background:var(--navy); padding:30px 24px 22px; position:relative; overflow:hidden; }
+  .header::after { content:''; position:absolute; bottom:0; right:0; width:160px; height:100%;
+    background:linear-gradient(135deg,transparent 50%,rgba(200,151,58,0.12) 100%); pointer-events:none; }
+  .header-tag { font-size:9px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+  .header h1 { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:white; line-height:1.2; }
+  .header h1 span { color:var(--gold-light); }
+  .header-sub { font-size:12px; color:rgba(255,255,255,0.6); font-style:italic; margin-top:4px; }
+  .gold-rule { width:48px; height:3px; background:var(--gold); margin:14px 0 0; }
+
+  /* BLOCK NAV */
+  .nav-bar { background:var(--navy-mid); padding:10px 16px; display:flex; gap:6px; overflow-x:auto; scrollbar-width:none;
+    -webkit-overflow-scrolling:touch; position:sticky; top:0; z-index:20; }
+  .nav-bar::-webkit-scrollbar { display:none; }
+  .nav-pill { background:rgba(255,255,255,0.12); color:rgba(255,255,255,0.8); border:none; border-radius:20px;
+    padding:5px 12px; font-family:'Source Serif 4',serif; font-size:11px; white-space:nowrap; cursor:pointer; transition:background .2s; }
+  .nav-pill.active { background:var(--gold); color:var(--navy); font-weight:600; }
+
+  .content { padding:22px 20px 60px; }
+
+  /* YEAR SELECTOR */
+  .yearsel-wrap { margin-bottom:24px; }
+  .yearsel-q { font-family:'Playfair Display',serif; font-size:14px; color:var(--navy); margin-bottom:10px; }
+  .yearsel { display:flex; gap:8px; }
+  .yr-big { flex:1; background:white; border:1.5px solid var(--border); color:var(--navy); border-radius:10px;
+    padding:12px 0; font-family:'Playfair Display',serif; font-size:18px; font-weight:700; cursor:pointer; transition:all .18s; text-align:center; }
+  .yr-big span { display:block; font-family:'Source Serif 4',serif; font-size:9.5px; font-weight:400; font-style:italic; color:var(--text-muted); margin-top:2px; letter-spacing:.3px; }
+  .yr-big:hover { border-color:var(--gold); }
+  .yr-big.active { background:var(--navy); color:white; border-color:var(--navy); }
+  .yr-big.active span { color:var(--gold-light); }
+
+  /* SECTION HEADER */
+  .section-header { display:flex; align-items:center; gap:12px; margin-bottom:18px; padding-bottom:8px; border-bottom:1.5px solid var(--border); }
+  .section-num { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--gold); opacity:.7; flex-shrink:0; }
+  .section-title { font-family:'Playfair Display',serif; font-size:16px; font-weight:600; color:var(--navy); }
+  .section-title em { display:block; font-family:'Source Serif 4',serif; font-size:10.5px; font-weight:400; font-style:italic; color:var(--text-muted); margin-top:1px; }
+
+  /* BUCKETS */
+  .bucket { margin-bottom:24px; }
+  .bucket-title { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .bucket-title h2 { font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--navy); }
+  .bucket-title .count { font-size:10px; font-weight:600; color:var(--gold); background:var(--gold-pale); border-radius:20px; padding:2px 8px; }
+  .bucket-sub { font-size:11px; font-style:italic; color:var(--text-muted); margin-bottom:13px; }
+  .bucket-urgent .bucket-title h2 { color:var(--red-accent); }
+
+  /* RESIDENT CARD */
+  .rcard { background:var(--cream); border:1px solid var(--border); border-radius:9px; padding:13px 15px; margin-bottom:10px; }
+  .rcard.urgent { background:var(--red-light); border-color:#e0bcbc; }
+  .rcard-top { display:flex; align-items:flex-start; gap:9px; }
+  .rcard-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:6px; }
+  .rcard.urgent .rcard-dot { background:var(--red-accent); }
+  .rcard-main { flex:1; min-width:0; }
+  .rcard-title { font-family:'Playfair Display',serif; font-size:13.5px; font-weight:600; color:var(--navy); line-height:1.25; margin-bottom:5px; }
+  .rcard-obj { font-size:12.5px; color:var(--text); line-height:1.6; }
+  .rcard.urgent .rcard-obj { color:#4a1f1f; }
+  .rcard-obj b { color:var(--red-accent); }
+  .rcard-toggle { font-size:10.5px; color:var(--gold); font-weight:600; cursor:pointer; margin-top:9px; display:inline-block; letter-spacing:.2px; }
+  .rcard-toggle:hover { text-decoration:underline; }
+  .rdetail { display:none; margin-top:11px; padding-top:11px; border-top:1px dashed var(--border); }
+  .rcard.open .rdetail { display:block; }
+  .rcard.open .rcard-toggle .more { display:none; }
+  .rcard-toggle .less { display:none; }
+  .rcard.open .rcard-toggle .less { display:inline; }
+
+  .axis { margin-bottom:11px; }
+  .axis:last-child { margin-bottom:0; }
+  .axis-label { font-size:9px; font-weight:600; letter-spacing:1.1px; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+  .dom-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:4px 0; border-bottom:1px dotted var(--border); }
+  .dom-row:last-child { border-bottom:none; }
+  .dom-name { font-size:11.5px; color:var(--text); line-height:1.4; }
+
+  .chip { display:inline-block; min-width:30px; text-align:center; font-family:'Playfair Display',serif; font-size:11px; font-weight:700;
+    padding:3px 9px; border-radius:20px; letter-spacing:.3px; border:1.5px solid transparent; }
+  .chip.r1 { background:var(--green-light); color:var(--green); }
+  .chip.r2 { background:var(--gold-pale); color:#8a6420; }
+  .chip.r3 { background:var(--navy); color:var(--gold-light); }
+  .chip.na { background:var(--warm-gray); color:#9a917f; font-style:italic; font-family:'Source Serif 4',serif; font-weight:400; }
+
+  /* FUTURE GRID */
+  .rdetail .dom-row.future { display:none; }
+  .rdetail .axis.future-only { display:none; }
+  .rdetail.show-future .dom-row.future { display:flex; }
+  .rdetail.show-future .axis.future-only { display:block; }
+  .rdetail .dom-row.future .chip { background:var(--warm-gray); color:#9a917f; box-shadow:none; opacity:.85; }
+  .rdetail .dom-row.future .dom-name { color:#9a917f; }
+  .future-toggle { font-size:10.5px; color:var(--text-muted); font-weight:600; cursor:pointer; margin-top:11px;
+    display:inline-block; border-top:1px dotted var(--border); padding-top:9px; letter-spacing:.2px; }
+  .future-toggle:hover { color:var(--navy); }
+  .future-toggle .fl { display:none; }
+  .rdetail.show-future .future-toggle .fm { display:none; }
+  .rdetail.show-future .future-toggle .fl { display:inline; }
+  .detail-note { font-size:10.5px; font-style:italic; color:var(--text-muted); margin-top:11px; padding:8px 11px; background:var(--warm-gray); border-radius:6px; line-height:1.5; }
+
+  /* LECTURAS */
+  .lect-toggle { font-size:10.5px; color:var(--green); font-weight:600; cursor:pointer; margin-top:9px; display:inline-block; letter-spacing:.2px; }
+  .lect-toggle:hover { text-decoration:underline; }
+  .lect-block { display:none; margin-top:10px; padding-top:11px; border-top:1px dashed var(--border); }
+  .rcard.show-lect .lect-block { display:block; }
+  .rcard.show-lect .lect-toggle .lmore { display:none; }
+  .lect-toggle .lless { display:none; }
+  .rcard.show-lect .lect-toggle .lless { display:inline; }
+  .lect-item { display:flex; gap:9px; align-items:flex-start; padding:7px 0; border-bottom:1px dotted var(--border); }
+  .lect-item:last-child { border-bottom:none; }
+  .lect-item.lect-future { opacity:.4; }
+  .lect-chip { flex-shrink:0; margin-top:1px; }
+  .lect-tipo { font-size:8.5px; font-weight:600; letter-spacing:.7px; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:2px; }
+  .lect-cite { font-size:11.5px; color:var(--text); line-height:1.5; }
+  .lect-cite a { color:var(--navy); text-decoration:underline; }
+
+  /* MANTÉN (collapsed, red prominent) */
+  .manten { border:1px solid #e0bcbc; border-radius:9px; overflow:hidden; }
+  .manten-head { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:var(--red-light); cursor:pointer; border-left:4px solid var(--red-accent); }
+  .manten-head .mh-title { font-family:'Playfair Display',serif; font-size:13px; font-weight:600; color:var(--red-accent); flex:1; }
+  .manten-head .count { font-size:10px; font-weight:600; color:var(--red-accent); background:#f0d6d6; border-radius:20px; padding:2px 8px; margin-left:8px; }
+  .manten-head .caret { font-size:11px; color:var(--red-accent); transition:transform .2s; margin-left:8px; }
+  .manten.open .caret { transform:rotate(90deg); }
+  .manten-body { display:none; padding:6px 14px 10px; }
+  .manten.open .manten-body { display:block; }
+  .manten-row { padding:9px 0; border-bottom:1px dotted var(--border); }
+  .manten-row:last-child { border-bottom:none; }
+  .manten-row .mr-t { font-family:'Playfair Display',serif; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:2px; }
+  .manten-row .mr-o { font-size:11.5px; color:var(--text-muted); line-height:1.5; }
+
+  .empty { text-align:center; padding:34px 20px; color:var(--text-muted); font-style:italic; font-size:13px; }
+  .footer { text-align:center; font-size:10.5px; color:var(--text-muted); font-style:italic; padding:22px 20px 36px; line-height:1.7; }
+  .footer .gold-rule { margin:0 auto 12px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-tag">Perfil de Conocimientos</div>
+    <h1>Equipo de Rodilla <span>UC</span></h1>
+    <div class="header-sub">Lo que se espera de ti, según tu año</div>
+    <div class="gold-rule"></div>
+  </div>
+
+  <div class="nav-bar" id="navBar">
+    <button class="nav-pill active" data-sec="generalidades">Generalidades</button>
+    <button class="nav-pill" data-sec="trauma">Trauma</button>
+    <button class="nav-pill" data-sec="ortopedia">Ortopedia</button>
+    <button class="nav-pill" data-sec="reemplazo">Reemplazo</button>
+    <button class="nav-pill" data-sec="miscelaneos">Misceláneos</button>
+  </div>
+
+  <div class="content">
+    <div class="yearsel-wrap">
+      <div class="yearsel-q">¿En qué año estás?</div>
+      <div class="yearsel" id="yearSel">
+        <button class="yr-big active" data-yr="1">R1<span>1.er año</span></button>
+        <button class="yr-big" data-yr="2">R2<span>2.º año</span></button>
+        <button class="yr-big" data-yr="3">R3<span>3.er año</span></button>
+      </div>
+    </div>
+    <div id="resContent"></div>
+  </div>
+
+  <div class="footer">
+    <div class="gold-rule"></div>
+    Perfil de Conocimientos · Rotación Rodilla UC<br>Dr. Pablo Besa · Dr. Cristián Ruz
+  </div>
+</div>
+
+<script>
+  const DOMAINS = ["Generalidades","Anamnesis y examen físico","Evaluación imagenológica",
+    "Tratamiento: indicaciones","Abordajes quirúrgicos","Técnicas quirúrgicas","Manejo postoperatorio",
+    "Complicaciones","Manejo de complicaciones","Análisis crítico de la literatura","Implantes y tecnologías"];
+  const AXES = [
+    { label:"Diagnóstico-clínico", idx:[0,1,2] },
+    { label:"Decisión terapéutica", idx:[3,4,7] },
+    { label:"Quirúrgico-experto", idx:[5,6,8,9,10] }
+  ];
+  const TYPE_DIMS = {
+    conocimiento:["Comprende","Aplica","Integra / Analiza"],
+    procedimiento:["Conoce y comprende","Realiza","Supervisa y enseña"]
+  };
+
+  const BLOCK_META = {
+    generalidades:{ num:"01", title:"Generalidades", sub:"Anatomía, examen, imágenes, artrocentesis, artroscopía, séptica" },
+    trauma:{ num:"02", title:"Trauma", sub:"Fracturas, luxaciones, síndrome compartimental" },
+    ortopedia:{ num:"03", title:"Ortopedia", sub:"Patología ligamentaria, meniscal, condral y de partes blandas" },
+    reemplazo:{ num:"04", title:"Reemplazo articular", sub:"Artrosis, ATR, UNI, revisión, periprotésico" },
+    miscelaneos:{ num:"05", title:"Misceláneos", sub:"Tromboprofilaxis" }
+  };
+
+  const BLOCKS = {
+    generalidades:[
+      { t:"Anatomía y biomecánica", tipo:"conocimiento", foco:1, dlv:[1,1,2],
+        obj:{1:"Conoces la anatomía normal y descriptiva, los ejes y la biomecánica funcional de la rodilla; identificas las estructuras en la imagen.",
+             2:"Integras la anatomía de los compartimientos y de las esquinas (PM/PL) al razonamiento de la inestabilidad y a la planificación."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — anatomía y biomecánica de la rodilla.", url:""} ] },
+      { t:"Examen físico de rodilla", tipo:"conocimiento", foco:1, dlv:[1,1,2],
+        obj:{1:"Realizas un examen físico completo y ordenado: inspección, rangos, maniobras ligamentarias, meniscales y patelofemorales.",
+             2:"Integras el examen al diagnóstico diferencial y reconoces los patrones de inestabilidad combinada."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Hoppenfeld — exploración física de la rodilla.", url:""} ] },
+      { t:"Estudio imagenológico de rodilla", tipo:"conocimiento", foco:1, dlv:[1,2,3],
+        obj:{1:"Solicitas e interpretas las proyecciones radiográficas estándar y especiales; conoces las indicaciones de TAC y RM.",
+             2:"Indicas estudios dinámicos y de estrés, aplicas criterios de evaluación y protección radiológica, y usas el intensificador intraoperatorio.",
+             3:"Lideras la planificación imagenológica compleja (deformidad, revisión)."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — imagenología de la rodilla.", url:""} ] },
+      { t:"Artrocentesis y punción articular", tipo:"procedimiento", foco:1, dlv:[1,1,2],
+        obj:{1:"Ejecutas la artrocentesis con técnica estéril, solicitas el estudio del líquido (citoquímico, cultivo, cristales) e interpretas los resultados. Conoces riesgos y complicaciones.",
+             2:"Realizas la punción guiada por imagen de forma autónoma, manejas las complicaciones y supervisas a residentes menores, entregando retroalimentación."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — artrocentesis y análisis del líquido sinovial.", url:""} ] },
+      { t:"Principios de artroscopía de rodilla", tipo:"procedimiento", foco:2, dlv:[1,2,3],
+        obj:{1:"Conoces los portales básicos, el equipamiento artroscópico y los principios de la artroscopía diagnóstica.",
+             2:"Realizas la artroscopía diagnóstica, manejas los portales y reconoces las complicaciones (extravasación, lesión condral/neurovascular).",
+             3:"Dominas los portales especiales y el manejo de las complicaciones artroscópicas."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — principios de artroscopía.", url:""} ] },
+      { t:"Artritis séptica de rodilla", foco:1, urgent:true, lv:[1,1,1,1,2,2,2,2,3,2,0],
+        obj:{1:"URGENCIA: reconoces la artritis séptica, la confirmas con artrocentesis e inicias el manejo. Sabes que es una emergencia quirúrgica (drenaje precoz).",
+             2:"Indicas y participas en el aseo quirúrgico (artroscópico o abierto) y manejas el postoperatorio.",
+             3:"Manejas la sepsis articular compleja, el desbridamiento repetido y la infección sobre implantes."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — artritis séptica.", url:""},
+                   {n:2, tipo:"Revisión", cita:"Pendiente: revisión de artritis séptica de articulación nativa — a definir con el grupo.", url:""} ] }
+    ],
+    trauma:[
+      { t:"Principios básicos de osteosíntesis (AO)", tipo:"conocimiento", foco:1, dlv:[1,2,2],
+        obj:{1:"Conoces los principios AO: reducción, estabilidad (absoluta vs. relativa), preservación biológica y rehabilitación precoz.",
+             2:"Aplicas los principios al elegir el implante y el constructo según el patrón de fractura."},
+        lecturas:[ {n:1, tipo:"Base", cita:"AO Principles of Fracture Management — principios básicos.", url:""} ] },
+      { t:"Principios avanzados de osteosíntesis (AO)", tipo:"conocimiento", foco:2, dlv:[2,3,3],
+        obj:{2:"Dominas los conceptos avanzados: corredores biológicos, fijación puente, manejo de partes blandas y secuencia en politrauma.",
+             3:"Planificas constructos complejos y resuelves la falla de osteosíntesis."},
+        lecturas:[ {n:2, tipo:"Base", cita:"AO Principles of Fracture Management — conceptos avanzados.", url:""},
+                   {n:3, tipo:"Recurso", cita:"AO Surgery Reference (acceso libre).", url:"https://surgeryreference.aofoundation.org/"} ] },
+      { t:"Fractura de patela", foco:1, lv:[1,1,1,2,2,2,2,2,3,2,2],
+        obj:{1:"Diagnosticas la fractura de patela, evalúas el mecanismo extensor e inmovilizas; reconoces la indicación quirúrgica.",
+             2:"Indicas y ejecutas la osteosíntesis (banda de tensión, cerclaje) y manejas el postoperatorio.",
+             3:"Resuelves los patrones conminutos, la patelectomía parcial y las complicaciones."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green's Fractures in Adults — fractura de patela.", url:""},
+                   {n:2, tipo:"Recurso", cita:"AO Surgery Reference — patela.", url:"https://surgeryreference.aofoundation.org/"} ] },
+      { t:"Fractura de fémur distal", foco:2, lv:[1,1,2,2,2,3,2,2,3,3,3],
+        obj:{1:"Reconoces la fractura de fémur distal, la estabilizas e identificas urgencias asociadas; derivas para manejo definitivo.",
+             2:"Clasificas (AO), indicas el tratamiento y conoces los abordajes y el implante (placa/clavo).",
+             3:"Ejecutas la osteosíntesis y manejas la conminución, el hueso osteoporótico y la falla."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green — fractura de fémur distal.", url:""},
+                   {n:2, tipo:"Recurso", cita:"AO Surgery Reference — fémur distal.", url:"https://surgeryreference.aofoundation.org/"} ] },
+      { t:"Fractura de tibia proximal", foco:2, lv:[1,1,2,2,2,3,2,2,3,3,3],
+        obj:{1:"Reconoces la fractura proximal de tibia, vigilas el síndrome compartimental y las partes blandas; estabilizas.",
+             2:"Clasificas, indicas el manejo (incluido el control de daños) y conoces los abordajes.",
+             3:"Ejecutas la osteosíntesis y manejas las complicaciones de partes blandas."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green — fractura proximal de tibia.", url:""},
+                   {n:2, tipo:"Recurso", cita:"AO Surgery Reference — tibia proximal.", url:"https://surgeryreference.aofoundation.org/"} ] },
+      { t:"Fractura de platillos tibiales", foco:2, lv:[1,1,2,2,2,3,2,2,3,3,3],
+        obj:{1:"Reconoces la fractura de platillos, evalúas partes blandas y descartas síndrome compartimental; estabilizas e indicas TAC.",
+             2:"Clasificas (Schatzker / 3 columnas), indicas el tratamiento y conoces los abordajes según columna.",
+             3:"Ejecutas la reducción articular y la osteosíntesis; manejas el hundimiento, el injerto y las complicaciones."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green — fractura de platillos tibiales.", url:""},
+                   {n:2, tipo:"Clasificación", cita:"Schatzker J, et al. Clasificación de fracturas de platillos tibiales (1979).", url:""},
+                   {n:2, tipo:"Recurso", cita:"AO Surgery Reference — platillos tibiales.", url:"https://surgeryreference.aofoundation.org/"} ] },
+      { t:"Infección relacionada a fracturas", foco:3, lv:[1,1,2,2,2,3,3,3,3,3,2],
+        obj:{1:"Reconoces los signos de infección sobre una fractura y solicitas el estudio inicial.",
+             2:"Comprendes los principios de manejo (desbridamiento, cobertura, antibióticos) y participas.",
+             3:"Planificas el manejo de la pseudoartrosis infectada y la estrategia por etapas."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green — infección y pseudoartrosis.", url:""},
+                   {n:3, tipo:"Revisión", cita:"Pendiente: revisión de infección relacionada a fracturas — a definir con el grupo.", url:""} ] },
+      { t:"Luxación de rodilla", foco:3, urgent:true, lv:[2,1,3,1,3,3,3,3,3,3,3],
+        obj:{1:"URGENCIA: reconoces la luxación de rodilla, tamizas el compromiso vascular (pulsos, ABI) y neurológico, reduces e inmovilizas. Derivas de inmediato.",
+             2:"Comprendes el estudio vascular seriado y la secuencia de manejo agudo.",
+             3:"Planificas la reconstrucción multiligamentaria y manejas la lesión vascular asociada."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — luxación de rodilla.", url:""},
+                   {n:1, tipo:"Evidencia", cita:"Stannard JP, et al. Lesión vascular en luxación de rodilla: rol del examen físico (ABI). JBJS Am 2004.", url:""},
+                   {n:2, tipo:"Revisión", cita:"Management of multiligament knee injuries. EFORT Open Reviews 2020.", url:"https://eor.bioscientifica.com/view/journals/eor/5/3/2058-5241.5.190012.xml"} ] },
+      { t:"Luxación de patela", foco:1, lv:[1,1,1,1,2,2,2,2,3,2,2],
+        obj:{1:"Reduces la luxación aguda de rótula, inmovilizas, descartas fractura osteocondral (RM) e indicas rehabilitación.",
+             2:"Reconoces la inestabilidad recidivante y derivas para evaluación quirúrgica.",
+             3:"Conoces la reparación/reconstrucción en el contexto agudo con fragmento osteocondral."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — luxación aguda de rótula.", url:""},
+                   {n:2, tipo:"Consenso", cita:"Post WR, Fithian DC. Patellofemoral Instability (AOSSM/PFF). Orthop J Sports Med 2018.", url:"https://journals.sagepub.com/doi/full/10.1177/2325967117750352"} ] },
+      { t:"Luxación tibiofibular proximal", foco:3, lv:[1,2,2,2,3,3,2,2,3,3,0],
+        obj:{1:"Reconoces esta luxación infrecuente (dolor lateral, deformidad), la reduces y derivas.",
+             2:"Confirmas el tipo e indicas el manejo (cerrado vs. quirúrgico).",
+             3:"Conoces la fijación/reconstrucción en la inestabilidad crónica."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — luxación tibiofibular proximal.", url:""} ] },
+      { t:"Síndrome compartimental", foco:1, urgent:true, lv:[1,1,1,1,2,2,2,2,3,2,2],
+        obj:{1:"URGENCIA: reconoces el síndrome compartimental por la clínica (dolor desproporcionado), mides presiones si es necesario y activas la fasciotomía sin demora.",
+             2:"Ejecutas o participas en la fasciotomía y manejas el postoperatorio (cierre, partes blandas).",
+             3:"Manejas las secuelas y complicaciones (necrosis, contractura)."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green — síndrome compartimental agudo.", url:""} ] },
+      { t:"Artrotomía traumática", foco:1, lv:[1,1,1,1,2,2,2,2,3,2,0],
+        obj:{1:"Reconoces la artrotomía traumática (test de carga salina / TAC con aire), inicias antibióticos y profilaxis, y la llevas a aseo quirúrgico oportuno.",
+             2:"Ejecutas el aseo articular y manejas el postoperatorio.",
+             3:"Manejas la herida compleja y la infección articular asociada."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green — heridas articulares traumáticas.", url:""} ] }
+    ],
+    ortopedia:[
+      { t:"Disfunción patelofemoral", foco:1, lv:[1,1,1,1,3,3,2,2,3,2,1],
+        obj:{1:"Reconoces el dolor femoropatelar, examinas el aparato extensor y el tracking, descartas banderas rojas e inicias kinesioterapia. Sabes cuándo derivar.",
+             2:"Diriges el tratamiento conservador estructurado e identificas los factores anatómicos que predisponen.",
+             3:"Conoces las opciones quirúrgicas (excepcionales) y manejas el caso refractario."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — dolor femoropatelar (medicina deportiva).", url:""},
+          {n:2, tipo:"Revisión", cita:"Pendiente: consenso/revisión de terapia de ejercicio (cuádriceps + cadera) — a definir con el grupo.", url:""}
+        ] },
+      { t:"Inestabilidad patelofemoral", foco:2, lv:[1,1,2,2,2,3,2,2,3,3,3],
+        obj:{1:"Reconoces el episodio de luxación de rótula y lo derivas tras el manejo inicial.",
+             2:"Examinas la inestabilidad (aprehensión, J-sign), mides TT-TG y altura patelar, e indicas conservador vs. cirugía.",
+             3:"Dominas la reconstrucción del MPFL y conoces la indicación de osteotomía de la TAT y troclear."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — inestabilidad patelofemoral.", url:""},
+          {n:2, tipo:"Consenso", cita:"Post WR, Fithian DC. Patellofemoral Instability: Consensus Statement (AOSSM/PFF). Orthop J Sports Med 2018.", url:"https://journals.sagepub.com/doi/full/10.1177/2325967117750352"},
+          {n:3, tipo:"Evidencia", cita:"Revisión sistemática de reconstrucción del MPFL para inestabilidad recurrente (tasas de recidiva y complicaciones).", url:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8224374/"}
+        ] },
+      { t:"Lesiones meniscales", foco:1, lv:[1,1,1,2,2,2,2,2,3,3,2],
+        obj:{1:"Diagnosticas la lesión meniscal por clínica, lees la RM e inicias manejo. Identificas el bloqueo articular como urgencia relativa.",
+             2:"Decides reparar vs. resecar según patrón y zona; conoces la meniscectomía parcial artroscópica.",
+             3:"Ejecutas la sutura meniscal, conoces dispositivos y trasplante, y analizas la evidencia de preservación."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — lesiones meniscales.", url:""},
+          {n:2, tipo:"Guía", cita:"AAOS Clinical Practice Guideline: Management of Acute Isolated Meniscal Pathology (2024).", url:"https://www.aaos.org/ampcpg"},
+          {n:3, tipo:"Evidencia", cita:"Sihvonen R, et al. Meniscectomía parcial artroscópica vs. cirugía simulada en lesión degenerativa (ensayo FIDELITY). NEJM 2013.", url:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11343554/"}
+        ] },
+      { t:"Rotura del ligamento cruzado anterior", foco:2, lv:[1,1,1,2,2,3,2,2,3,3,3],
+        obj:{1:"Sospechas la rotura ante hemartrosis aguda (Lachman), pides RM y derivas.",
+             2:"Confirmas el diagnóstico e indicas conservador vs. reconstrucción según paciente y demanda.",
+             3:"Dominas la reconstrucción (injerto, túneles), manejas la rehabilitación, la rerrotura y la artrofibrosis."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — capítulo de Medicina Deportiva (rodilla: anatomía, examen y diagnóstico del LCA).", url:""},
+          {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — capítulo de lesiones del LCA.", url:""},
+          {n:2, tipo:"Guía", cita:"AAOS Clinical Practice Guideline: Management of ACL Injuries (actualización 2022).", url:"https://www.aaos.org/aclcpg"},
+          {n:3, tipo:"Evidencia", cita:"Frobell RB, et al. Treatment for acute ACL tear (ensayo KANON). NEJM 2010; seguimiento a 5 años: BMJ 2013;346:f232.", url:"https://pubmed.ncbi.nlm.nih.gov/20660401/"},
+          {n:3, tipo:"Evidencia", cita:"Reijman M, et al. Reconstrucción precoz vs. rehabilitación con reconstrucción diferida (ensayo COMPARE). BMJ 2021;372:n375.", url:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7941216/"}
+        ] },
+      { t:"Rotura del ligamento cruzado posterior", foco:3, lv:[1,2,2,2,3,3,3,3,3,3,3],
+        obj:{2:"Reconoces y examinas la lesión del LCP (cajón posterior, gravedad) e interpretas la RM.",
+             3:"Indicas conservador vs. reconstrucción, conoces la técnica y manejas el caso combinado."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — lesiones del LCP.", url:""},
+          {n:3, tipo:"Revisión", cita:"Pendiente: revisión de diagnóstico y manejo del LCP — a definir con el grupo.", url:""}
+        ] },
+      { t:"Esguince de rodilla", foco:1, lv:[1,1,1,1,0,0,1,1,2,2,0],
+        obj:{1:"Diagnosticas el esguince, descartas fractura asociada (Ottawa), inmovilizas e indicas rehabilitación. Manejo completo a tu cargo.",
+             2:"Afianzas el diagnóstico diferencial con lesiones estructurales."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — evaluación de la rodilla aguda y reglas de Ottawa.", url:""}
+        ] },
+      { t:"Rotura de ligamentos colaterales", foco:1, lv:[1,1,2,2,3,3,2,2,3,2,2],
+        obj:{1:"Diagnosticas el esguince del LCM, lo tratas ortopédicamente y reconoces cuándo sospechar lesión del LCL/esquina.",
+             2:"Indicas el manejo según grado y reconoces la inestabilidad que requiere cirugía.",
+             3:"Conoces la reparación/reconstrucción del LCL y su rol en lesiones combinadas."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — lesiones de ligamentos colaterales (LCM/LCL).", url:""},
+          {n:2, tipo:"Revisión", cita:"LaPrade RF, Wijdicks CA. Management of injuries to the medial side of the knee. J Orthop Sports Phys Ther 2012.", url:""}
+        ] },
+      { t:"Lesión de la esquina posteromedial", foco:3, lv:[2,2,3,3,3,3,3,3,3,3,3],
+        obj:{2:"Reconoces su rol en la inestabilidad medial combinada y la sospechas al examen.",
+             3:"Estudias, indicas y conoces la reconstrucción; manejas el caso combinado."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — lado medial / esquina posteromedial.", url:""},
+          {n:3, tipo:"Revisión", cita:"LaPrade RF, Wijdicks CA. Management of injuries to the medial side of the knee. J Orthop Sports Phys Ther 2012.", url:""}
+        ] },
+      { t:"Lesión de la esquina posterolateral", foco:3, lv:[2,2,3,3,3,3,3,3,3,3,3],
+        obj:{2:"Reconoces la lesión de la esquina PL (dial test, varo) y su asociación con LCP/LCA.",
+             3:"Estudias, indicas y conoces la reconstrucción de la esquina posterolateral."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — esquina posterolateral.", url:""},
+          {n:2, tipo:"Revisión", cita:"Posterolateral Corner Injury of the Knee: Evaluation and Treatment. JAAOS 2008.", url:"https://journals.lww.com/jaaos/fulltext/2008/09000/posterolateral_corner_injury_of_the_knee_.3.aspx"},
+          {n:3, tipo:"Evidencia", cita:"Geeslin AG, Moulton SG, LaPrade RF. Systematic review of outcomes of PLC injuries, parts 1-2. Am J Sports Med 2016.", url:""}
+        ] },
+      { t:"Lesiones multiligamentarias", foco:3, urgent:true, lv:[2,1,3,1,3,3,3,3,3,3,3],
+        obj:{1:"URGENCIA: reconoces la luxación de rodilla, tamizas el compromiso vascular (pulsos, ABI) y neurológico, inmovilizas y derivas de inmediato.",
+             2:"Comprendes el estudio por etapas y el manejo agudo vs. diferido.",
+             3:"Planificas y conoces la reconstrucción multiligamentaria y su rehabilitación."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — luxación de rodilla y lesión multiligamentaria.", url:""},
+          {n:2, tipo:"Revisión", cita:"Management of multiligament knee injuries. EFORT Open Reviews 2020;5:145-155.", url:"https://eor.bioscientifica.com/view/journals/eor/5/3/2058-5241.5.190012.xml"},
+          {n:1, tipo:"Evidencia", cita:"Stannard JP, et al. Vascular injuries in knee dislocations: rol del examen físico (ABI) para indicar arteriografía. JBJS Am 2004.", url:""}
+        ] },
+      { t:"Lesiones condrales / osteocondrales", foco:2, lv:[1,2,2,2,3,3,3,2,3,3,3],
+        obj:{1:"Reconoces la lesión condral (mecanismo, RM) y la derivas.",
+             2:"Clasificas (ICRS) e indicas el manejo según tamaño y localización.",
+             3:"Conoces las técnicas restaurativas (microfractura, OAT, AMIC/MACI) y su evidencia."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — lesiones condrales y técnicas de reparación.", url:""},
+          {n:2, tipo:"Guía", cita:"AAOS Clinical Practice Guideline: Diagnosis and Treatment of Osteochondritis Dissecans (rapid update 2023).", url:"https://www.aaos.org/globalassets/quality-and-practice-resources/osteochondritis-dissecans/osteochondritis-dissecans-rapid-update-2023.pdf"},
+          {n:3, tipo:"Evidencia", cita:"Saris D, Brittberg M, et al. MACI vs. microfractura en defectos condrales (ensayo SUMMIT). Am J Sports Med 2014; seguimiento a 5 años 2018.", url:""}
+        ] },
+      { t:"Osteonecrosis de rodilla", foco:2, lv:[1,2,2,2,3,3,2,2,3,3,2],
+        obj:{1:"Sospechas la osteonecrosis ante dolor agudo y RM compatible; derivas.",
+             2:"Diferencias SPONK de secundaria, estadificas e indicas el manejo inicial.",
+             3:"Conoces las opciones quirúrgicas según estadio (desde artroscopía a artroplastía)."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — osteonecrosis de rodilla (SPONK vs. secundaria).", url:""},
+          {n:2, tipo:"Revisión", cita:"Pendiente: revisión de osteonecrosis de rodilla — a definir con el grupo.", url:""}
+        ] },
+      { t:"Patología quística de rodilla", foco:1, lv:[1,1,1,1,3,3,2,2,3,2,0],
+        obj:{1:"Diagnosticas el quiste de Baker y los quistes meniscales, los estudias e inicias manejo; reconoces el diferencial vascular.",
+             2:"Indicas el tratamiento de la causa (p. ej. patología meniscal asociada).",
+             3:"Conoces la resección (excepcional) y el manejo del recidivante."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — quiste poplíteo (Baker) y quistes meniscales.", url:""}
+        ] },
+      { t:"Tendinopatía patelar", foco:1, lv:[1,1,2,1,0,3,2,2,3,2,2],
+        obj:{1:"Diagnosticas la tendinopatía patelar por clínica, la confirmas con eco e inicias manejo con carga excéntrica.",
+             2:"Diriges el programa de carga y conoces las terapias adyuvantes y su evidencia.",
+             3:"Manejas el caso refractario y conoces la cirugía (excepcional)."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — tendinopatía patelar (rodilla del saltador).", url:""},
+          {n:2, tipo:"Evidencia", cita:"Revisión sistemática/metaanálisis en red de programas de carga (excéntrico, isométrico, resistencia lenta pesada) en tendinopatía patelar. Heliyon 2024.", url:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11570476/"}
+        ] },
+      { t:"Tendinopatía cuadricipital", foco:1, lv:[1,1,2,1,0,3,2,2,3,2,0],
+        obj:{1:"Diagnosticas la tendinopatía cuadricipital e inicias manejo conservador.",
+             2:"Diriges la rehabilitación y reconoces la rotura que requiere cirugía.",
+             3:"Conoces la reparación quirúrgica de la rotura."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — patología del tendón cuadricipital.", url:""}
+        ] },
+      { t:"Tendinitis de la pata de ganso", foco:1, lv:[1,1,1,1,0,0,1,1,2,1,0],
+        obj:{1:"Diagnosticas la tendinitis/bursitis de la pata de ganso y la manejas de forma conservadora completa.",
+             2:"Afianzas el diferencial del dolor medial (menisco, LCM, artrosis)."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — dolor medial de rodilla / bursitis de la pata de ganso.", url:""}
+        ] },
+      { t:"Síndrome de fricción de la banda iliotibial", foco:1, lv:[1,1,1,1,0,3,1,1,2,2,0],
+        obj:{1:"Diagnosticas el síndrome de fricción de la BIT (corredores) e indicas manejo conservador y de carga.",
+             2:"Diriges la corrección biomecánica y reconoces el caso refractario."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — síndrome de fricción de la banda iliotibial.", url:""}
+        ] },
+      { t:"Desejes · osteotomías alrededor de la rodilla", foco:3, lv:[1,2,2,2,3,3,3,2,3,3,3],
+        obj:{2:"Analizas los ejes (teleradiografía) y comprendes el concepto de corrección e indicación.",
+             3:"Planificas y conoces la técnica (HTO/DFO), la fijación y el manejo postoperatorio."},
+        lecturas:[
+          {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — osteotomías alrededor de la rodilla (HTO/DFO).", url:""},
+          {n:3, tipo:"Evidencia", cita:"Arthur A, LaPrade RF, Agel J. Osteotomía tibial proximal de cuña abierta. Am J Sports Med 2007.", url:""}
+        ] }
+    ],
+    reemplazo:[
+      { t:"Artrosis primaria y secundaria", foco:1, lv:[1,1,1,1,0,0,0,1,2,2,1], note:"La parte quirúrgica de la artrosis se trata en ATR, UNI y osteotomías.",
+        obj:{1:"Diagnosticas la artrosis (clínica + radiología en carga, Kellgren-Lawrence), distingues primaria de secundaria e inicias manejo conservador.",
+             2:"Escalonas el tratamiento conservador, indicas infiltraciones y reconoces cuándo derivar a cirugía.",
+             3:"Integras la artrosis al algoritmo quirúrgico (osteotomía vs. UNI vs. ATR)."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — artrosis de rodilla.", url:""},
+                   {n:2, tipo:"Guía", cita:"AAOS CPG: Management of Osteoarthritis of the Knee (Non-Arthroplasty), 2021.", url:""} ] },
+      { t:"Artroplastía total de rodilla (ATR)", foco:2, lv:[1,1,2,2,2,3,2,2,3,3,3],
+        obj:{1:"Conoces qué es la ATR, sus indicaciones generales y el postoperatorio básico (rehabilitación, tromboprofilaxis).",
+             2:"Indicas la ATR, conoces los abordajes, el alineamiento y los principios del balance ligamentario; manejas el postoperatorio.",
+             3:"Ejecutas o asistes la técnica, manejas el déficit óseo, el balance complejo y las complicaciones; conoces los diseños de implante."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — artroplastía total de rodilla.", url:""} ] },
+      { t:"Artroplastía unicompartamental (UNI)", foco:2, lv:[1,1,2,2,2,3,2,2,3,3,3],
+        obj:{2:"Conoces los criterios de indicación de la UNI y sus diferencias con la ATR; comprendes la técnica.",
+             3:"Ejecutas o asistes la UNI, manejas la sobrecorrección y la conversión a ATR."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — artroplastía unicompartamental.", url:""} ] },
+      { t:"Principios de artroplastías de revisión", tipo:"conocimiento", foco:3, dlv:[2,3,3],
+        obj:{2:"Reconoces la prótesis fallida (aflojamiento, desgaste, inestabilidad) y solicitas el estudio.",
+             3:"Conoces los principios de la revisión: manejo del déficit óseo, vástagos, constricción y planificación."},
+        lecturas:[ {n:2, tipo:"Base", cita:"Insall & Scott, Surgery of the Knee — principios de revisión.", url:""} ] },
+      { t:"Infección periprotésica", foco:3, lv:[2,2,2,3,3,3,3,3,3,3,3],
+        obj:{1:"Sospechas la infección periprotésica (dolor, signos inflamatorios) y solicitas el estudio inicial; no inicias antibióticos a ciegas.",
+             2:"Aplicas los criterios diagnósticos (MSIS) y comprendes el manejo en 1 vs. 2 tiempos.",
+             3:"Planificas el manejo (DAIR vs. recambio), el espaciador y la antibioterapia dirigida."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — infección periprotésica.", url:""},
+                   {n:2, tipo:"Definición", cita:"Parvizi J, et al. Definición 2018 de infección periprotésica (ICM). J Arthroplasty 2018.", url:"https://pubmed.ncbi.nlm.nih.gov/29551303/"},
+                   {n:3, tipo:"Guía", cita:"AAOS CPG: Diagnosis and Prevention of PJI (2019).", url:"https://www.aaos.org/quality/quality-programs/diagnosis-and-prevention-of-periprosthetic-joint-infections/"} ] },
+      { t:"Fracturas periprotésicas", foco:3, lv:[2,2,2,3,3,3,3,3,3,3,3],
+        obj:{1:"Reconoces la fractura periprotésica y la estabilizas; identificas el aflojamiento asociado.",
+             2:"Clasificas (Rorabeck/UCS) y comprendes el algoritmo (osteosíntesis vs. revisión).",
+             3:"Planificas y ejecutas la osteosíntesis o el recambio según la estabilidad del implante."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Rockwood & Green — fracturas periprotésicas de rodilla.", url:""},
+                   {n:2, tipo:"Clasificación", cita:"Clasificación de Rorabeck / Unified Classification System (UCS).", url:""} ] }
+    ],
+    miscelaneos:[
+      { t:"Tromboprofilaxis", tipo:"conocimiento", foco:1, dlv:[1,1,2],
+        obj:{1:"Conoces la estratificación de riesgo de enfermedad tromboembólica y aplicas la tromboprofilaxis (mecánica y farmacológica) según el caso.",
+             2:"Ajustas la profilaxis en pacientes complejos y reconoces/manejas el sangrado y la TVP/TEP.",
+             3:"Integras la evidencia y las guías actuales a los protocolos del equipo."},
+        lecturas:[ {n:1, tipo:"Base", cita:"Miller's Review of Orthopaedics — tromboprofilaxis en cirugía ortopédica.", url:""},
+                   {n:2, tipo:"Guía", cita:"AAOS CPG: Prevención de enfermedad tromboembólica venosa en artroplastía (confirmar versión con el grupo).", url:""} ] }
+    ]
+  };
+
+  function chipHTML(v){ return v===0 ? '<span class="chip na">—</span>' : '<span class="chip r'+v+'">R'+v+'</span>'; }
+  function objForYear(tp,y){ if(tp.obj[y])return tp.obj[y]; for(let k=y-1;k>=1;k--) if(tp.obj[k])return tp.obj[k]; return null; }
+
+  const FUTURE_TOGGLE = '<span class="future-toggle"><span class="fm">Lo que viene más adelante ›</span><span class="fl">Ocultar lo que viene ‹</span></span>';
+
+  function detailHTML(tp,y){
+    if(tp.tipo && TYPE_DIMS[tp.tipo]){
+      const labels=TYPE_DIMS[tp.tipo]; let anyFuture=false;
+      const rows=tp.dlv.map((lv,i)=>{
+        const isNow=lv>0&&lv<=y; if(!isNow)anyFuture=true;
+        return '<div class="dom-row '+(isNow?'now':'future')+'"><span class="dom-name">'+labels[i]+'</span>'+chipHTML(lv)+'</div>';
+      }).join('');
+      return '<div class="axis">'+rows+'</div>'+(anyFuture?FUTURE_TOGGLE:'');
+    }
+    let anyFuture=false;
+    const axesHTML = AXES.map(ax=>{
+      const rowsArr = ax.idx.map(di=>{
+        const lv=tp.lv[di];
+        if(lv===0 && tp.note) return null;
+        const isNow = lv>0 && lv<=y;
+        if(!isNow) anyFuture=true;
+        return '<div class="dom-row '+(isNow?'now':'future')+'"><span class="dom-name">'+DOMAINS[di]+'</span>'+chipHTML(lv)+'</div>';
+      }).filter(Boolean);
+      if(!rowsArr.length) return '';
+      const hasNow = ax.idx.some(di=>tp.lv[di]>0 && tp.lv[di]<=y);
+      return '<div class="axis'+(hasNow?'':' future-only')+'"><div class="axis-label">'+ax.label+'</div>'+rowsArr.join('')+'</div>';
+    }).join('');
+    const noteHTML = tp.note ? '<div class="detail-note">'+tp.note+'</div>' : '';
+    return axesHTML + noteHTML + (anyFuture ? FUTURE_TOGGLE : '');
+  }
+
+  function rcardHTML(tp,y){
+    const u = tp.urgent ? ' urgent' : '';
+    let lectHTML='';
+    if(tp.lecturas && tp.lecturas.length){
+      const items = tp.lecturas.map(L=>{
+        const fut = L.n>y ? ' lect-future' : '';
+        const cite = L.url ? '<a href="'+L.url+'" target="_blank" rel="noopener">'+L.cita+'</a>' : L.cita;
+        return '<div class="lect-item'+fut+'"><span class="lect-chip">'+chipHTML(L.n)+'</span><span class="lect-body"><span class="lect-tipo">'+L.tipo+'</span><span class="lect-cite">'+cite+'</span></span></div>';
+      }).join('');
+      lectHTML = '<span class="lect-toggle"><span class="lmore">📖 Lecturas sugeridas ›</span><span class="lless">📖 Ocultar lecturas ‹</span></span><div class="lect-block">'+items+'</div>';
+    }
+    return '<div class="rcard'+u+'"><div class="rcard-top"><span class="rcard-dot"></span><div class="rcard-main">'+
+      '<div class="rcard-title">'+tp.t+'</div><div class="rcard-obj">'+tp.obj[y]+'</div>'+
+      '<span class="rcard-toggle"><span class="more">Ver detalle por dominio ›</span><span class="less">Ocultar detalle ‹</span></span>'+
+      '<div class="rdetail">'+detailHTML(tp,y)+'</div>'+lectHTML+'</div></div></div>';
+  }
+
+  function renderResident(){
+    const y=STATE.year, block=STATE.block;
+    const topics = BLOCKS[block]||[]; const meta = BLOCK_META[block];
+    const dominar=[],reconocer=[],manten=[];
+    topics.forEach(tp=>{
+      const has=!!tp.obj[y];
+      if(tp.foco===y&&has)dominar.push(tp);
+      else if(tp.foco>y){ if(has)reconocer.push(tp); }
+      else { if(objForYear(tp,y))manten.push(tp); }
+    });
+
+    let html='<div class="section-header"><div class="section-num">'+meta.num+'</div><div class="section-title">'+meta.title+'<em>'+meta.sub+'</em></div></div>';
+
+    if(dominar.length){
+      html+='<div class="bucket"><div class="bucket-title"><h2>A dominar este año</h2><span class="count">'+dominar.length+'</span></div>'+
+        '<div class="bucket-sub">Lo central de tu R'+y+': debes manejarlo con autonomía.</div>'+
+        dominar.map(tp=>rcardHTML(tp,y)).join('')+'</div>';
+    }
+    if(reconocer.length){
+      const anyUrgent=reconocer.some(t=>t.urgent);
+      html+='<div class="bucket'+(anyUrgent?' bucket-urgent':'')+'"><div class="bucket-title"><h2>En tu radar este año</h2><span class="count">'+reconocer.length+'</span></div>'+
+        reconocer.map(tp=>rcardHTML(tp,y)).join('')+'</div>';
+    }
+    if(manten.length){
+      const rows=manten.map(tp=>'<div class="manten-row"><div class="mr-t">'+tp.t+'</div><div class="mr-o">'+objForYear(tp,y)+'</div></div>').join('');
+      html+='<div class="bucket"><div class="manten"><div class="manten-head"><span class="mh-title">Ya lo manejas — mantén y profundiza</span><span class="count">'+manten.length+'</span><span class="caret">›</span></div>'+
+        '<div class="manten-body">'+rows+'</div></div></div>';
+    }
+    if(!dominar.length&&!reconocer.length&&!manten.length){
+      html+='<div class="empty">Sin contenidos definidos para R'+y+' en este módulo.</div>';
+    }
+
+    const host=document.getElementById('resContent');
+    host.innerHTML=html;
+    host.querySelectorAll('.rcard-toggle').forEach(t=>t.addEventListener('click',()=>t.closest('.rcard').classList.toggle('open')));
+    host.querySelectorAll('.future-toggle').forEach(t=>t.addEventListener('click',e=>{e.stopPropagation();t.closest('.rdetail').classList.toggle('show-future');}));
+    host.querySelectorAll('.lect-toggle').forEach(t=>t.addEventListener('click',e=>{e.stopPropagation();t.closest('.rcard').classList.toggle('show-lect');}));
+    host.querySelectorAll('.manten-head').forEach(h=>h.addEventListener('click',()=>h.closest('.manten').classList.toggle('open')));
+  }
+
+  const STATE={ year:1, block:'generalidades' };
+
+  document.getElementById('navBar').addEventListener('click',e=>{
+    const b=e.target.closest('.nav-pill'); if(!b)return;
+    document.querySelectorAll('.nav-pill').forEach(p=>p.classList.remove('active')); b.classList.add('active');
+    STATE.block=b.dataset.sec; renderResident();
+    document.querySelector('.content').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  document.getElementById('yearSel').addEventListener('click',e=>{
+    const b=e.target.closest('.yr-big'); if(!b)return;
+    document.querySelectorAll('.yr-big').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+    STATE.year=parseInt(b.dataset.yr,10); renderResident();
+  });
+
+  renderResident();
+</script>
+</body>
+</html>
