@@ -1,0 +1,26 @@
+{
+  "mes": "Junio 2026",
+  "sesiones": {
+    "mitad": "Mar 10 jun · 12:00–12:40",
+    "final": "Mar 30 jun · 12:00–12:40"
+  },
+  "residentes": [
+    { "nombre": "Bernardita Vicuña", "anio": "R3" },
+    { "nombre": "Mateo Ferrer", "anio": "R1" },
+    { "nombre": "Raimundo Poblete", "anio": "R1" }
+  ],
+  "evaluadores": [
+    "Dr. Vega",
+    "Dr. Orrego",
+    "Dr. Irribarra",
+    "Dr. Irarrázaval",
+    "Dr. Tuca",
+    "Dr. Espinosa",
+    "Dr. Vial",
+    "Dr. Besa",
+    "Dr. Ruz",
+    "Dr. Serrano",
+    "Dr. Raúl Zilleruelo",
+    "Dr. Francisco Fernández"
+  ]
+}
