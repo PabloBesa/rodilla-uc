@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pautas de Evaluación — Rodilla UC</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-mid: #243560;
+    --gold: #c8973a;
+    --gold-light: #e8c47a;
+    --gold-pale: #f5e9cc;
+    --cream: #faf8f3;
+    --warm-gray: #f0ece3;
+    --green: #2a6041;
+    --green-light: #e8f2ec;
+    --red-accent: #8b2e2e;
+    --red-light: #f5eaea;
+    --border: #d4c9b0;
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Source Serif 4', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--navy);
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--navy);
+    padding: 20px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-header h1 {
+    font-family: var(--font-display);
+    color: var(--gold);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .app-header p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.75rem;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  /* MODE SELECTOR */
+  .mode-bar {
+    background: var(--navy-mid);
+    padding: 10px 20px;
+    display: flex;
+    gap: 8px;
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1px solid rgba(200,151,58,0.4);
+    border-radius: 20px;
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .mode-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  /* NAV PILLS */
+  .nav-scroll {
+    background: var(--warm-gray);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav-scroll::-webkit-scrollbar { display: none; }
+  .nav-pill {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--navy);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-right: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-pill.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: white;
+    font-weight: 600;
+  }
+
+  /* CONTENT */
+  .content { padding: 20px 16px 80px; }
+
+  /* PAUTA CARD */
+  .pauta-section { display: none; }
+  .pauta-section.active { display: block; }
+
+  .pauta-header {
+    margin-bottom: 18px;
+  }
+  .pauta-header .section-number {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--gold);
+    line-height: 1;
+    font-weight: 700;
+  }
+  .pauta-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--navy);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .pauta-header .subtitle {
+    font-style: italic;
+    color: rgba(26,39,68,0.6);
+    font-size: 0.82rem;
+    margin-top: 3px;
+  }
+
+  /* EXPECTATIVAS BOX */
+  .expectativas-box {
+    background: var(--gold-pale);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    font-size: 0.82rem;
+    color: var(--navy);
+    line-height: 1.55;
+  }
+  .expectativas-box strong {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+  }
+
+  /* NAME FIELDS (evaluator mode) */
+  .name-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .field-group label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(26,39,68,0.6);
+    margin-bottom: 4px;
+  }
+  .field-group input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--navy);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field-group input:focus {
+    border-color: var(--gold);
+  }
+  .field-group select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--navy);
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c8973a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+  .field-group select:focus { border-color: var(--gold); }
+  .field-group select.error { border-color: var(--red-accent); background-color: var(--red-light); }
+  .cal-general.error { border-color: var(--red-accent); }
+
+
+  /* COMPETENCIA GROUP */
+  .competencia-group {
+    margin-bottom: 18px;
+  }
+  .competencia-label {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--navy-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 12px;
+    background: var(--warm-gray);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--navy-mid);
+  }
+
+  /* OBJETIVO ITEM */
+  .objetivo-item {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+  .objetivo-text {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+
+  /* SCORE BUTTONS */
+  .score-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+  .score-btn {
+    padding: 6px 2px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--warm-gray);
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    color: rgba(26,39,68,0.6);
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.2;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .score-btn:active { transform: scale(0.95); }
+
+  .score-btn.selected-D  { background: var(--red-accent); border-color: var(--red-accent); color: white; font-weight: 600; }
+  .score-btn.selected-BE { background: #c46020; border-color: #c46020; color: white; font-weight: 600; }
+  .score-btn.selected-CE { background: var(--green); border-color: var(--green); color: white; font-weight: 600; }
+  .score-btn.selected-EE { background: var(--navy); border-color: var(--navy); color: var(--gold); font-weight: 600; }
+  .score-btn.selected-NA { background: #888; border-color: #888; color: white; font-weight: 600; }
+
+  /* RESIDENT VIEW — score display */
+  .score-legend {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .legend-item {
+    text-align: center;
+    padding: 5px 2px;
+    border-radius: 6px;
+    font-size: 0.62rem;
+    line-height: 1.2;
+    color: rgba(26,39,68,0.5);
+    border: 1px solid var(--border);
+    background: var(--warm-gray);
+  }
+
+  /* CALIFICACION GENERAL */
+  .cal-general {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
+  .cal-general h3 {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .cal-general-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .cal-btn {
+    padding: 9px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--warm-gray);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    color: rgba(26,39,68,0.7);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cal-btn.selected-D  { background: var(--red-accent); border-color: var(--red-accent); color: white; font-weight: 600; }
+  .cal-btn.selected-BE { background: #c46020; border-color: #c46020; color: white; font-weight: 600; }
+  .cal-btn.selected-CE { background: var(--green); border-color: var(--green); color: white; font-weight: 600; }
+  .cal-btn.selected-EE { background: var(--navy); border-color: var(--navy); color: var(--gold); font-weight: 600; }
+
+  /* COMENTARIOS */
+  .comentarios-area {
+    margin-top: 4px;
+  }
+  .comentarios-area label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(26,39,68,0.6);
+    margin-bottom: 6px;
+  }
+  .comentarios-area textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--navy);
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .comentarios-area textarea:focus { border-color: var(--gold); }
+
+
+
+
+
+  /* RESET BTN */
+  .reset-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: rgba(26,39,68,0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* SAVE BTN */
+  .save-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .save-btn:active { opacity: 0.8; }
+  .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--navy);
+    color: white;
+    padding: 11px 20px;
+    border-radius: 24px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 300;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red-accent); }
+
+  /* RESIDENT INFO BOX */
+  .resident-info-hidden { display: none; } .resident-info-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: 0.8rem;
+    color: var(--navy);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* Score display for resident mode */
+  .score-display {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    pointer-events: none;
+  }
+  .score-display .score-btn {
+    cursor: default;
+    opacity: 0.5;
+  }
+  .score-display .score-btn.selected-CE,
+  .score-display .score-btn.selected-EE,
+  .score-display .score-btn.selected-D,
+  .score-display .score-btn.selected-BE,
+  .score-display .score-btn.selected-NA {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>Pautas de Evaluación</h1>
+  <p>Equipo de Rodilla UC</p>
+</div>
+
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="selectCompletadoPor(this, 'Evaluador')" id="modeEval">Evaluador</button>
+  <button class="mode-btn" onclick="selectCompletadoPor(this, 'Residente')" id="modeRes">Residente</button>
+</div>
+
+<div class="nav-scroll" id="navScroll">
+  <button class="nav-pill active" onclick="showPauta(0)">Pabellón</button>
+  <button class="nav-pill" onclick="showPauta(1)">Policlínico Primero</button>
+  <button class="nav-pill" onclick="showPauta(2)">Policlínico Avanzado</button>
+  <button class="nav-pill" onclick="showPauta(3)">Presentación</button>
+  <button class="nav-pill" onclick="showPauta(4)">Visitas</button>
+</div>
+
+<div class="content">
+
+<!-- ============ PABELLÓN ============ -->
+<div class="pauta-section active" id="pauta-0">
+  <div class="pauta-header">
+    <div class="section-number">01</div>
+    <h2>Pabellón</h2>
+    <div class="subtitle">Equipo de Rodilla</div>
+  </div>
+
+  <div class="expectativas-box">
+    <strong>Expectativas</strong>
+    El residente es un actor clave dentro del pabellón. Debe participar activamente en cada una de las fases, mostrando interés e iniciativa en adquirir las herramientas de ayudante y cirujano para el cuidado del paciente.
+  </div>
+
+  <div>
+    <div class="name-fields">
+      <div class="field-group">
+        <label>Nombre Residente</label>
+        <select id="p0-residente">
+        <option value="">— Seleccionar —</option>
+        <option>Bernardita</option>
+        <option>Mateo</option>
+        <option>Raimundo</option>
+      </select>
+      </div>
+      <div class="field-group">
+        <label>Nombre Evaluador</label>
+        <select id="p0-evaluador">
+        <option value="">— Seleccionar —</option>
+        <option>Dr. Vega</option>
+        <option>Dr. Orrego</option>
+        <option>Dr. Irribarra</option>
+        <option>Dr. Irarrázaval</option>
+        <option>Dra. Tuca</option>
+        <option>Dr. Espinosa</option>
+        <option>Dr. Vial</option>
+        <option>Dr. Besa</option>
+        <option>Dr. Ruz</option>
+        <option>Dr. Serrano</option>
+        <option>Dr. Zilleruelo</option>
+        <option>Dr. Fernández</option>
+      </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="resident-info-hidden">
+    <div class="resident-info-box">
+      Esta pauta refleja los criterios con que serás evaluado en pabellón. Puedes usarla como referencia para prepararte.
+    </div>
+  </div>
+
+  <!-- Médico Experto -->
+  <div class="competencia-group">
+    <div class="competencia-label">Médico Experto</div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Comprende la indicación y el procedimiento a realizar</div>
+      <div class="score-buttons" data-pauta="0" data-item="0">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Prepara el contexto operatorio (posición, luces, isquemia, equipamiento, etc.)</div>
+      <div class="score-buttons" data-pauta="0" data-item="1">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Realiza pausa quirúrgica completa acorde a la reglamentación del centro</div>
+      <div class="score-buttons" data-pauta="0" data-item="2">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Conoce la anatomía quirúrgica y comprende de modo general los pasos y la secuencia quirúrgica</div>
+      <div class="score-buttons" data-pauta="0" data-item="3">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Participa y toma protagonismo acorde a su nivel y a lo solicitado, mostrando iniciativa y atención</div>
+      <div class="score-buttons" data-pauta="0" data-item="4">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Demuestra las habilidades prácticas requeridas en su nivel cuando se le solicita realizar pasos del procedimiento</div>
+      <div class="score-buttons" data-pauta="0" data-item="5">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profesional -->
+  <div class="competencia-group">
+    <div class="competencia-label">Profesional</div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Mantiene un ambiente de trabajo adecuado con el personal de pabellón</div>
+      <div class="score-buttons" data-pauta="0" data-item="6">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Realiza un registro completo en el protocolo operatorio, mostrando comprensión sobre lo realizado</div>
+      <div class="score-buttons" data-pauta="0" data-item="7">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+
+    <div class="objetivo-item">
+      <div class="objetivo-text">Lidera el cuidado postoperatorio inmediato del paciente, procurando cuidados e indicaciones acordes</div>
+      <div class="score-buttons" data-pauta="0" data-item="8">
+        <button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button>
+        <button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button>
+        <button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button>
+        <button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button>
+        <button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cal-general">
+    <h3>Calificación general</h3>
+    <div class="cal-general-buttons" data-pauta="0">
+      <button class="cal-btn" data-score="D" onclick="setCalGeneral(this)">Deficiente</button>
+      <button class="cal-btn" data-score="BE" onclick="setCalGeneral(this)">Bajo las expectativas</button>
+      <button class="cal-btn" data-score="CE" onclick="setCalGeneral(this)">Cumple expectativas</button>
+      <button class="cal-btn" data-score="EE" onclick="setCalGeneral(this)">Excede expectativas</button>
+    </div>
+  </div>
+
+  <div class="comentarios-area">
+    <label>Comentarios</label>
+    <textarea id="p0-comentarios" placeholder="Observaciones, fortalezas, áreas de mejora…"></textarea>
+  </div>
+
+  <button class="save-btn" id="saveBtn0" onclick="savePauta(0)">Enviar Evaluación</button>
+  <button class="reset-btn" onclick="resetPauta(0)">Reiniciar evaluación</button>
+</div>
+
+<!-- ============ POLICLÍNICO PRIMERO ============ -->
+<div class="pauta-section" id="pauta-1">
+  <div class="pauta-header">
+    <div class="section-number">02</div>
+    <h2>Policlínico Primero</h2>
+    <div class="subtitle">Equipo de Rodilla</div>
+  </div>
+
+  <div class="expectativas-box">
+    <strong>Expectativas</strong>
+    Se espera que el residente oriente su anamnesis, examen físico, hipótesis y tratamiento a cuadros clínicos sindromáticos, basados en la anatomía y fisiopatología involucrada en estos.
+  </div>
+
+  <div>
+    <div class="name-fields">
+      <div class="field-group">
+        <label>Nombre Residente</label>
+        <select id="p1-residente">
+        <option value="">— Seleccionar —</option>
+        <option>Bernardita</option>
+        <option>Mateo</option>
+        <option>Raimundo</option>
+      </select>
+      </div>
+      <div class="field-group">
+        <label>Nombre Evaluador</label>
+        <select id="p1-evaluador">
+        <option value="">— Seleccionar —</option>
+        <option>Dr. Vega</option>
+        <option>Dr. Orrego</option>
+        <option>Dr. Irribarra</option>
+        <option>Dr. Irarrázaval</option>
+        <option>Dra. Tuca</option>
+        <option>Dr. Espinosa</option>
+        <option>Dr. Vial</option>
+        <option>Dr. Besa</option>
+        <option>Dr. Ruz</option>
+        <option>Dr. Serrano</option>
+        <option>Dr. Zilleruelo</option>
+        <option>Dr. Fernández</option>
+      </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="resident-info-hidden">
+    <div class="resident-info-box">
+      Esta pauta refleja los criterios con que serás evaluado en Policlínico (nivel inicial). Úsala como guía de aprendizaje.
+    </div>
+  </div>
+
+  <!-- Médico Experto -->
+  <div class="competencia-group">
+    <div class="competencia-label">Médico Experto</div>
+    <div class="objetivo-item"><div class="objetivo-text">Evalúa sistemáticamente los antecedentes en cada paciente</div><div class="score-buttons" data-pauta="1" data-item="0"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Desarrolla una entrevista y examen físico acorde al motivo de consulta</div><div class="score-buttons" data-pauta="1" data-item="1"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Realiza un examen físico completo dirigido al motivo de consulta</div><div class="score-buttons" data-pauta="1" data-item="2"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Resume de manera clara y completa la información relevante del caso</div><div class="score-buttons" data-pauta="1" data-item="3"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Plantea y justifica un diagnóstico diferencial adecuado</div><div class="score-buttons" data-pauta="1" data-item="4"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Interpreta los exámenes del paciente de manera adecuada</div><div class="score-buttons" data-pauta="1" data-item="5"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Diseña un plan de estudio/tratamiento dado el diagnóstico, incluyendo los antecedentes y el contexto del paciente</div><div class="score-buttons" data-pauta="1" data-item="6"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <!-- Comunicador -->
+  <div class="competencia-group">
+    <div class="competencia-label">Comunicador</div>
+    <div class="objetivo-item"><div class="objetivo-text">Mantiene una comunicación fluida y atenta con el paciente</div><div class="score-buttons" data-pauta="1" data-item="7"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Transmite de manera efectiva el diagnóstico y las implicancias de este al paciente (y su familia)</div><div class="score-buttons" data-pauta="1" data-item="8"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Entrega indicaciones y la documentación asociada de manera clara para el paciente</div><div class="score-buttons" data-pauta="1" data-item="9"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <!-- Profesional -->
+  <div class="competencia-group">
+    <div class="competencia-label">Profesional</div>
+    <div class="objetivo-item"><div class="objetivo-text">Cuida la comodidad y privacidad del paciente en todo momento</div><div class="score-buttons" data-pauta="1" data-item="10"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Realiza un registro completo en la ficha clínica electrónica del paciente, consignando su nombre al final</div><div class="score-buttons" data-pauta="1" data-item="11"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <div class="cal-general">
+    <h3>Calificación general</h3>
+    <div class="cal-general-buttons" data-pauta="1">
+      <button class="cal-btn" data-score="D" onclick="setCalGeneral(this)">Deficiente</button>
+      <button class="cal-btn" data-score="BE" onclick="setCalGeneral(this)">Bajo las expectativas</button>
+      <button class="cal-btn" data-score="CE" onclick="setCalGeneral(this)">Cumple expectativas</button>
+      <button class="cal-btn" data-score="EE" onclick="setCalGeneral(this)">Excede expectativas</button>
+    </div>
+  </div>
+  <div class="comentarios-area"><label>Comentarios</label><textarea id="p1-comentarios" placeholder="Observaciones, fortalezas, áreas de mejora…"></textarea></div>
+  <button class="save-btn" id="saveBtn1" onclick="savePauta(1)">Enviar Evaluación</button>
+  <button class="reset-btn" onclick="resetPauta(1)">Reiniciar evaluación</button>
+</div>
+
+<!-- ============ POLICLÍNICO AVANZADO ============ -->
+<div class="pauta-section" id="pauta-2">
+  <div class="pauta-header">
+    <div class="section-number">03</div>
+    <h2>Policlínico Avanzado</h2>
+    <div class="subtitle">Equipo de Rodilla</div>
+  </div>
+
+  <div class="expectativas-box">
+    <strong>Expectativas</strong>
+    El residente debe orientarse al diagnóstico etiológico y justificar la elección de un eventual tratamiento médico o quirúrgico con énfasis en resultados esperables y complicaciones.
+  </div>
+
+  <div>
+    <div class="name-fields">
+      <div class="field-group"><label>Nombre Residente</label><select id="p2-residente">
+        <option value="">— Seleccionar —</option>
+        <option>Bernardita</option>
+        <option>Mateo</option>
+        <option>Raimundo</option>
+      </select></div>
+      <div class="field-group"><label>Nombre Evaluador</label><select id="p2-evaluador">
+        <option value="">— Seleccionar —</option>
+        <option>Dr. Vega</option>
+        <option>Dr. Orrego</option>
+        <option>Dr. Irribarra</option>
+        <option>Dr. Irarrázaval</option>
+        <option>Dra. Tuca</option>
+        <option>Dr. Espinosa</option>
+        <option>Dr. Vial</option>
+        <option>Dr. Besa</option>
+        <option>Dr. Ruz</option>
+        <option>Dr. Serrano</option>
+        <option>Dr. Zilleruelo</option>
+        <option>Dr. Fernández</option>
+      </select></div>
+    </div>
+  </div>
+  <div class="resident-info-hidden"><div class="resident-info-box">Esta pauta refleja los criterios con que serás evaluado en Policlínico (nivel avanzado). Úsala como guía de aprendizaje.</div></div>
+
+  <!-- Médico Experto -->
+  <div class="competencia-group">
+    <div class="competencia-label">Médico Experto</div>
+    <div class="objetivo-item"><div class="objetivo-text">Evalúa sistemáticamente los antecedentes en cada paciente</div><div class="score-buttons" data-pauta="2" data-item="0"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Desarrolla una entrevista y examen físico acorde al motivo de consulta</div><div class="score-buttons" data-pauta="2" data-item="1"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Realiza un examen físico completo dirigido al motivo de consulta</div><div class="score-buttons" data-pauta="2" data-item="2"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Resume de manera clara y completa la información relevante del caso</div><div class="score-buttons" data-pauta="2" data-item="3"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Plantea y justifica un diagnóstico diferencial adecuado</div><div class="score-buttons" data-pauta="2" data-item="4"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Interpreta los exámenes del paciente de manera adecuada</div><div class="score-buttons" data-pauta="2" data-item="5"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Diseña un plan de estudio/tratamiento dado el diagnóstico, incluyendo los antecedentes y el contexto del paciente</div><div class="score-buttons" data-pauta="2" data-item="6"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <!-- Comunicador -->
+  <div class="competencia-group">
+    <div class="competencia-label">Comunicador</div>
+    <div class="objetivo-item"><div class="objetivo-text">Mantiene una comunicación fluida y atenta con el paciente</div><div class="score-buttons" data-pauta="2" data-item="7"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Transmite de manera efectiva el diagnóstico y las implicancias de este al paciente (y su familia)</div><div class="score-buttons" data-pauta="2" data-item="8"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Entrega indicaciones y la documentación asociada de manera clara para el paciente</div><div class="score-buttons" data-pauta="2" data-item="9"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <!-- Profesional -->
+  <div class="competencia-group">
+    <div class="competencia-label">Profesional</div>
+    <div class="objetivo-item"><div class="objetivo-text">Cuida la comodidad y privacidad del paciente en todo momento</div><div class="score-buttons" data-pauta="2" data-item="10"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Realiza un registro completo en la ficha clínica electrónica del paciente, consignando su nombre al final</div><div class="score-buttons" data-pauta="2" data-item="11"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <div class="cal-general"><h3>Calificación general</h3><div class="cal-general-buttons" data-pauta="2"><button class="cal-btn" data-score="D" onclick="setCalGeneral(this)">Deficiente</button><button class="cal-btn" data-score="BE" onclick="setCalGeneral(this)">Bajo las expectativas</button><button class="cal-btn" data-score="CE" onclick="setCalGeneral(this)">Cumple expectativas</button><button class="cal-btn" data-score="EE" onclick="setCalGeneral(this)">Excede expectativas</button></div></div>
+  <div class="comentarios-area"><label>Comentarios</label><textarea id="p2-comentarios" placeholder="Observaciones, fortalezas, áreas de mejora…"></textarea></div>
+  <button class="save-btn" id="saveBtn2" onclick="savePauta(2)">Enviar Evaluación</button>
+  <button class="reset-btn" onclick="resetPauta(2)">Reiniciar evaluación</button>
+</div>
+
+<!-- ============ PRESENTACIÓN ============ -->
+<div class="pauta-section" id="pauta-3">
+  <div class="pauta-header">
+    <div class="section-number">04</div>
+    <h2>Presentación</h2>
+    <div class="subtitle">Equipo de Rodilla</div>
+  </div>
+
+  <div class="expectativas-box">
+    <strong>Expectativas</strong>
+    Entiende e integra lo que está presentando de acuerdo a su nivel, pero más allá de transmitir información.
+  </div>
+
+  <div>
+    <div class="name-fields">
+      <div class="field-group"><label>Nombre Residente</label><select id="p3-residente">
+        <option value="">— Seleccionar —</option>
+        <option>Bernardita</option>
+        <option>Mateo</option>
+        <option>Raimundo</option>
+      </select></div>
+      <div class="field-group"><label>Nombre Evaluador</label><select id="p3-evaluador">
+        <option value="">— Seleccionar —</option>
+        <option>Dr. Vega</option>
+        <option>Dr. Orrego</option>
+        <option>Dr. Irribarra</option>
+        <option>Dr. Irarrázaval</option>
+        <option>Dra. Tuca</option>
+        <option>Dr. Espinosa</option>
+        <option>Dr. Vial</option>
+        <option>Dr. Besa</option>
+        <option>Dr. Ruz</option>
+        <option>Dr. Serrano</option>
+        <option>Dr. Zilleruelo</option>
+        <option>Dr. Fernández</option>
+      </select></div>
+    </div>
+  </div>
+  <div class="resident-info-hidden"><div class="resident-info-box">Estos son los criterios con que serás evaluado en tus presentaciones. Prepárate para integrar el contenido, no solo transmitirlo.</div></div>
+
+  <!-- Académico -->
+  <div class="competencia-group">
+    <div class="competencia-label">Académico</div>
+    <div class="objetivo-item"><div class="objetivo-text">Presenta el tema de manera ordenada y adecuada</div><div class="score-buttons" data-pauta="3" data-item="0"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Comprende en globo el tema de la presentación, más allá de la mera entrega de la información</div><div class="score-buttons" data-pauta="3" data-item="1"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Destaca la relevancia de la información presentada para su práctica clínica</div><div class="score-buttons" data-pauta="3" data-item="2"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <!-- Profesional -->
+  <div class="competencia-group">
+    <div class="competencia-label">Profesional</div>
+    <div class="objetivo-item"><div class="objetivo-text">Es puntual con el inicio y fin de la presentación, respetando el tiempo asignado para ello</div><div class="score-buttons" data-pauta="3" data-item="3"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <div class="cal-general"><h3>Calificación general</h3><div class="cal-general-buttons" data-pauta="3"><button class="cal-btn" data-score="D" onclick="setCalGeneral(this)">Deficiente</button><button class="cal-btn" data-score="BE" onclick="setCalGeneral(this)">Bajo las expectativas</button><button class="cal-btn" data-score="CE" onclick="setCalGeneral(this)">Cumple expectativas</button><button class="cal-btn" data-score="EE" onclick="setCalGeneral(this)">Excede expectativas</button></div></div>
+  <div class="comentarios-area"><label>Comentarios</label><textarea id="p3-comentarios" placeholder="Observaciones, fortalezas, áreas de mejora…"></textarea></div>
+  <button class="save-btn" id="saveBtn3" onclick="savePauta(3)">Enviar Evaluación</button>
+  <button class="reset-btn" onclick="resetPauta(3)">Reiniciar evaluación</button>
+</div>
+
+<!-- ============ VISITAS ============ -->
+<div class="pauta-section" id="pauta-4">
+  <div class="pauta-header">
+    <div class="section-number">05</div>
+    <h2>Visitas</h2>
+    <div class="subtitle">Evaluador: Fellow — Equipo de Rodilla</div>
+  </div>
+
+  <div class="expectativas-box">
+    <strong>Expectativas</strong>
+    El residente debe evaluar diariamente a los pacientes que tiene a cargo, adecuando la evaluación al momento de cada paciente y su patología. Se integra al resto del equipo, comunicando de manera oportuna y profesional la información relevante.
+  </div>
+
+  <div>
+    <div class="name-fields">
+      <div class="field-group"><label>Nombre Residente</label><select id="p4-residente">
+        <option value="">— Seleccionar —</option>
+        <option>Bernardita</option>
+        <option>Mateo</option>
+        <option>Raimundo</option>
+      </select></div>
+      <div class="field-group"><label>Nombre Evaluador (Fellow)</label><select id="p4-evaluador">
+        <option value="">— Seleccionar —</option>
+        <option>Dr. Vega</option>
+        <option>Dr. Orrego</option>
+        <option>Dr. Irribarra</option>
+        <option>Dr. Irarrázaval</option>
+        <option>Dra. Tuca</option>
+        <option>Dr. Espinosa</option>
+        <option>Dr. Vial</option>
+        <option>Dr. Besa</option>
+        <option>Dr. Ruz</option>
+        <option>Dr. Serrano</option>
+        <option>Dr. Zilleruelo</option>
+        <option>Dr. Fernández</option>
+      </select></div>
+    </div>
+  </div>
+  <div class="resident-info-hidden"><div class="resident-info-box">Esta pauta refleja los criterios con que el fellow evaluará tu desempeño en visitas diarias.</div></div>
+
+  <!-- Médico Experto -->
+  <div class="competencia-group">
+    <div class="competencia-label">Médico Experto</div>
+    <div class="objetivo-item"><div class="objetivo-text">Conoce a los pacientes, comprendiendo tanto su patología actual como los antecedentes de relevancia</div><div class="score-buttons" data-pauta="4" data-item="0"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Realiza una anamnesis y examen físico diario adecuado a cada paciente que tiene a su cargo</div><div class="score-buttons" data-pauta="4" data-item="1"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Interpreta los exámenes del paciente de manera adecuada</div><div class="score-buttons" data-pauta="4" data-item="2"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <!-- Comunicador -->
+  <div class="competencia-group">
+    <div class="competencia-label">Comunicador</div>
+    <div class="objetivo-item"><div class="objetivo-text">Mantiene una comunicación fluida y atenta con el paciente, dando tiempo a resolución de preguntas y necesidades</div><div class="score-buttons" data-pauta="4" data-item="3"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Comunica al tratante y al fellow la información relevante de manera adecuada y oportuna</div><div class="score-buttons" data-pauta="4" data-item="4"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <!-- Profesional -->
+  <div class="competencia-group">
+    <div class="competencia-label">Profesional</div>
+    <div class="objetivo-item"><div class="objetivo-text">Realiza un registro adecuado en la ficha clínica y epicrisis del paciente</div><div class="score-buttons" data-pauta="4" data-item="5"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Escucha sugerencias y recomendaciones de forma positiva, integrando el aprendizaje a lo largo de la pasada</div><div class="score-buttons" data-pauta="4" data-item="6"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Es puntual en el cumplimiento de horarios</div><div class="score-buttons" data-pauta="4" data-item="7"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+    <div class="objetivo-item"><div class="objetivo-text">Mantiene un trato adecuado con el resto del personal que atiende al paciente</div><div class="score-buttons" data-pauta="4" data-item="8"><button class="score-btn" data-score="D" onclick="setScore(this)">Deficiente</button><button class="score-btn" data-score="BE" onclick="setScore(this)">Bajo Exp.</button><button class="score-btn" data-score="CE" onclick="setScore(this)">Cumple Exp.</button><button class="score-btn" data-score="EE" onclick="setScore(this)">Excede Exp.</button><button class="score-btn" data-score="NA" onclick="setScore(this)">N/A</button></div></div>
+  </div>
+
+  <div class="cal-general"><h3>Calificación general</h3><div class="cal-general-buttons" data-pauta="4"><button class="cal-btn" data-score="D" onclick="setCalGeneral(this)">Deficiente</button><button class="cal-btn" data-score="BE" onclick="setCalGeneral(this)">Bajo las expectativas</button><button class="cal-btn" data-score="CE" onclick="setCalGeneral(this)">Cumple expectativas</button><button class="cal-btn" data-score="EE" onclick="setCalGeneral(this)">Excede expectativas</button></div></div>
+  <div class="comentarios-area"><label>Comentarios</label><textarea id="p4-comentarios" placeholder="Observaciones, fortalezas, áreas de mejora…"></textarea></div>
+  <button class="save-btn" id="saveBtn4" onclick="savePauta(4)">Enviar Evaluación</button>
+  <button class="reset-btn" onclick="resetPauta(4)">Reiniciar evaluación</button>
+</div>
+
+</div><!-- end .content -->
+
+<div class="toast" id="toast"></div>
+
+    <div class="modal-actions">
+      <button class="modal-copy-btn" onclick="copySummary()">Copiar texto</button>
+      <button class="modal-close-btn" onclick="closeModal()">Cerrar</button>
+    </div>
+    <div class="copy-confirm" id="copyConfirm">Copiado al portapapeles</div>
+  </div>
+</div>
+
+<script>
+let completadoPor = 'Evaluador';
+
+function selectCompletadoPor(btn, valor) {
+  completadoPor = valor;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU5QVGKjUX0bOBer0GnSVJ5tcGH2XYEO0C1em9M-y9GNgPAMLN1UZyfzm5Q3F5c49dYw/exec';
+
+const PAUTA_NAMES = ['Pabellón', 'Policlínico Primero', 'Policlínico Avanzado', 'Presentación', 'Visitas'];
+const SCORE_LABELS = { D: 'Deficiente', BE: 'Bajo las expectativas', CE: 'Cumple expectativas', EE: 'Excede expectativas', NA: 'No aplica' };
+
+let currentMode = 'evaluador';
+let currentPauta = 0;
+
+// scores[pautaIndex][itemIndex] = 'D'|'BE'|'CE'|'EE'|'NA'|null
+const scores = Array.from({length:5}, () => ({}));
+const calGeneral = Array(5).fill(null);
+
+
+function showPauta(idx) {
+  document.querySelectorAll('.pauta-section').forEach((s,i) => s.classList.toggle('active', i === idx));
+  document.querySelectorAll('.nav-pill').forEach((p,i) => p.classList.toggle('active', i === idx));
+  currentPauta = idx;
+}
+
+function setScore(btn) {
+  if (currentMode !== 'evaluador') return;
+  const container = btn.parentElement;
+  const pautaIdx = parseInt(container.dataset.pauta);
+  const itemIdx = parseInt(container.dataset.item);
+  const score = btn.dataset.score;
+
+  // Deselect all in this container
+  container.querySelectorAll('.score-btn').forEach(b => {
+    b.className = 'score-btn';
+  });
+
+  const already = scores[pautaIdx][itemIdx] === score;
+  if (!already) {
+    btn.classList.add('selected-' + score);
+    scores[pautaIdx][itemIdx] = score;
+  } else {
+    scores[pautaIdx][itemIdx] = null;
+  }
+}
+
+function setCalGeneral(btn) {
+  if (currentMode !== 'evaluador') return;
+  const container = btn.parentElement;
+  const pautaIdx = parseInt(container.dataset.pauta);
+  const score = btn.dataset.score;
+  const already = calGeneral[pautaIdx] === score;
+
+  container.querySelectorAll('.cal-btn').forEach(b => b.className = 'cal-btn');
+  if (!already) {
+    btn.classList.add('selected-' + score);
+    calGeneral[pautaIdx] = score;
+  } else {
+    calGeneral[pautaIdx] = null;
+  }
+}
+
+
+
+
+function resetPauta(pautaIdx) {
+  if (!confirm('¿Reiniciar esta evaluación?')) return;
+  // Clear scores
+  scores[pautaIdx] = {};
+  calGeneral[pautaIdx] = null;
+  // Clear UI
+  const section = document.getElementById('pauta-' + pautaIdx);
+  section.querySelectorAll('.score-btn').forEach(b => b.className = 'score-btn');
+  section.querySelectorAll('.cal-btn').forEach(b => b.className = 'cal-btn');
+  const res = document.getElementById('p' + pautaIdx + '-residente');
+  const ev = document.getElementById('p' + pautaIdx + '-evaluador');
+  const com = document.getElementById('p' + pautaIdx + '-comentarios');
+  if (res) { res.value = ''; res.classList.remove('error'); }
+  if (ev)  { ev.value = '';  ev.classList.remove('error'); }
+  if (com) com.value = '';
+  // Scroll to top of pauta
+  document.getElementById('pauta-' + pautaIdx).scrollIntoView({behavior:'smooth', block:'start'});
+  // Reset send button
+  const saveBtn = document.getElementById('saveBtn' + pautaIdx);
+  if (saveBtn) {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Enviar Evaluación';
+    saveBtn.style.background = '';
+    const resetBtn = saveBtn.nextElementSibling;
+    if (resetBtn) { resetBtn.style.borderColor = ''; resetBtn.style.color = ''; resetBtn.style.fontWeight = ''; }
+  }
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function savePauta(pautaIdx) {
+  const residente   = document.getElementById('p' + pautaIdx + '-residente')?.value.trim() || '';
+  const evaluador   = document.getElementById('p' + pautaIdx + '-evaluador')?.value.trim() || '';
+  const comentarios = document.getElementById('p' + pautaIdx + '-comentarios')?.value.trim() || '';
+  const fecha       = new Date().toLocaleDateString('es-CL');
+
+  const resEl = document.getElementById('p' + pautaIdx + '-residente');
+  const evEl  = document.getElementById('p' + pautaIdx + '-evaluador');
+  const calEl = document.querySelector('#pauta-' + pautaIdx + ' .cal-general');
+  resEl.classList.remove('error'); evEl.classList.remove('error'); if(calEl) calEl.classList.remove('error');
+
+  if (!residente) {
+    resEl.classList.add('error');
+    showToast('Selecciona el nombre del residente', 'error');
+    resEl.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  if (!evaluador) {
+    evEl.classList.add('error');
+    showToast('Selecciona el nombre del evaluador', 'error');
+    evEl.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  if (!calGeneral[pautaIdx]) {
+    if(calEl) calEl.classList.add('error');
+    showToast('Selecciona una calificación general', 'error');
+    if(calEl) calEl.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // Collect scored items with competencia label
+  const section = document.getElementById('pauta-' + pautaIdx);
+  const items = [];
+  section.querySelectorAll('.objetivo-item').forEach(item => {
+    const scoreContainer = item.querySelector('.score-buttons');
+    const pIdx = parseInt(scoreContainer.dataset.pauta);
+    const iIdx = parseInt(scoreContainer.dataset.item);
+    const s = scores[pIdx][iIdx];
+    if (!s) return; // skip unscored
+
+    // Find competencia
+    const siblings = Array.from(item.parentElement.children);
+    const myIdx = siblings.indexOf(item);
+    let comp = '';
+    for (let i = myIdx - 1; i >= 0; i--) {
+      if (siblings[i].classList.contains('competencia-label')) { comp = siblings[i].textContent.trim(); break; }
+    }
+    items.push({
+      competencia: comp,
+      objetivo: item.querySelector('.objetivo-text').textContent.trim(),
+      resultado: SCORE_LABELS[s]
+    });
+  });
+
+  const btn = document.getElementById('saveBtn' + pautaIdx);
+  btn.disabled = true;
+  btn.textContent = 'Guardando…';
+
+  const params = new URLSearchParams({
+    action: 'savePauta',
+    completadoPor,
+    fecha,
+    tipoPauta: PAUTA_NAMES[pautaIdx],
+    residente,
+    evaluador,
+    calGeneral: calGeneral[pautaIdx] ? SCORE_LABELS[calGeneral[pautaIdx]] : '',
+    comentarios,
+    items: JSON.stringify(items)
+  });
+
+  try {
+    const res = await fetch(SCRIPT_URL + '?' + params.toString());
+    const data = await res.json();
+    if (data.ok) {
+      showToast('✓ Evaluación enviada correctamente', 'success');
+      btn.textContent = '¡Enviado! Muchas gracias';
+      btn.disabled = true;
+      const resetBtn = btn.nextElementSibling;
+      if (resetBtn) {
+        resetBtn.style.borderColor = 'var(--gold)';
+        resetBtn.style.color = 'var(--gold)';
+        resetBtn.style.fontWeight = '600';
+      }
+    } else {
+      showToast('Error: ' + (data.message || 'intenta de nuevo'), 'error');
+      btn.disabled = false;
+      btn.textContent = 'Enviar Evaluación';
+    }
+  } catch(err) {
+    showToast('Error de conexión, intenta de nuevo', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Enviar Evaluación';
+  }
+}
+
+</script>
+
+<script>
+/* Lee residentes y evaluadores desde la fuente única: cohorte.json.
+   Si el fetch falla, se conservan las opciones estáticas de respaldo. */
+(async function () {
+  let cohorte;
+  try {
+    const r = await fetch('cohorte.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return;
+    cohorte = await r.json();
+  } catch (e) { return; }
+  const firstNames = (cohorte.residentes || []).map(function (x) { return String(x.nombre).split(' ')[0]; });
+  const evals = cohorte.evaluadores || [];
+  function fill(sel, items) {
+    if (!sel) return;
+    while (sel.options.length > 1) sel.remove(1); // conserva el placeholder
+    items.forEach(function (v) {
+      const o = document.createElement('option');
+      o.textContent = v;
+      sel.appendChild(o);
+    });
+  }
+  document.querySelectorAll('select[id$="-residente"]').forEach(function (s) { fill(s, firstNames); });
+  document.querySelectorAll('select[id$="-evaluador"]').forEach(function (s) { fill(s, evals); });
+})();
+</script>
+</body>
+</html>
