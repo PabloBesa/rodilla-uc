@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Coordinador — Rodilla UC</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-mid: #243560;
+    --gold: #c8973a;
+    --gold-pale: #f5e9cc;
+    --cream: #faf8f3;
+    --warm-gray: #f0ece3;
+    --green: #2a6041;
+    --green-light: #e8f2ec;
+    --border: #d4c9b0;
+    --red-accent: #8b2e2e;
+    --red-light: #f5eaea;
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Source Serif 4', serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--navy);
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  .app-header {
+    background: var(--navy);
+    padding: 20px 20px 16px;
+  }
+  .app-header h1 { font-family: var(--font-display); color: var(--gold); font-size: 1.15rem; font-weight: 700; }
+  .app-header p { color: rgba(255,255,255,0.5); font-size: 0.75rem; font-style: italic; margin-top: 2px; }
+
+  /* PIN */
+  .pin-screen {
+    padding: 52px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .pin-icon {
+    width: 64px; height: 64px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+  }
+  .pin-screen h2 { font-family: var(--font-display); font-size: 1.3rem; color: var(--navy); text-align: center; }
+  .pin-screen p { font-size: 0.82rem; color: rgba(26,39,68,0.5); text-align: center; font-style: italic; }
+  .pin-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-family: var(--font-body);
+    font-size: 1.6rem;
+    color: var(--navy);
+    text-align: center;
+    letter-spacing: 0.4em;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .pin-input:focus { border-color: var(--gold); }
+  .pin-input.error { border-color: var(--red-accent); background: var(--red-light); }
+  .pin-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--gold);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .pin-error { font-size: 0.8rem; color: var(--red-accent); font-style: italic; display: none; }
+
+  /* MAIN */
+  .main-screen { display: none; padding: 24px 16px 60px; }
+
+  .welcome {
+    margin-bottom: 28px;
+  }
+  .welcome .section-number {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    color: var(--gold);
+    font-weight: 700;
+    line-height: 1;
+  }
+  .welcome h2 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--navy);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .welcome p {
+    font-size: 0.82rem;
+    color: rgba(26,39,68,0.55);
+    font-style: italic;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(26,39,68,0.45);
+    margin-bottom: 10px;
+    margin-top: 24px;
+  }
+
+  .tool-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: var(--navy);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tool-card:active {
+    border-color: var(--gold);
+    box-shadow: 0 2px 12px rgba(200,151,58,0.15);
+  }
+  .tool-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .icon-navy { background: var(--navy); }
+  .icon-green { background: var(--green-light); }
+  .icon-gold { background: var(--gold-pale); }
+
+  .tool-info { flex: 1; }
+  .tool-name {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .tool-desc {
+    font-size: 0.75rem;
+    color: rgba(26,39,68,0.5);
+    font-style: italic;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .tool-arrow {
+    color: var(--gold);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+  }
+
+  .logout-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: rgba(26,39,68,0.35);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>Panel de Coordinador</h1>
+  <p>Equipo de Rodilla UC</p>
+</div>
+
+<!-- PIN -->
+<div class="pin-screen" id="pinScreen">
+  <div class="pin-icon">🔐</div>
+  <h2>Acceso privado</h2>
+  <p>Solo para coordinadores del programa</p>
+  <input type="password" class="pin-input" id="pinInput" placeholder="····" maxlength="4" inputmode="numeric">
+  <div class="pin-error" id="pinError">PIN incorrecto</div>
+  <button class="pin-btn" onclick="checkPin()">Ingresar</button>
+</div>
+
+<!-- MAIN -->
+<div class="main-screen" id="mainScreen">
+
+  <div class="welcome">
+    <div class="section-number">👋</div>
+    <h2>Hola, Pablo y Cristián</h2>
+    <p>Herramientas de gestión del programa de residencia</p>
+  </div>
+
+  <div class="section-label">Durante la sesión de feedback</div>
+
+  <a class="tool-card" href="https://pablobesa.github.io/rodilla-uc/GuiaFeedback2.html" target="_blank">
+    <div class="tool-icon icon-navy">💬</div>
+    <div class="tool-info">
+      <div class="tool-name">Guía de Feedback</div>
+      <div class="tool-desc">Estructura la sesión, registra pautas y genera resumen</div>
+    </div>
+    <div class="tool-arrow">→</div>
+  </a>
+
+  <div class="section-label">Seguimiento y datos</div>
+
+  <a class="tool-card" href="https://pablobesa.github.io/rodilla-uc/feedbackstaff.html" target="_blank">
+    <div class="tool-icon icon-gold">📝</div>
+    <div class="tool-info">
+      <div class="tool-name">Feedback del Equipo</div>
+      <div class="tool-desc">Formulario para que los staff califiquen a los residentes del mes</div>
+    </div>
+    <div class="tool-arrow">→</div>
+  </a>
+
+
+  <a class="tool-card" href="https://pablobesa.github.io/rodilla-uc/VisualizadorPautas2.html" target="_blank">
+    <div class="tool-icon icon-green">📊</div>
+    <div class="tool-info">
+      <div class="tool-name">Visualizador de Pautas</div>
+      <div class="tool-desc">Ver evaluaciones por residente, desglose por ítem</div>
+    </div>
+    <div class="tool-arrow">→</div>
+  </a>
+
+  <a class="tool-card" href="https://pablobesa.github.io/rodilla-uc/Evaluaciones.html" target="_blank">
+    <div class="tool-icon icon-gold">⭐</div>
+    <div class="tool-info">
+      <div class="tool-name">Evaluación Fin de Pasada</div>
+      <div class="tool-desc">Dashboard de respuestas anónimas del programa</div>
+    </div>
+    <div class="tool-arrow">→</div>
+  </a>
+
+  <div class="section-label">Links para residentes</div>
+
+  <a class="tool-card" href="https://pablobesa.github.io/rodilla-uc/GuiaResidentes.html" target="_blank">
+    <div class="tool-icon icon-navy">📋</div>
+    <div class="tool-info">
+      <div class="tool-name">Guía del Residente</div>
+      <div class="tool-desc">Onboarding y bienvenida a la rotación</div>
+    </div>
+    <div class="tool-arrow">→</div>
+  </a>
+
+  <a class="tool-card" href="https://pablobesa.github.io/rodilla-uc/Calendario.html" target="_blank">
+    <div class="tool-icon icon-gold">📅</div>
+    <div class="tool-info">
+      <div class="tool-name">Calendario</div>
+      <div class="tool-desc">Horarios, evaluaciones y sesiones de feedback</div>
+    </div>
+    <div class="tool-arrow">→</div>
+  </a>
+
+  <a class="tool-card" href="https://pablobesa.github.io/rodilla-uc/Pautas.html" target="_blank">
+    <div class="tool-icon icon-green">✅</div>
+    <div class="tool-info">
+      <div class="tool-name">Pautas de Evaluación</div>
+      <div class="tool-desc">Formulario de evaluación por competencias</div>
+    </div>
+    <div class="tool-arrow">→</div>
+  </a>
+
+  <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+
+</div>
+
+<script>
+const PIN = '6174';
+
+function checkPin() {
+  const val = document.getElementById('pinInput').value.trim();
+  const input = document.getElementById('pinInput');
+  const err = document.getElementById('pinError');
+  if (val === PIN) {
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('mainScreen').style.display = 'block';
+  } else {
+    input.classList.add('error');
+    err.style.display = 'block';
+    input.value = '';
+    setTimeout(() => { input.classList.remove('error'); err.style.display = 'none'; }, 2500);
+  }
+}
+
+document.getElementById('pinInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPin();
+});
+
+function logout() {
+  document.getElementById('mainScreen').style.display = 'none';
+  document.getElementById('pinScreen').style.display = 'flex';
+  document.getElementById('pinInput').value = '';
+}
+
+
+</script>
+</body>
+</html>
