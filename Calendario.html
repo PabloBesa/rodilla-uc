@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario Julio 2026 — Rotación Rodilla UC</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-mid: #243560;
+    --gold: #c8973a;
+    --gold-light: #e8c47a;
+    --gold-pale: #f5e9cc;
+    --cream: #faf8f3;
+    --warm-gray: #f0ece3;
+    --text: #2c2c2c;
+    --text-muted: #5a5a5a;
+    --border: #d4c9b0;
+    --green: #2a6041;
+    --green-light: #e8f2ec;
+    --red-accent: #8b2e2e;
+    --red-light: #f5eaea;
+    --purple: #4a2a6b;
+    --purple-light: #f0eaf8;
+    --blue: #1a4a7a;
+    --blue-light: #e8f0f8;
+    --orange: #7a3a10;
+    --orange-light: #f8ede8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Serif 4', Georgia, serif; background: var(--cream); color: var(--text); font-size: 15px; line-height: 1.75; }
+  .page { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
+
+  .header { background: var(--navy); padding: 32px 24px 24px; position: relative; overflow: hidden; }
+  .header::after { content: ''; position: absolute; bottom: 0; right: 0; width: 160px; height: 100%; background: linear-gradient(135deg, transparent 50%, rgba(200,151,58,0.12) 100%); pointer-events: none; }
+  .header-tag { font-size: 9px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: white; line-height: 1.2; margin-bottom: 6px; }
+  .header h1 span { color: var(--gold-light); }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.6); font-style: italic; margin-top: 4px; }
+  .gold-rule { width: 48px; height: 3px; background: var(--gold); margin: 14px 0 0; }
+
+  .nav-bar { background: var(--navy-mid); padding: 10px 16px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-pill { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); border: none; border-radius: 20px; padding: 5px 12px; font-family: 'Source Serif 4', serif; font-size: 11px; white-space: nowrap; cursor: pointer; transition: background 0.2s; letter-spacing: 0.2px; }
+  .nav-pill:hover, .nav-pill.active { background: var(--gold); color: var(--navy); font-weight: 600; }
+
+  .content { padding: 20px 20px 60px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* MONTH GRID */
+  .month-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 16px; }
+  .day-header { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); text-align: center; padding: 4px 2px 6px; border-bottom: 1.5px solid var(--border); }
+  .cal-day { border: 1px solid var(--border); border-radius: 4px; padding: 4px; min-height: 72px; font-size: 9px; line-height: 1.35; background: white; }
+  .cal-day.empty { background: var(--cream); border-color: transparent; }
+  .cal-day.holiday { background: #f9f0e8; border-color: #e8d4b0; }
+  .cal-day.switch-day { border: 1.5px dashed var(--gold); background: var(--gold-pale); }
+  .day-num { font-family: 'Playfair Display', serif; font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 3px; display: block; }
+  .cal-day.holiday .day-num { color: var(--orange); }
+
+  .chip { display: block; border-radius: 3px; padding: 1px 4px; margin-bottom: 2px; font-size: 7.5px; font-weight: 600; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chip-feedback { background: var(--navy); color: var(--gold-light); }
+  .chip-berna { background: var(--gold-pale); color: #7a5010; }
+  .chip-mateo { background: var(--blue-light); color: var(--blue); }
+  .chip-raimundo { background: var(--green-light); color: var(--green); }
+  .chip-presentation { background: var(--purple-light); color: var(--purple); }
+  .chip-holiday { background: #f0e4cc; color: var(--orange); }
+  .chip-eval-b { background: #c8973a; color: white; }
+  .chip-eval-m { background: var(--blue); color: white; }
+  .chip-eval-r { background: var(--green); color: white; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; padding: 12px 14px; background: var(--warm-gray); border-radius: 8px; border: 1px solid var(--border); }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--text); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* SECTION HEADER */
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1.5px solid var(--border); margin-top: 20px; }
+  .section-header:first-child { margin-top: 0; }
+  .section-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--gold); opacity: 0.7; line-height: 1; flex-shrink: 0; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--navy); }
+  .section-title em { display: block; font-family: 'Source Serif 4', serif; font-size: 10px; font-weight: 400; font-style: italic; color: var(--text-muted); margin-top: 1px; }
+
+  /* EVAL CARDS */
+  .eval-card { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .eval-card-header { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .eval-card-header.berna { background: var(--gold-pale); border-bottom: 1px solid #e8d4b0; }
+  .eval-card-header.mateo { background: var(--blue-light); border-bottom: 1px solid #c8d8ec; }
+  .eval-card-header.raimundo { background: var(--green-light); border-bottom: 1px solid #b2d4bf; }
+  .eval-card-header.neutral { background: var(--warm-gray); border-bottom: 1px solid var(--border); }
+  .eval-resident { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; color: var(--navy); }
+  .eval-level { font-size: 10px; color: var(--text-muted); font-style: italic; }
+  .eval-body { padding: 10px 14px; }
+  .eval-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 11.5px; gap: 8px; }
+  .eval-row:last-child { border-bottom: none; }
+  .eval-type { font-weight: 600; color: var(--navy); flex-shrink: 0; min-width: 90px; }
+  .eval-detail { color: var(--text-muted); text-align: right; line-height: 1.5; }
+  .eval-date { color: var(--navy); font-weight: 600; font-size: 11px; }
+
+  .h-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; }
+  .h1 { background: var(--navy); color: var(--gold-light); }
+  .h2 { background: var(--gold); color: var(--navy); }
+
+  .highlight { border-left: 4px solid var(--gold); background: var(--warm-gray); padding: 12px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 12.5px; line-height: 1.7; }
+  .highlight strong { color: var(--navy); }
+  .highlight-red { border-left: 4px solid var(--red-accent); background: var(--red-light); padding: 12px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 12.5px; line-height: 1.7; }
+  .highlight-green { border-left: 4px solid var(--green); background: var(--green-light); padding: 12px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 12.5px; line-height: 1.7; }
+  .highlight-green strong { color: var(--green); }
+
+  .feedback-card { background: var(--navy); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+  .feedback-card .fb-date { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; color: var(--gold-light); margin-bottom: 6px; }
+  .feedback-card .fb-body { font-size: 11.5px; color: rgba(255,255,255,0.85); line-height: 1.65; }
+  .feedback-card .fb-body strong { color: var(--gold-light); }
+
+  /* WEEK LABEL */
+  .week-label { font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin: 10px 0 4px; }
+
+  .footer { background: var(--warm-gray); border-top: 1px solid var(--border); padding: 16px 20px; text-align: center; font-size: 10.5px; color: var(--text-muted); font-style: italic; }
+
+  .chip-cristian { background: var(--gold-pale); color: #7a5010; }
+  .chip-angela { background: var(--blue-light); color: var(--blue); }
+  .chip-antonio { background: var(--green-light); color: var(--green); }
+  .chip-research { background: var(--warm-gray); color: var(--text-muted); }
+  .keydates { background: var(--warm-gray); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; margin-bottom: 16px; }
+  .kd-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 11.5px; align-items: baseline; }
+  .kd-row:last-child { border-bottom: none; }
+  .kd-label { flex: 0 0 96px; font-weight: 700; color: var(--navy); }
+  .kd-val { color: var(--text); }
+  .intro-p { font-size: 12px; color: var(--text); line-height: 1.6; margin: 0 0 12px; }
+</style>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-tag">Calendario de Rotación · Rodilla UC</div>
+    <h1>Julio <span>2026</span></h1>
+    <p class="header-sub">Equipo de Cirugía de Rodilla — Ortopedia y Traumatología UC</p>
+    <div class="gold-rule"></div>
+    <p class="header-sub" style="margin-top:10px;">Dr. Pablo Besa · Dr. Cristián Ruz</p>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-pill active" onclick="show('general', this)">Inicio</button>
+    <button class="nav-pill" onclick="show('cristian', this)">Cristián</button>
+    <button class="nav-pill" onclick="show('angela', this)">Ángela</button>
+    <button class="nav-pill" onclick="show('antonio', this)">Antonio</button>
+  </div>
+
+  <div class="content">
+
+    <div class="section active" id="sec-general">
+      <div class="section-header"><div class="section-num">·</div><div class="section-title">Cómo usar este calendario<em>Julio 2026</em></div></div>
+      <p class="intro-p">Cada residente tiene su propia pestaña arriba con su calendario del mes. Abre la tuya y revisa lo que te toca:</p>
+      <div class="keydates">
+        <div class="kd-row"><span class="kd-label">Rotación</span><span class="kd-val">Qué horario te toca y cuándo cambias de track</span></div>
+        <div class="kd-row"><span class="kd-label">Día a día</span><span class="kd-val">Dónde estás cada día (pabellón, policlínico, cuenta)</span></div>
+        <div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">Tu día y hora de feedback</span></div>
+        <div class="kd-row"><span class="kd-label">Presentación</span><span class="kd-val">Tu fecha de presentación y tu tutor</span></div>
+      </div>
+
+      <div class="section-header"><div class="section-num">·</div><div class="section-title">Fechas del equipo<em>válidas para todos</em></div></div>
+      <div class="keydates">
+        <div class="kd-row"><span class="kd-label">Cambio horario</span><span class="kd-val">Lun 20 jul — todos cambian de track</span></div>
+        <div class="kd-row"><span class="kd-label">Feriado</span><span class="kd-val">Jue 16 jul — Virgen del Carmen</span></div>
+        <div class="kd-row"><span class="kd-label">1er martes</span><span class="kd-val">Mar 7 jul — reunión de investigación (sin presentaciones ese día)</span></div>
+        <div class="kd-row"><span class="kd-label">Vacaciones</span><span class="kd-val">Dr. Besa fuera 13–19 jul · las presentaciones siguen con su tutor</span></div>
+      </div>
+
+      <div class="section-header"><div class="section-num">·</div><div class="section-title">Presentaciones<em>día y tutor</em></div></div>
+      <div class="keydates">
+        <div class="kd-row"><span class="kd-label">Cristián · R2</span><span class="kd-val">14 jul — Dr. Raimundo Vial</span></div>
+        <div class="kd-row"><span class="kd-label">Ángela · R1</span><span class="kd-val">21 jul — Dr. Besa</span></div>
+        <div class="kd-row"><span class="kd-label">Antonio · R1</span><span class="kd-val">28 jul — Dr. Ruz</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-cristian">
+      <div class="section-header"><div class="section-num">01</div><div class="section-title">Cristián Salas · R2<em>Tu rotación de julio</em></div></div>
+      <div class="keydates"><div class="kd-row"><span class="kd-label">Rotación</span><span class="kd-val">Horario 1 (1–17 jul) → Horario 2 (desde lun 20)</span></div><div class="kd-row"><span class="kd-label">Presentación</span><span class="kd-val">Mar 14 jul · Reunión Equipo · Tutor Dr. Raimundo Vial</span></div><div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">Mar 7 (mitad) y Mar 28 (final) · 12:00 hrs</span></div><div class="kd-row"><span class="kd-label">Pautas</span><span class="kd-val">2 pabellón · 2 policlínico · visitas · presentación — coordina con los evaluadores durante el mes</span></div></div>
+      <div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--gold-pale)"></div>Su jornada</div><div class="legend-item"><div class="legend-dot" style="background:var(--purple-light)"></div>Presentación</div><div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Feedback / Cambio</div><div class="legend-item"><div class="legend-dot" style="background:#f0e4cc"></div>Feriado</div></div>
+      <div class="month-grid">
+        <div class="day-header">Lun</div><div class="day-header">Mar</div><div class="day-header">Mié</div><div class="day-header">Jue</div><div class="day-header">Vie</div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day"><span class="day-num">1</span><span class="chip chip-cristian">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">2</span><span class="chip chip-cristian">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">3</span><span class="chip chip-cristian">H1 · Poli SJ</span></div>
+        <div class="cal-day"><span class="day-num">6</span><span class="chip chip-cristian">H1 · OR Vega</span></div>
+        <div class="cal-day"><span class="day-num">7</span><span class="chip chip-cristian">H1 · Cta SL</span><span class="chip chip-research">Reunión investig.</span><span class="chip chip-feedback">Feedback 12:00</span></div>
+        <div class="cal-day"><span class="day-num">8</span><span class="chip chip-cristian">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">9</span><span class="chip chip-cristian">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">10</span><span class="chip chip-cristian">H1 · Poli SJ</span></div>
+        <div class="cal-day"><span class="day-num">13</span><span class="chip chip-cristian">H1 · OR Vega</span></div>
+        <div class="cal-day"><span class="day-num">14</span><span class="chip chip-cristian">H1 · Cta SL</span><span class="chip chip-presentation">Present. · Dr. R. Vial</span></div>
+        <div class="cal-day"><span class="day-num">15</span><span class="chip chip-cristian">H1 · OR Marc</span></div>
+        <div class="cal-day holiday"><span class="day-num">16</span><span class="chip chip-holiday">Feriado</span><span class="chip chip-holiday">Virgen del Carmen</span></div>
+        <div class="cal-day"><span class="day-num">17</span><span class="chip chip-cristian">H1 · Poli SJ</span></div>
+        <div class="cal-day switch-day"><span class="day-num">20</span><span class="chip chip-cristian">H2 · OR SC</span><span class="chip chip-feedback">↔ Cambio a H2</span></div>
+        <div class="cal-day"><span class="day-num">21</span><span class="chip chip-cristian">H2 · OR O-I</span></div>
+        <div class="cal-day"><span class="day-num">22</span><span class="chip chip-cristian">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">23</span><span class="chip chip-cristian">H2 · Poli Irr</span></div>
+        <div class="cal-day"><span class="day-num">24</span><span class="chip chip-cristian">H2 · Cta SL</span></div>
+        <div class="cal-day"><span class="day-num">27</span><span class="chip chip-cristian">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">28</span><span class="chip chip-cristian">H2 · OR O-I</span><span class="chip chip-feedback">Feedback 12:00</span></div>
+        <div class="cal-day"><span class="day-num">29</span><span class="chip chip-cristian">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">30</span><span class="chip chip-cristian">H2 · Poli Irr</span></div>
+        <div class="cal-day"><span class="day-num">31</span><span class="chip chip-cristian">H2 · Cta SL</span></div>
+        </div>
+      <div class="section-header"><div class="section-num">·</div><div class="section-title">¿Qué es cada horario?<em>Referencia de tus turnos</em></div></div>
+      <div class="keydates">
+        <div class="kd-row"><span class="kd-label"><span class="h-badge h1">Horario 1</span></span><span class="kd-val">Lun: OR Vega · Mar: Cuenta Sta Lucía · Mié y Jue: OR Marcoleta · Vie: Poli San Joaquín</span></div>
+        <div class="kd-row"><span class="kd-label"><span class="h-badge h2">Horario 2</span></span><span class="kd-val">Lun y Mié: OR San Carlos · Mar: OR Orrego-Irribarra · Jue: Poli Irribarra · Vie: Cuenta Sta Lucía</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-angela">
+      <div class="section-header"><div class="section-num">02</div><div class="section-title">Ángela Benavente · R1<em>Tu rotación de julio</em></div></div>
+      <div class="keydates"><div class="kd-row"><span class="kd-label">Rotación</span><span class="kd-val">Horario 2 (1–17 jul) → Horario 1 (desde lun 20)</span></div><div class="kd-row"><span class="kd-label">Presentación</span><span class="kd-val">Mar 21 jul · Reunión Equipo · Tutor Dr. Besa</span></div><div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">Mar 7 (mitad) y Mar 28 (final) · 12:20 hrs</span></div><div class="kd-row"><span class="kd-label">Pautas</span><span class="kd-val">2 pabellón · 2 policlínico · visitas · presentación — coordina con los evaluadores durante el mes</span></div></div>
+      <div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--blue-light)"></div>Su jornada</div><div class="legend-item"><div class="legend-dot" style="background:var(--purple-light)"></div>Presentación</div><div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Feedback / Cambio</div><div class="legend-item"><div class="legend-dot" style="background:#f0e4cc"></div>Feriado</div></div>
+      <div class="month-grid">
+        <div class="day-header">Lun</div><div class="day-header">Mar</div><div class="day-header">Mié</div><div class="day-header">Jue</div><div class="day-header">Vie</div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day"><span class="day-num">1</span><span class="chip chip-angela">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">2</span><span class="chip chip-angela">H2 · Poli Irr</span></div>
+        <div class="cal-day"><span class="day-num">3</span><span class="chip chip-angela">H2 · Cta SL</span></div>
+        <div class="cal-day"><span class="day-num">6</span><span class="chip chip-angela">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">7</span><span class="chip chip-angela">H2 · OR O-I</span><span class="chip chip-research">Reunión investig.</span><span class="chip chip-feedback">Feedback 12:20</span></div>
+        <div class="cal-day"><span class="day-num">8</span><span class="chip chip-angela">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">9</span><span class="chip chip-angela">H2 · Poli Irr</span></div>
+        <div class="cal-day"><span class="day-num">10</span><span class="chip chip-angela">H2 · Cta SL</span></div>
+        <div class="cal-day"><span class="day-num">13</span><span class="chip chip-angela">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">14</span><span class="chip chip-angela">H2 · OR O-I</span></div>
+        <div class="cal-day"><span class="day-num">15</span><span class="chip chip-angela">H2 · OR SC</span></div>
+        <div class="cal-day holiday"><span class="day-num">16</span><span class="chip chip-holiday">Feriado</span><span class="chip chip-holiday">Virgen del Carmen</span></div>
+        <div class="cal-day"><span class="day-num">17</span><span class="chip chip-angela">H2 · Cta SL</span></div>
+        <div class="cal-day switch-day"><span class="day-num">20</span><span class="chip chip-angela">H1 · OR Vega</span><span class="chip chip-feedback">↔ Cambio a H1</span></div>
+        <div class="cal-day"><span class="day-num">21</span><span class="chip chip-angela">H1 · Cta SL</span><span class="chip chip-presentation">Present. · Dr. Besa</span></div>
+        <div class="cal-day"><span class="day-num">22</span><span class="chip chip-angela">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">23</span><span class="chip chip-angela">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">24</span><span class="chip chip-angela">H1 · Poli SJ</span></div>
+        <div class="cal-day"><span class="day-num">27</span><span class="chip chip-angela">H1 · OR Vega</span></div>
+        <div class="cal-day"><span class="day-num">28</span><span class="chip chip-angela">H1 · Cta SL</span><span class="chip chip-feedback">Feedback 12:20</span></div>
+        <div class="cal-day"><span class="day-num">29</span><span class="chip chip-angela">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">30</span><span class="chip chip-angela">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">31</span><span class="chip chip-angela">H1 · Poli SJ</span></div>
+        </div>
+      <div class="section-header"><div class="section-num">·</div><div class="section-title">¿Qué es cada horario?<em>Referencia de tus turnos</em></div></div>
+      <div class="keydates">
+        <div class="kd-row"><span class="kd-label"><span class="h-badge h1">Horario 1</span></span><span class="kd-val">Lun: OR Vega · Mar: Cuenta Sta Lucía · Mié y Jue: OR Marcoleta · Vie: Poli San Joaquín</span></div>
+        <div class="kd-row"><span class="kd-label"><span class="h-badge h2">Horario 2</span></span><span class="kd-val">Lun y Mié: OR San Carlos · Mar: OR Orrego-Irribarra · Jue: Poli Irribarra · Vie: Cuenta Sta Lucía</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-antonio">
+      <div class="section-header"><div class="section-num">03</div><div class="section-title">Antonio Marinkovic · R1<em>Tu rotación de julio</em></div></div>
+      <div class="keydates"><div class="kd-row"><span class="kd-label">Rotación</span><span class="kd-val">Horario 2 (1–17 jul) → Horario 1 (desde lun 20)</span></div><div class="kd-row"><span class="kd-label">Presentación</span><span class="kd-val">Mar 28 jul · Reunión Equipo · Tutor Dr. Ruz</span></div><div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">Mar 7 (mitad) y Mar 28 (final) · 12:40 hrs</span></div><div class="kd-row"><span class="kd-label">Pautas</span><span class="kd-val">2 pabellón · 2 policlínico · visitas · presentación — coordina con los evaluadores durante el mes</span></div></div>
+      <div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--green-light)"></div>Su jornada</div><div class="legend-item"><div class="legend-dot" style="background:var(--purple-light)"></div>Presentación</div><div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Feedback / Cambio</div><div class="legend-item"><div class="legend-dot" style="background:#f0e4cc"></div>Feriado</div></div>
+      <div class="month-grid">
+        <div class="day-header">Lun</div><div class="day-header">Mar</div><div class="day-header">Mié</div><div class="day-header">Jue</div><div class="day-header">Vie</div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day empty"></div>
+        <div class="cal-day"><span class="day-num">1</span><span class="chip chip-antonio">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">2</span><span class="chip chip-antonio">H2 · Poli Irr</span></div>
+        <div class="cal-day"><span class="day-num">3</span><span class="chip chip-antonio">H2 · Cta SL</span></div>
+        <div class="cal-day"><span class="day-num">6</span><span class="chip chip-antonio">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">7</span><span class="chip chip-antonio">H2 · OR O-I</span><span class="chip chip-research">Reunión investig.</span><span class="chip chip-feedback">Feedback 12:40</span></div>
+        <div class="cal-day"><span class="day-num">8</span><span class="chip chip-antonio">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">9</span><span class="chip chip-antonio">H2 · Poli Irr</span></div>
+        <div class="cal-day"><span class="day-num">10</span><span class="chip chip-antonio">H2 · Cta SL</span></div>
+        <div class="cal-day"><span class="day-num">13</span><span class="chip chip-antonio">H2 · OR SC</span></div>
+        <div class="cal-day"><span class="day-num">14</span><span class="chip chip-antonio">H2 · OR O-I</span></div>
+        <div class="cal-day"><span class="day-num">15</span><span class="chip chip-antonio">H2 · OR SC</span></div>
+        <div class="cal-day holiday"><span class="day-num">16</span><span class="chip chip-holiday">Feriado</span><span class="chip chip-holiday">Virgen del Carmen</span></div>
+        <div class="cal-day"><span class="day-num">17</span><span class="chip chip-antonio">H2 · Cta SL</span></div>
+        <div class="cal-day switch-day"><span class="day-num">20</span><span class="chip chip-antonio">H1 · OR Vega</span><span class="chip chip-feedback">↔ Cambio a H1</span></div>
+        <div class="cal-day"><span class="day-num">21</span><span class="chip chip-antonio">H1 · Cta SL</span></div>
+        <div class="cal-day"><span class="day-num">22</span><span class="chip chip-antonio">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">23</span><span class="chip chip-antonio">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">24</span><span class="chip chip-antonio">H1 · Poli SJ</span></div>
+        <div class="cal-day"><span class="day-num">27</span><span class="chip chip-antonio">H1 · OR Vega</span></div>
+        <div class="cal-day"><span class="day-num">28</span><span class="chip chip-antonio">H1 · Cta SL</span><span class="chip chip-presentation">Present. · Dr. Ruz</span><span class="chip chip-feedback">Feedback 12:40</span></div>
+        <div class="cal-day"><span class="day-num">29</span><span class="chip chip-antonio">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">30</span><span class="chip chip-antonio">H1 · OR Marc</span></div>
+        <div class="cal-day"><span class="day-num">31</span><span class="chip chip-antonio">H1 · Poli SJ</span></div>
+        </div>
+      <div class="section-header"><div class="section-num">·</div><div class="section-title">¿Qué es cada horario?<em>Referencia de tus turnos</em></div></div>
+      <div class="keydates">
+        <div class="kd-row"><span class="kd-label"><span class="h-badge h1">Horario 1</span></span><span class="kd-val">Lun: OR Vega · Mar: Cuenta Sta Lucía · Mié y Jue: OR Marcoleta · Vie: Poli San Joaquín</span></div>
+        <div class="kd-row"><span class="kd-label"><span class="h-badge h2">Horario 2</span></span><span class="kd-val">Lun y Mié: OR San Carlos · Mar: OR Orrego-Irribarra · Jue: Poli Irribarra · Vie: Cuenta Sta Lucía</span></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
