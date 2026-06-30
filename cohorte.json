@@ -1,13 +1,13 @@
 {
-  "mes": "Junio 2026",
+  "mes": "Julio 2026",
   "sesiones": {
-    "mitad": "Mar 10 jun · 12:00–12:40",
-    "final": "Mar 30 jun · 12:00–12:40"
+    "mitad": "Mar 07 jul · 12:00–12:40",
+    "final": "Mar 28 jul · 12:00–12:40"
   },
   "residentes": [
-    { "nombre": "Bernardita Vicuña", "anio": "R3" },
-    { "nombre": "Mateo Ferrer", "anio": "R1" },
-    { "nombre": "Raimundo Poblete", "anio": "R1" }
+    { "nombre": "Cristián Salas", "anio": "R3" },
+    { "nombre": "Ángela Benavente", "anio": "R1" },
+    { "nombre": "Antonio Marinkovic", "anio": "R1" }
   ],
   "evaluadores": [
     "Dr. Vega",
