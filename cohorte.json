@@ -1,13 +1,38 @@
 {
   "mes": "Julio 2026",
+  "anio": 2026,
+  "mes_num": 7,
   "sesiones": {
     "mitad": "Mar 07 jul · 12:00–12:40",
-    "final": "Mar 28 jul · 12:00–12:40"
+    "final": "Mar 28 jul · 12:00–12:40",
+    "mitad_fecha": "2026-07-07",
+    "final_fecha": "2026-07-28",
+    "hora_base": "12:00"
   },
+  "cambio_horario_fecha": "2026-07-20",
+  "horarios": {
+    "H1": {
+      "lun": { "full": "Pabellón Vega", "short": "Pab. Vega" },
+      "mar": { "full": "Cuenta Santa Lucía", "short": "Cta SL" },
+      "mie": { "full": "Pabellón Marcoleta", "short": "Pab. Marc" },
+      "jue": { "full": "Pabellón Marcoleta", "short": "Pab. Marc" },
+      "vie": { "full": "Policlínico San Joaquín", "short": "Poli SJ" }
+    },
+    "H2": {
+      "lun": { "full": "Pabellón San Carlos", "short": "Pab. SC" },
+      "mar": { "full": "Pabellón Orrego-Irribarra", "short": "Pab. O-I" },
+      "mie": { "full": "Pabellón San Carlos", "short": "Pab. SC" },
+      "jue": { "full": "Policlínico Irribarra", "short": "Poli Irr" },
+      "vie": { "full": "Cuenta Santa Lucía", "short": "Cta SL" }
+    }
+  },
+  "eventos_equipo": [
+    { "etiqueta": "Vacaciones", "texto": "Dr. Besa fuera 13–19 jul · las presentaciones siguen con su tutor" }
+  ],
   "residentes": [
-    { "nombre": "Cristián Salas", "anio": "R2" },
-    { "nombre": "Ángela Benavente", "anio": "R1" },
-    { "nombre": "Antonio Marinkovic", "anio": "R1" }
+    { "nombre": "Cristián Salas", "anio": "R2", "horario_inicial": "H1", "presentacion": { "fecha": "2026-07-14", "tutor": "Dr. Raimundo Vial" } },
+    { "nombre": "Ángela Benavente", "anio": "R1", "horario_inicial": "H2", "presentacion": { "fecha": "2026-07-21", "tutor": "Dr. Besa" } },
+    { "nombre": "Antonio Marinkovic", "anio": "R1", "horario_inicial": "H2", "presentacion": { "fecha": "2026-07-28", "tutor": "Dr. Ruz" } }
   ],
   "evaluadores": [
     "Dr. Vega",
