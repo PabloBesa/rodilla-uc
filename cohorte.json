@@ -1,15 +1,16 @@
 {
-  "mes": "Julio 2026",
+  "mes": "Agosto 2026",
   "anio": 2026,
-  "mes_num": 7,
+  "mes_num": 8,
   "sesiones": {
-    "mitad": "Mar 07 jul · 12:00–12:40",
-    "final": "Mar 28 jul · 12:00–12:40",
-    "mitad_fecha": "2026-07-07",
-    "final_fecha": "2026-07-28",
+    "mitad": "Mar 11 ago · 12:00–12:40",
+    "final": "Mar 25 ago · 12:00–12:40",
+    "mitad_fecha": "2026-08-11",
+    "final_fecha": "2026-08-25",
     "hora_base": "12:00"
   },
-  "cambio_horario_fecha": "2026-07-20",
+  "cambio_horario_fecha": "2026-08-17",
+  "reunion_investigacion_fecha": "2026-08-11",
   "horarios": {
     "H1": {
       "lun": { "full": "Pabellón Vega", "short": "Pab. Vega" },
@@ -26,13 +27,10 @@
       "vie": { "full": "Cuenta Santa Lucía", "short": "Cta SL" }
     }
   },
-  "eventos_equipo": [
-    { "etiqueta": "Vacaciones", "texto": "Dr. Besa fuera 13–19 jul · las presentaciones siguen con su tutor" }
-  ],
+  "eventos_equipo": [],
   "residentes": [
-    { "nombre": "Cristián Salas", "anio": "R2", "horario_inicial": "H1", "presentacion": { "fecha": "2026-07-14", "tutor": "Dr. Raimundo Vial" } },
-    { "nombre": "Ángela Benavente", "anio": "R1", "horario_inicial": "H2", "presentacion": { "fecha": "2026-07-21", "tutor": "Dr. Besa" } },
-    { "nombre": "Antonio Marinkovic", "anio": "R1", "horario_inicial": "H2", "presentacion": { "fecha": "2026-07-28", "tutor": "Dr. Ruz" } }
+    { "nombre": "José Antonio Dietz", "anio": "R2", "horario_inicial": "H1", "presentacion": { "fecha": "2026-08-18", "tutor": "Dr. Vial" } },
+    { "nombre": "Sofía Serra", "anio": "R2", "horario_inicial": "H2", "presentacion": { "fecha": "2026-08-25", "tutor": "Dr. Ruz" } }
   ],
   "evaluadores": [
     "Dr. Vega",

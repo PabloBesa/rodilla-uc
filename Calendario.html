@@ -149,6 +149,15 @@ const FERIADOS_RESPALDO_2026 = [
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 function isoDate(y, m, d) { return `${y}-${pad2(m)}-${pad2(d)}`; }
+function fechaReunionInvestigacion(cohorte) {
+  // Normalmente el primer martes del mes; usa reunion_investigacion_fecha en
+  // cohorte.json si ese mes la reunión se mueve a otra fecha.
+  if (cohorte.reunion_investigacion_fecha) return cohorte.reunion_investigacion_fecha;
+  const primerDia = new Date(cohorte.anio, cohorte.mes_num - 1, 1);
+  const offsetLunes = (primerDia.getDay() + 6) % 7;
+  const primerMartes = offsetLunes <= 1 ? (2 - offsetLunes) : (9 - offsetLunes);
+  return isoDate(cohorte.anio, cohorte.mes_num, primerMartes);
+}
 function firstNameInitial(nombreCompleto) {
   // "Dr. Raimundo Vial" -> "Dr. R. Vial" · "Dr. Besa" (ya corto) se deja igual
   const partes = nombreCompleto.trim().split(/\s+/);
@@ -199,6 +208,7 @@ function construirGrid(cohorte, feriados, residente, chipClass) {
 
   const cambio = cohorte.cambio_horario_fecha;
   const otroHorario = residente.horario_inicial === 'H1' ? 'H2' : 'H1';
+  const reunionFecha = fechaReunionInvestigacion(cohorte);
 
   for (let d = 1; d <= ultimoDia; d++) {
     const fecha = new Date(anio, mesNum - 1, d);
@@ -223,7 +233,7 @@ function construirGrid(cohorte, feriados, residente, chipClass) {
       chips.push(`<span class="chip ${chipClass}">${horarioActivo} · ${ubicacion.short}</span>`);
       if (esCambio) clases.push('switch-day');
       if (esCambio) chips.push(`<span class="chip chip-feedback">&harr; Cambio a ${horarioActivo}</span>`);
-      if (diaSemana === 1 && d <= 7) chips.push(`<span class="chip chip-research">Reunión investig.</span>`);
+      if (fechaISO === reunionFecha) chips.push(`<span class="chip chip-research">Reunión investig.</span>`);
       if (residente.presentacion && residente.presentacion.fecha === fechaISO) {
         chips.push(`<span class="chip chip-presentation">Present. · ${firstNameInitial(residente.presentacion.tutor)}</span>`);
       }
@@ -260,15 +270,11 @@ function construirSeccionGeneral(cohorte, feriados) {
   const feriadosDelMes = [...feriados.entries()]
     .filter(([fecha]) => fecha.startsWith(`${cohorte.anio}-${pad2(cohorte.mes_num)}`));
 
-  const primerDia = new Date(cohorte.anio, cohorte.mes_num - 1, 1);
-  const offsetLunes = (primerDia.getDay() + 6) % 7;
-  const primerMartes = offsetLunes <= 1 ? (2 - offsetLunes) : (9 - offsetLunes);
-
   let equipoRows = `<div class="kd-row"><span class="kd-label">Cambio horario</span><span class="kd-val">${fechaCorta(cohorte.cambio_horario_fecha)} — todos cambian de track</span></div>`;
   feriadosDelMes.forEach(([fecha, titulo]) => {
     equipoRows += `<div class="kd-row"><span class="kd-label">Feriado</span><span class="kd-val">${fechaCorta(fecha)} — ${titulo}</span></div>`;
   });
-  equipoRows += `<div class="kd-row"><span class="kd-label">1er martes</span><span class="kd-val">${fechaCorta(isoDate(cohorte.anio, cohorte.mes_num, primerMartes))} — reunión de investigación (sin presentaciones ese día)</span></div>`;
+  equipoRows += `<div class="kd-row"><span class="kd-label">Reunión equipo</span><span class="kd-val">${fechaCorta(fechaReunionInvestigacion(cohorte))} — reunión de investigación (sin presentaciones ese día)</span></div>`;
   (cohorte.eventos_equipo || []).forEach(ev => {
     equipoRows += `<div class="kd-row"><span class="kd-label">${ev.etiqueta || 'Aviso'}</span><span class="kd-val">${ev.texto}</span></div>`;
   });
