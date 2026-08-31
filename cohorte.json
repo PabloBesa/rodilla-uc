@@ -1,16 +1,15 @@
 {
-  "mes": "Agosto 2026",
+  "mes": "Septiembre 2026",
   "anio": 2026,
-  "mes_num": 8,
+  "mes_num": 9,
   "sesiones": {
-    "mitad": "Mar 11 ago · 12:00–12:40",
-    "final": "Mar 25 ago · 12:00–12:40",
-    "mitad_fecha": "2026-08-11",
-    "final_fecha": "2026-08-25",
+    "mitad": "Mar 15 sep · 12:00–12:40",
+    "final": "Mar 29 sep · 12:00–12:40",
+    "mitad_fecha": "2026-09-15",
+    "final_fecha": "2026-09-29",
     "hora_base": "12:00"
   },
-  "cambio_horario_fecha": "2026-08-17",
-  "reunion_investigacion_fecha": "2026-08-11",
+  "cambio_horario_fecha": "2026-09-15",
   "horarios": {
     "H1": {
       "lun": { "full": "Pabellón Vega", "short": "Pab. Vega" },
@@ -29,8 +28,9 @@
   },
   "eventos_equipo": [],
   "residentes": [
-    { "nombre": "José Antonio Dietz", "anio": "R2", "horario_inicial": "H1", "presentacion": { "fecha": "2026-08-18", "tutor": "Dr. Vial" } },
-    { "nombre": "Sofía Serra", "anio": "R2", "horario_inicial": "H2", "presentacion": { "fecha": "2026-08-25", "tutor": "Dr. Ruz" } }
+    { "nombre": "Paula Münzenmayer", "anio": "R2", "horario_inicial": "H2", "presentacion": { "fecha": "2026-09-22", "tutor": "Dr. Besa" } },
+    { "nombre": "Fernanda Torres", "anio": "R3", "horario_inicial": "H1", "presentacion": { "fecha": "2026-09-15", "tutor": "Dr. Vial" } },
+    { "nombre": "Joaquín Reyes", "anio": "R1", "horario_inicial": "H1", "presentacion": { "fecha": "2026-09-29", "tutor": "Dr. Ruz" } }
   ],
   "evaluadores": [
     "Dr. Vega",
