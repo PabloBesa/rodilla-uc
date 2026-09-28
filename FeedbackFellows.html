@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Feedback de Fellows · Rodilla UC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a2744;
+    --gold:#c8973a;
+    --cream:#faf8f3;
+    --green:#2f7d4f;
+    --green-dark:#256340;
+    --line:#e8e2d4;
+    --ink:#2a2f3a;
+    --muted:#6c6f78;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:#fdfcf9;
+    color:var(--ink);
+    font-family:"Source Serif 4",Georgia,serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:26px 18px 60px;}
+
+  header.top{text-align:center;margin-bottom:22px;}
+  header.top .kicker{
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;font-family:"Source Serif 4",serif;
+  }
+  header.top h1{
+    font-family:"Playfair Display",serif;font-weight:700;
+    color:var(--navy);font-size:28px;line-height:1.12;margin:6px 0 4px;
+  }
+  header.top .sub{font-style:italic;color:var(--muted);font-size:15px;}
+
+  .intro{
+    background:var(--cream);border:1px solid var(--line);border-radius:8px;
+    padding:16px 18px;margin-bottom:22px;font-size:14.5px;color:#42454e;
+  }
+  .intro p{margin:0 0 9px;}
+  .intro p:last-child{margin-bottom:0;}
+  .intro strong{color:var(--navy);}
+
+  label.field-label{
+    display:block;font-weight:600;color:var(--navy);
+    font-size:14px;margin:0 0 8px;
+  }
+  select.evaluador{
+    width:100%;padding:13px 14px;font-family:inherit;font-size:16px;
+    color:var(--ink);background:#fff;border:1px solid var(--line);
+    border-radius:8px;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c8973a' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 16px center;
+  }
+  select.evaluador:focus{outline:none;border-color:var(--gold);}
+
+  .eval-block{margin-bottom:26px;}
+
+  .card{
+    background:var(--cream);border:1px solid var(--line);border-radius:8px;
+    padding:18px 18px 16px;margin-bottom:16px;transition:border-color .2s;
+  }
+  .card.done{border-color:var(--green);}
+  .card.skipped{opacity:.78;}
+
+  .card-head{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}
+  .num{font-family:"Playfair Display",serif;color:var(--gold);font-weight:600;font-size:18px;}
+  .name{font-family:"Playfair Display",serif;color:var(--navy);font-weight:600;font-size:20px;line-height:1.1;}
+
+  .scoreline{display:flex;align-items:center;gap:12px;margin:14px 0 4px;}
+  .score-val{
+    font-family:"Playfair Display",serif;font-weight:700;font-size:30px;
+    color:var(--navy);min-width:58px;text-align:center;
+  }
+  .score-val.empty{color:#c4bda9;font-size:24px;}
+  .slider-c{flex:1;}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;
+    background:linear-gradient(90deg,var(--gold) 0%,var(--gold) 50%,#e3dcc9 50%,#e3dcc9 100%);
+    outline:none;margin:0;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;
+    background:var(--navy);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:var(--navy);
+    border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+  }
+  input[type=range].untouched::-webkit-slider-thumb{background:#b8b09a;}
+  input[type=range].untouched::-moz-range-thumb{background:#b8b09a;}
+  input[type=range]:disabled{opacity:.4;}
+
+  .scale-legend{font-size:11.5px;color:var(--muted);text-align:center;margin:2px 0 12px;}
+  .scale-legend b{color:var(--navy);font-weight:600;}
+
+  .skip-row{display:flex;align-items:center;gap:9px;margin:10px 0 4px;}
+  .skip-row input{width:18px;height:18px;accent-color:var(--gold);}
+  .skip-row label{font-size:14px;color:#52555e;cursor:pointer;}
+
+  .box-label{font-size:13px;font-weight:600;color:var(--navy);margin:14px 0 6px;}
+  textarea{
+    width:100%;min-height:62px;padding:11px 12px;font-family:inherit;font-size:15px;
+    color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:7px;
+    resize:vertical;line-height:1.45;
+  }
+  textarea:focus{outline:none;border-color:var(--gold);}
+  textarea:disabled{background:#f1efe8;}
+
+  /* PAUTA (10 categorías) */
+  .pauta-block{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px;}
+  .pauta-title{
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    color:rgba(26,39,68,.5);margin-bottom:12px;
+  }
+  .cat{margin-bottom:16px;}
+  .cat-head{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;}
+  .cat-num{font-family:"Playfair Display",serif;color:var(--gold);font-weight:600;font-size:13px;flex-shrink:0;}
+  .cat-title{font-weight:600;color:var(--navy);font-size:13.5px;}
+  .cat-detalle{font-size:11.5px;color:var(--muted);line-height:1.45;margin:2px 0 8px 21px;}
+  .cat-scoreline{display:flex;align-items:center;gap:10px;margin-left:21px;}
+  .cat-val{
+    font-family:"Playfair Display",serif;font-weight:700;font-size:18px;
+    color:var(--navy);min-width:22px;text-align:center;
+  }
+  .cat-val.empty{color:#c4bda9;font-size:15px;}
+  input[type=range].cat-slider::-webkit-slider-thumb{width:18px;height:18px;}
+  input[type=range].cat-slider::-moz-range-thumb{width:16px;height:16px;}
+  .cat-legend{
+    font-size:10px;color:rgba(108,111,120,.85);margin:3px 0 0 21px;
+    display:flex;justify-content:space-between;
+  }
+
+  .pending{
+    background:#fff7e8;border:1px solid #ecd9a8;border-radius:8px;color:#7a5a14;
+    font-size:14px;padding:12px 14px;margin:6px 0 16px;
+  }
+  .pending.hidden{display:none;}
+
+  button.send{
+    width:100%;padding:16px;font-family:"Playfair Display",serif;font-size:18px;font-weight:600;
+    color:#fff;background:var(--green);border:none;border-radius:9px;cursor:pointer;
+    box-shadow:0 3px 0 var(--green-dark);transition:transform .05s, background .2s;
+  }
+  button.send:active{transform:translateY(2px);box-shadow:0 1px 0 var(--green-dark);}
+  button.send:disabled{
+    background:#cfd2cc;box-shadow:0 3px 0 #b6b9b2;color:#fff;cursor:not-allowed;
+  }
+
+  .done-screen{text-align:center;padding:40px 14px;}
+  .done-screen .check{
+    width:74px;height:74px;border-radius:50%;background:var(--green);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+  }
+  .done-screen .check svg{width:38px;height:38px;}
+  .done-screen h2{font-family:"Playfair Display",serif;color:var(--navy);font-size:26px;margin:0 0 8px;}
+  .done-screen p{color:var(--muted);font-size:15px;margin:0 0 22px;}
+  .done-screen button{
+    background:none;border:1px solid var(--line);border-radius:8px;padding:11px 18px;
+    font-family:inherit;font-size:14px;color:var(--navy);cursor:pointer;
+  }
+
+  .error-banner{
+    background:#fdecec;border:1px solid #f3b6b6;color:#9b2c2c;border-radius:8px;
+    padding:12px 14px;font-size:14px;margin-bottom:14px;
+  }
+  .error-banner.hidden{display:none;}
+
+  footer.sig{margin-top:30px;text-align:center;font-size:12px;color:#9a9d8f;font-style:italic;}
+
+  .loading{text-align:center;color:var(--muted);padding:50px 0;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="loading">Cargando…</div>
+</div>
+
+<script>
+/* ====== CONFIGURACIÓN ====== */
+const SCRIPT_URL = 'PENDIENTE_URL_APPS_SCRIPT';
+const COHORTE_URL = 'cohorte_fellows.json';
+
+const FALLBACK = {
+  fellows: [
+    { nombre: "Raúl Zilleruelo" },
+    { nombre: "Francisco Fernández" }
+  ],
+  evaluadores: [
+    "Dr. Vega","Dr. Orrego","Dr. Irribarra","Dr. Irarrázaval","Dra. Tuca",
+    "Dr. Espinosa","Dr. Vial","Dr. Besa","Dr. Ruz","Dr. Serrano"
+  ],
+  categorias: []
+};
+
+let COHORTE = null;
+const state = {}; // por fellow: {touched, value, skip, fortalezas, oportunidades, cats:{id:{touched,value}}}
+
+function fmt1(v){ return v.toFixed(1).replace('.', ','); }
+function firstName(full){ return full.split(' ')[0]; }
+
+async function init(){
+  try{
+    const res = await fetch(COHORTE_URL + '?t=' + Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error('no');
+    COHORTE = await res.json();
+  }catch(e){
+    COHORTE = FALLBACK;
+  }
+  COHORTE.fellows.forEach((f,i)=>{
+    const cats = {};
+    COHORTE.categorias.forEach(c => { cats[c.id] = {touched:false, value:4}; });
+    state[i] = {touched:false, value:5.0, skip:false, fortalezas:'', oportunidades:'', cats};
+  });
+  render();
+}
+
+function render(){
+  const app = document.getElementById('app');
+  const opts = COHORTE.evaluadores.map(e=>`<option value="${e}">${e}</option>`).join('');
+  const cards = COHORTE.fellows.map((f,i)=>cardHTML(f,i)).join('');
+
+  app.innerHTML = `
+    <header class="top">
+      <div class="kicker">Rodilla UC</div>
+      <h1>Feedback de Fellows</h1>
+      <div class="sub">Pauta de Evaluación Programas Fellowship</div>
+    </header>
+
+    <div class="intro">
+      <p>Evalúa el desempeño global del fellow — la <strong>calificación general</strong> es tu apreciación de conjunto; la <strong>pauta detallada</strong> abajo sigue los 10 aspectos definidos por la Dra. Tuca.</p>
+      <p>Escala de la pauta: <strong>1-3 Insuficiente</strong> · <strong>4 Logro mínimo</strong> · <strong>5-6 Logro parcial</strong> · <strong>7 Logro completo</strong>.</p>
+      <p>Tu nombre queda registrado para la Dra. Tuca; <strong>los fellows no lo ven</strong>.</p>
+    </div>
+
+    <div class="eval-block">
+      <label class="field-label" for="evaluador">¿Quién evalúa?</label>
+      <select class="evaluador" id="evaluador">
+        <option value="">Selecciona tu nombre…</option>
+        ${opts}
+      </select>
+    </div>
+
+    <div id="cards">${cards}</div>
+
+    <div class="error-banner hidden" id="errBanner"></div>
+    <div class="pending" id="pending"></div>
+    <button class="send" id="sendBtn" disabled>Enviar feedback</button>
+
+    <footer class="sig">Dra. Tuca · Equipo de Rodilla UC · con ayuda de Claude AI</footer>
+  `;
+
+  document.getElementById('evaluador').addEventListener('change', updateGate);
+  document.getElementById('sendBtn').addEventListener('click', send);
+
+  COHORTE.fellows.forEach((f,i)=>wireCard(i));
+  updateGate();
+}
+
+function cardHTML(f,i){
+  const n = String(i+1).padStart(2,'0');
+  const cats = COHORTE.categorias.map((c,ci)=>`
+    <div class="cat">
+      <div class="cat-head">
+        <span class="cat-num">${ci+1}</span>
+        <span class="cat-title">${c.titulo}</span>
+      </div>
+      <div class="cat-detalle">${c.detalle}</div>
+      <div class="cat-scoreline">
+        <div class="cat-val empty" id="catval-${i}-${c.id}">—</div>
+        <div class="slider-c">
+          <input type="range" min="1" max="7" step="1" value="4" class="cat-slider untouched" id="catslider-${i}-${c.id}" data-cat="${c.id}" data-fellow="${i}" />
+        </div>
+      </div>
+      <div class="cat-legend"><span>1-3 I</span><span>4 LM</span><span>5-6 LP</span><span>7 LC</span></div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="card" id="card-${i}">
+      <div class="card-head">
+        <span class="num">${n}</span>
+        <span class="name">${f.nombre}</span>
+      </div>
+
+      <div class="scoreline">
+        <div class="score-val empty" id="val-${i}">—</div>
+        <div class="slider-c">
+          <input type="range" min="1" max="7" step="0.1" value="5.0" class="untouched" id="slider-${i}" />
+        </div>
+      </div>
+      <div class="scale-legend">1 muy bajo &nbsp;·&nbsp; <b>5 cumple lo esperado</b> &nbsp;·&nbsp; 7 sobresaliente</div>
+
+      <div class="skip-row">
+        <input type="checkbox" id="skip-${i}" />
+        <label for="skip-${i}">No alcancé a evaluarlo en este período</label>
+      </div>
+
+      <div class="pauta-block">
+        <div class="pauta-title">Pauta detallada — 10 aspectos</div>
+        ${cats}
+      </div>
+
+      <div class="box-label">Fortalezas — lo que hace bien y debe seguir haciendo</div>
+      <textarea id="fort-${i}" placeholder="Opcional…"></textarea>
+
+      <div class="box-label">Oportunidades de mejora — algo concreto para trabajar</div>
+      <textarea id="opor-${i}" placeholder="Opcional…"></textarea>
+    </div>
+  `;
+}
+
+function paintSlider(el){
+  const min = parseFloat(el.min), max = parseFloat(el.max);
+  const pct = ((el.value - min) / (max - min)) * 100;
+  el.style.background =
+    `linear-gradient(90deg,var(--gold) 0%,var(--gold) ${pct}%,#e3dcc9 ${pct}%,#e3dcc9 100%)`;
+}
+
+function wireCard(i){
+  const slider = document.getElementById('slider-'+i);
+  const val = document.getElementById('val-'+i);
+  const skip = document.getElementById('skip-'+i);
+  const fort = document.getElementById('fort-'+i);
+  const opor = document.getElementById('opor-'+i);
+
+  slider.addEventListener('input', ()=>{
+    state[i].touched = true;
+    state[i].value = parseFloat(slider.value);
+    slider.classList.remove('untouched');
+    val.textContent = fmt1(state[i].value);
+    val.classList.remove('empty');
+    paintSlider(slider);
+    updateGate();
+  });
+
+  skip.addEventListener('change', ()=>{
+    state[i].skip = skip.checked;
+    slider.disabled = skip.checked;
+    fort.disabled = skip.checked;
+    opor.disabled = skip.checked;
+    document.getElementById('card-'+i).classList.toggle('skipped', skip.checked);
+    updateGate();
+  });
+
+  fort.addEventListener('input', ()=>{ state[i].fortalezas = fort.value; });
+  opor.addEventListener('input', ()=>{ state[i].oportunidades = opor.value; });
+
+  COHORTE.categorias.forEach(c=>{
+    const cs = document.getElementById('catslider-'+i+'-'+c.id);
+    const cv = document.getElementById('catval-'+i+'-'+c.id);
+    cs.addEventListener('input', ()=>{
+      state[i].cats[c.id].touched = true;
+      state[i].cats[c.id].value = parseInt(cs.value, 10);
+      cs.classList.remove('untouched');
+      cv.textContent = cs.value;
+      cv.classList.remove('empty');
+      paintSlider(cs);
+      updateGate();
+    });
+  });
+}
+
+function isComplete(i){
+  if(state[i].skip) return true;
+  if(!state[i].touched) return false;
+  return COHORTE.categorias.every(c => state[i].cats[c.id].touched);
+}
+
+function updateGate(){
+  COHORTE.fellows.forEach((f,i)=>{
+    document.getElementById('card-'+i).classList.toggle('done', isComplete(i) && !state[i].skip);
+  });
+
+  const evaluador = document.getElementById('evaluador').value;
+  const pendientes = COHORTE.fellows
+    .map((f,i)=>({f,i}))
+    .filter(o=>!isComplete(o.i))
+    .map(o=>firstName(o.f.nombre));
+
+  const pendingBox = document.getElementById('pending');
+  const btn = document.getElementById('sendBtn');
+
+  let msgs = [];
+  if(!evaluador) msgs.push('Selecciona tu nombre arriba.');
+  if(pendientes.length){
+    const lista = pendientes.length===1 ? pendientes[0] : pendientes.slice(0,-1).join(', ')+' y '+pendientes.slice(-1);
+    msgs.push('Falta completar la calificación general y los 10 aspectos (o marcar como no evaluado) de: <strong>'+lista+'</strong>.');
+  }
+
+  if(msgs.length){
+    pendingBox.classList.remove('hidden');
+    pendingBox.innerHTML = msgs.join('<br>');
+    btn.disabled = true;
+  }else{
+    pendingBox.classList.add('hidden');
+    btn.disabled = false;
+  }
+}
+
+async function send(){
+  const evaluador = document.getElementById('evaluador').value;
+  const btn = document.getElementById('sendBtn');
+  const err = document.getElementById('errBanner');
+  err.classList.add('hidden');
+
+  const payload = {
+    evaluador: evaluador,
+    evaluaciones: COHORTE.fellows.map((f,i)=>{
+      const cats = {};
+      COHORTE.categorias.forEach(c=>{
+        cats[c.titulo] = state[i].skip ? null : state[i].cats[c.id].value;
+      });
+      return {
+        fellow: f.nombre,
+        noObservado: state[i].skip,
+        calificacion: state[i].skip ? null : state[i].value,
+        categorias: cats,
+        fortalezas: state[i].skip ? '' : state[i].fortalezas.trim(),
+        oportunidades: state[i].skip ? '' : state[i].oportunidades.trim()
+      };
+    })
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+
+  try{
+    await fetch(SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+    showDone(evaluador);
+  }catch(e){
+    err.textContent = 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.';
+    err.classList.remove('hidden');
+    btn.disabled = false;
+    btn.textContent = 'Enviar feedback';
+  }
+}
+
+function showDone(evaluador){
+  document.getElementById('app').innerHTML = `
+    <div class="done-screen">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2>¡Feedback enviado!</h2>
+      <p>Gracias, ${evaluador}. Tu evaluación quedó registrada.</p>
+      <button onclick="location.reload()">Enviar otra evaluación</button>
+    </div>
+    <footer class="sig">Dra. Tuca · Equipo de Rodilla UC · con ayuda de Claude AI</footer>
+  `;
+}
+
+init();
+</script>
+</body>
+</html>

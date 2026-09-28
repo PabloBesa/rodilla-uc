@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Visualizador de Fellows — Rodilla UC</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-mid: #243560;
+    --gold: #c8973a;
+    --gold-light: #e8c47a;
+    --gold-pale: #f5e9cc;
+    --cream: #faf8f3;
+    --warm-gray: #f0ece3;
+    --green: #2a6041;
+    --green-light: #e8f2ec;
+    --red-accent: #8b2e2e;
+    --red-light: #f5eaea;
+    --orange: #c46020;
+    --orange-light: #fdf0e6;
+    --border: #d4c9b0;
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Source Serif 4', serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--navy);
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  .app-header {
+    background: var(--navy);
+    padding: 20px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-header h1 { font-family: var(--font-display); color: var(--gold); font-size: 1.15rem; font-weight: 700; }
+  .app-header p { color: rgba(255,255,255,0.5); font-size: 0.75rem; font-style: italic; margin-top: 2px; }
+
+  .pin-screen {
+    padding: 48px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .pin-icon {
+    width: 56px; height: 56px;
+    background: var(--gold-pale);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .pin-screen h2 { font-family: var(--font-display); font-size: 1.2rem; color: var(--navy); text-align: center; }
+  .pin-screen p { font-size: 0.82rem; color: rgba(26,39,68,0.55); text-align: center; font-style: italic; }
+  .pin-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    color: var(--navy);
+    text-align: center;
+    letter-spacing: 0.3em;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .pin-input:focus { border-color: var(--gold); }
+  .pin-input.error { border-color: var(--red-accent); background: var(--red-light); }
+  .pin-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--navy);
+    color: var(--gold);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .pin-error { font-size: 0.8rem; color: var(--red-accent); font-style: italic; display: none; }
+
+  .main-screen { display: none; }
+
+  .fellow-bar {
+    background: var(--warm-gray);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+  }
+  .fellow-bar label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(26,39,68,0.55);
+    margin-bottom: 6px;
+  }
+  .fellow-select {
+    width: 100%;
+    padding: 9px 32px 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--navy);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c8973a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .content { padding: 20px 16px 60px; }
+
+  .loading {
+    text-align: center;
+    padding: 48px 24px;
+    color: rgba(26,39,68,0.4);
+    font-style: italic;
+    font-size: 0.85rem;
+  }
+
+  .empty-state { text-align: center; padding: 48px 24px; }
+  .empty-state p { color: rgba(26,39,68,0.45); font-style: italic; font-size: 0.85rem; line-height: 1.6; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: rgba(26,39,68,0.55);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .eval-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .eval-card-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .eval-meta { flex: 1; }
+  .eval-fecha { font-size: 0.72rem; color: rgba(26,39,68,0.5); margin-bottom: 2px; }
+  .eval-evaluador { font-size: 0.82rem; font-weight: 600; color: var(--navy); }
+  .chevron { font-size: 0.7rem; color: rgba(26,39,68,0.35); transition: transform 0.2s; }
+  .chevron.open { transform: rotate(180deg); }
+
+  .eval-card-body { padding: 12px 14px; }
+
+  .cal-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    margin-bottom: 10px;
+  }
+  .band-I  { background: var(--red-light);    color: var(--red-accent); }
+  .band-LM { background: var(--orange-light); color: var(--orange); }
+  .band-LP { background: var(--green-light);  color: var(--green); }
+  .band-LC { background: var(--gold-pale);    color: #7a5a1a; }
+  .band-na { background: var(--warm-gray);    color: rgba(26,39,68,0.5); }
+
+  .comentarios-block {
+    background: var(--warm-gray);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    color: var(--navy);
+    line-height: 1.55;
+    font-style: italic;
+    margin-top: 8px;
+  }
+  .comentarios-label {
+    font-style: normal;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(26,39,68,0.5);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .eval-detail { display: none; border-top: 1px solid var(--border); }
+  .eval-detail.open { display: block; }
+  .eval-detail-inner { padding: 10px 14px 14px; }
+  .detail-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--warm-gray);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .detail-item:last-child { border-bottom: none; }
+  .detail-titulo { flex: 1; color: var(--navy); }
+  .detail-resultado {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .refresh-btn {
+    width: 100%;
+    padding: 11px;
+    background: transparent;
+    color: rgba(26,39,68,0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>Visualizador de Fellows</h1>
+  <p>Equipo de Rodilla UC</p>
+</div>
+
+<div class="pin-screen" id="pinScreen">
+  <div class="pin-icon">🔒</div>
+  <h2>Acceso restringido</h2>
+  <p>Ingresa el PIN para ver las evaluaciones</p>
+  <input type="password" class="pin-input" id="pinInput" placeholder="····" maxlength="4" inputmode="numeric">
+  <div class="pin-error" id="pinError">PIN incorrecto, intenta nuevamente</div>
+  <button class="pin-btn" onclick="checkPin()">Ingresar</button>
+</div>
+
+<div class="main-screen" id="mainScreen">
+  <div class="fellow-bar">
+    <label>Ver evaluaciones de</label>
+    <select class="fellow-select" id="fellowSelect" onchange="loadFellow()">
+      <option value="">— Seleccionar fellow —</option>
+    </select>
+  </div>
+
+  <div class="content" id="mainContent">
+    <div class="empty-state"><p>Selecciona un fellow para ver sus evaluaciones</p></div>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'PENDIENTE_URL_APPS_SCRIPT';
+const PIN = '6174';
+
+function checkPin() {
+  const val = document.getElementById('pinInput').value.trim();
+  const input = document.getElementById('pinInput');
+  const err = document.getElementById('pinError');
+  if (val === PIN) {
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('mainScreen').style.display = 'block';
+  } else {
+    input.classList.add('error');
+    err.style.display = 'block';
+    input.value = '';
+    setTimeout(() => { input.classList.remove('error'); err.style.display = 'none'; }, 2500);
+  }
+}
+document.getElementById('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPin(); });
+
+function bandFor(n){
+  if (n === null || n === undefined || n === '') return { key:'na', label:'Sin dato' };
+  const v = parseFloat(n);
+  if (v <= 3) return { key:'I', label:'Insuficiente' };
+  if (v < 5) return { key:'LM', label:'Logro mínimo' };
+  if (v < 7) return { key:'LP', label:'Logro parcial' };
+  return { key:'LC', label:'Logro completo' };
+}
+
+function fechaLegible(fecha){
+  if (fecha && String(fecha).includes('T')) {
+    const d = new Date(fecha);
+    return d.toLocaleDateString('es-CL', {day:'2-digit', month:'long', year:'numeric'});
+  }
+  return fecha || '';
+}
+
+async function loadFellow() {
+  const fellow = document.getElementById('fellowSelect').value;
+  const content = document.getElementById('mainContent');
+  if (!fellow) {
+    content.innerHTML = '<div class="empty-state"><p>Selecciona un fellow para ver sus evaluaciones</p></div>';
+    return;
+  }
+
+  content.innerHTML = '<div class="loading">Cargando evaluaciones…</div>';
+
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=readFellow&fellow=' + encodeURIComponent(fellow));
+    const data = await res.json();
+    if (!data.ok) {
+      content.innerHTML = '<div class="empty-state"><p>El sheet respondió con un error.<br>' + (data.message || '') + '</p></div>';
+      return;
+    }
+    renderFellow(fellow, data.rows || []);
+  } catch (err) {
+    content.innerHTML = '<div class="empty-state"><p>Error de conexión — no se pudo leer el sheet.<br>Verifica tu internet e intenta nuevamente.</p></div>';
+  }
+}
+
+function renderFellow(fellow, rows) {
+  const content = document.getElementById('mainContent');
+
+  if (!rows || rows.length === 0) {
+    content.innerHTML = `
+      <div class="empty-state">
+        <p>No hay evaluaciones registradas para <strong>${fellow}</strong> todavía.<br><br>
+        <span style="font-size:0.78rem;">Si debería haber datos, verifica que los evaluadores estén usando la herramienta.</span></p>
+      </div>`;
+    return;
+  }
+
+  const observadas = rows.filter(r => !r['No observado']);
+  const promedio = observadas.length
+    ? (observadas.reduce((s, r) => s + parseFloat(r['Calificación General'] || 0), 0) / observadas.length)
+    : null;
+
+  let html = `<div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-number">${rows.length}</div>
+      <div class="stat-label">Evaluaciones</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">${promedio !== null ? promedio.toFixed(1).replace('.', ',') : '—'}</div>
+      <div class="stat-label">Promedio general</div>
+    </div>
+  </div>`;
+
+  rows.forEach((row, idx) => {
+    const cardId = 'card-' + idx;
+    const generalBand = bandFor(row['Calificación General']);
+    const calLabel = row['No observado'] ? 'No observado' : (row['Calificación General'] !== undefined ? String(row['Calificación General']).replace('.', ',') : '—');
+
+    const catKeys = Object.keys(row).filter(k =>
+      !['Fecha','Evaluador','Fellow','Calificación General','Fortalezas','Oportunidades','No observado'].includes(k)
+    );
+
+    let detailHtml = '<div class="eval-detail-inner">';
+    if (row['No observado']) {
+      detailHtml += '<div style="font-size:0.8rem;color:rgba(26,39,68,0.45);font-style:italic;">No alcanzó a ser evaluado en este período.</div>';
+    } else {
+      catKeys.forEach(k => {
+        const band = bandFor(row[k]);
+        detailHtml += `<div class="detail-item">
+          <div class="detail-titulo">${k}</div>
+          <span class="detail-resultado band-${band.key}">${row[k] ?? '—'} · ${band.label}</span>
+        </div>`;
+      });
+      if (row['Fortalezas']) detailHtml += `<div class="comentarios-block"><span class="comentarios-label">Fortalezas</span>${row['Fortalezas']}</div>`;
+      if (row['Oportunidades']) detailHtml += `<div class="comentarios-block"><span class="comentarios-label">Oportunidades de mejora</span>${row['Oportunidades']}</div>`;
+    }
+    detailHtml += '</div>';
+
+    html += `<div class="eval-card" onclick="toggleDetail('${cardId}')">
+      <div class="eval-card-header">
+        <div class="eval-meta">
+          <div class="eval-fecha">${fechaLegible(row['Fecha'])}</div>
+          <div class="eval-evaluador">${row['Evaluador'] || ''}</div>
+        </div>
+        <span class="chevron" id="chev-${cardId}">▼</span>
+      </div>
+      <div class="eval-card-body">
+        <span class="cal-badge band-${row['No observado'] ? 'na' : generalBand.key}">${calLabel}</span>
+      </div>
+      <div class="eval-detail" id="${cardId}">${detailHtml}</div>
+    </div>`;
+  });
+
+  html += `<button class="refresh-btn" onclick="loadFellow()">Actualizar datos</button>`;
+  content.innerHTML = html;
+}
+
+function toggleDetail(cardId) {
+  const detail = document.getElementById(cardId);
+  const chev = document.getElementById('chev-' + cardId);
+  if (!detail) return;
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open', !isOpen);
+  if (chev) chev.classList.toggle('open', !isOpen);
+}
+
+(async function () {
+  let cohorte;
+  try {
+    const r = await fetch('cohorte_fellows.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return;
+    cohorte = await r.json();
+  } catch (e) { return; }
+  const sel = document.getElementById('fellowSelect');
+  if (!sel) return;
+  const nombres = (cohorte.fellows || []).map(x => x.nombre);
+  while (sel.options.length > 1) sel.remove(1);
+  nombres.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+})();
+</script>
+</body>
+</html>
