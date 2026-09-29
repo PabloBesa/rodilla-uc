@@ -17,6 +17,10 @@
     --line:#e8e2d4;
     --ink:#2a2f3a;
     --muted:#6c6f78;
+    --band-i:#8b2e2e;
+    --band-lm:#c46020;
+    --band-lp:#2f7d4f;
+    --band-lc:#c8973a;
   }
   *{box-sizing:border-box;}
   body{
@@ -126,16 +130,22 @@
   .cat-num{font-family:"Playfair Display",serif;color:var(--gold);font-weight:600;font-size:13px;flex-shrink:0;}
   .cat-title{font-weight:600;color:var(--navy);font-size:13.5px;}
   .cat-detalle{font-size:11.5px;color:var(--muted);line-height:1.45;margin:2px 0 8px 21px;}
-  .cat-scoreline{display:flex;align-items:center;gap:10px;margin-left:21px;}
-  .cat-val{
-    font-family:"Playfair Display",serif;font-weight:700;font-size:18px;
-    color:var(--navy);min-width:22px;text-align:center;
+  .cat-buttons{display:flex;gap:5px;margin-top:8px;}
+  .cat-btn{
+    flex:1;height:44px;
+    border:1.5px solid var(--line);border-radius:8px;
+    background:#fff;font-family:"Playfair Display",serif;font-weight:700;font-size:16px;
+    color:var(--navy);cursor:pointer;-webkit-tap-highlight-color:transparent;
+    transition:background .12s, border-color .12s, color .12s, transform .05s;
+    touch-action:manipulation;
   }
-  .cat-val.empty{color:#c4bda9;font-size:15px;}
-  input[type=range].cat-slider::-webkit-slider-thumb{width:18px;height:18px;}
-  input[type=range].cat-slider::-moz-range-thumb{width:16px;height:16px;}
+  .cat-btn:active{transform:scale(0.92);}
+  .cat-btn.sel-i{background:var(--band-i);border-color:var(--band-i);color:#fff;}
+  .cat-btn.sel-lm{background:var(--band-lm);border-color:var(--band-lm);color:#fff;}
+  .cat-btn.sel-lp{background:var(--band-lp);border-color:var(--band-lp);color:#fff;}
+  .cat-btn.sel-lc{background:var(--band-lc);border-color:var(--band-lc);color:var(--navy);}
   .cat-legend{
-    font-size:10px;color:rgba(108,111,120,.85);margin:3px 0 0 21px;
+    font-size:10px;color:rgba(108,111,120,.85);margin-top:5px;
     display:flex;justify-content:space-between;
   }
 
@@ -274,11 +284,8 @@ function cardHTML(f,i){
         <span class="cat-title">${c.titulo}</span>
       </div>
       <div class="cat-detalle">${c.detalle}</div>
-      <div class="cat-scoreline">
-        <div class="cat-val empty" id="catval-${i}-${c.id}">—</div>
-        <div class="slider-c">
-          <input type="range" min="1" max="7" step="1" value="4" class="cat-slider untouched" id="catslider-${i}-${c.id}" data-cat="${c.id}" data-fellow="${i}" />
-        </div>
+      <div class="cat-buttons" id="catbtns-${i}-${c.id}" data-fellow="${i}" data-cat="${c.id}">
+        ${[1,2,3,4,5,6,7].map(v => `<button type="button" class="cat-btn" data-val="${v}">${v}</button>`).join('')}
       </div>
       <div class="cat-legend"><span>1-3 I</span><span>4 LM</span><span>5-6 LP</span><span>7 LC</span></div>
     </div>
@@ -342,11 +349,14 @@ function wireCard(i){
     updateGate();
   });
 
+  const catButtonGroups = COHORTE.categorias.map(c => document.getElementById('catbtns-'+i+'-'+c.id));
+
   skip.addEventListener('change', ()=>{
     state[i].skip = skip.checked;
     slider.disabled = skip.checked;
     fort.disabled = skip.checked;
     opor.disabled = skip.checked;
+    catButtonGroups.forEach(g => { g.querySelectorAll('.cat-btn').forEach(b => b.disabled = skip.checked); });
     document.getElementById('card-'+i).classList.toggle('skipped', skip.checked);
     updateGate();
   });
@@ -355,18 +365,27 @@ function wireCard(i){
   opor.addEventListener('input', ()=>{ state[i].oportunidades = opor.value; });
 
   COHORTE.categorias.forEach(c=>{
-    const cs = document.getElementById('catslider-'+i+'-'+c.id);
-    const cv = document.getElementById('catval-'+i+'-'+c.id);
-    cs.addEventListener('input', ()=>{
-      state[i].cats[c.id].touched = true;
-      state[i].cats[c.id].value = parseInt(cs.value, 10);
-      cs.classList.remove('untouched');
-      cv.textContent = cs.value;
-      cv.classList.remove('empty');
-      paintSlider(cs);
-      updateGate();
+    const group = document.getElementById('catbtns-'+i+'-'+c.id);
+    group.querySelectorAll('.cat-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const v = parseInt(btn.dataset.val, 10);
+        state[i].cats[c.id].touched = true;
+        state[i].cats[c.id].value = v;
+        group.querySelectorAll('.cat-btn').forEach(b=>{
+          b.classList.remove('sel-i','sel-lm','sel-lp','sel-lc');
+        });
+        btn.classList.add(bandClass(v));
+        updateGate();
+      });
     });
   });
+}
+
+function bandClass(v){
+  if (v <= 3) return 'sel-i';
+  if (v === 4) return 'sel-lm';
+  if (v <= 6) return 'sel-lp';
+  return 'sel-lc';
 }
 
 function isComplete(i){
