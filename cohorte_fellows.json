@@ -15,16 +15,20 @@
     "Dr. Ruz",
     "Dr. Serrano"
   ],
+  "grupos": [
+    { "id": "clinica", "titulo": "Competencia Clínica y Académica" },
+    { "id": "liderazgo", "titulo": "Liderazgo y Profesionalismo" }
+  ],
   "categorias": [
-    { "id": "clinicas", "titulo": "Habilidades Clínicas", "detalle": "Evaluación integral de pacientes (historia, examen físico, imágenes); prepara los casos propuestos en pabellón; identifica con precisión las indicaciones quirúrgicas." },
-    { "id": "procedimentales", "titulo": "Habilidades Procedimentales", "detalle": "Planifica de forma ordenada el procedimiento; selecciona insumos apropiados; participa en el posicionamiento y preparación; colabora anticipándose a las necesidades del cirujano; posee las habilidades técnicas de su nivel." },
-    { "id": "conocimiento", "titulo": "Conocimiento Médico", "detalle": "Posee los conocimientos necesarios, basados en evidencia actualizada, para resolver las patologías frecuentes de la subespecialidad; presenta casos clínicos de forma sistemática." },
-    { "id": "comunicativas", "titulo": "Habilidades Comunicativas", "detalle": "Se comunica de forma fluida con el equipo de trabajo y el personal de salud; muestra preocupación por el bienestar de los pacientes." },
-    { "id": "liderazgo", "titulo": "Trabajo en Equipo y Liderazgo", "detalle": "Participa activamente en la visita de pacientes hospitalizados; lidera el trabajo de los residentes que rotan por el equipo, generando un buen ambiente." },
-    { "id": "limitaciones", "titulo": "Reconocimiento de Limitaciones", "detalle": "Reconoce límites de sus conocimientos y solicita ayuda cuando es necesario; reconoce el riesgo durante la cirugía y solicita ayuda si no se siente preparado." },
-    { "id": "docencia", "titulo": "Participación en Docencia e Investigación", "detalle": "Participa respetuosamente en la docencia a residentes; colabora y lidera proyectos de investigación clínica; presenta proyectos propios en congresos." },
-    { "id": "profesionalismo", "titulo": "Profesionalismo", "detalle": "Es responsable y puntual; demuestra respeto, honestidad y empatía con el paciente y el equipo; compromiso con una atención de alta calidad." },
-    { "id": "respeto", "titulo": "Respeto con el Personal de Salud", "detalle": "Se comunica y colabora de manera eficiente y respetuosa con el equipo de salud, estableciendo roles y funciones." },
-    { "id": "feedback", "titulo": "Apertura al Feedback", "detalle": "Escucha, acepta, reflexiona y utiliza las críticas y sugerencias, positivas o constructivas, para mejorar su rendimiento y habilidades." }
+    { "id": "clinicas", "grupo": "clinica", "titulo": "Habilidades Clínicas", "detalle": "Evaluación integral de pacientes (historia, examen físico, imágenes); prepara los casos propuestos en pabellón; identifica con precisión las indicaciones quirúrgicas." },
+    { "id": "procedimentales", "grupo": "clinica", "titulo": "Habilidades Procedimentales", "detalle": "Planifica de forma ordenada el procedimiento; selecciona insumos apropiados; participa en el posicionamiento y preparación; colabora anticipándose a las necesidades del cirujano; posee las habilidades técnicas de su nivel." },
+    { "id": "conocimiento", "grupo": "clinica", "titulo": "Conocimiento Médico", "detalle": "Posee los conocimientos necesarios, basados en evidencia actualizada, para resolver las patologías frecuentes de la subespecialidad; presenta casos clínicos de forma sistemática." },
+    { "id": "comunicativas", "grupo": "clinica", "titulo": "Habilidades Comunicativas", "detalle": "Se comunica de forma fluida con el equipo de trabajo y el personal de salud; muestra preocupación por el bienestar de los pacientes." },
+    { "id": "docencia", "grupo": "clinica", "titulo": "Participación en Docencia e Investigación", "detalle": "Participa respetuosamente en la docencia a residentes; colabora y lidera proyectos de investigación clínica; presenta proyectos propios en congresos." },
+    { "id": "liderazgo", "grupo": "liderazgo", "titulo": "Trabajo en Equipo y Liderazgo", "detalle": "Participa activamente en la visita de pacientes hospitalizados; lidera el trabajo de los residentes que rotan por el equipo, generando un buen ambiente." },
+    { "id": "limitaciones", "grupo": "liderazgo", "titulo": "Reconocimiento de Limitaciones", "detalle": "Reconoce límites de sus conocimientos y solicita ayuda cuando es necesario; reconoce el riesgo durante la cirugía y solicita ayuda si no se siente preparado." },
+    { "id": "profesionalismo", "grupo": "liderazgo", "titulo": "Profesionalismo", "detalle": "Es responsable y puntual; demuestra respeto, honestidad y empatía con el paciente y el equipo; compromiso con una atención de alta calidad." },
+    { "id": "respeto", "grupo": "liderazgo", "titulo": "Respeto con el Personal de Salud", "detalle": "Se comunica y colabora de manera eficiente y respetuosa con el equipo de salud, estableciendo roles y funciones." },
+    { "id": "feedback", "grupo": "liderazgo", "titulo": "Apertura al Feedback", "detalle": "Escucha, acepta, reflexiona y utiliza las críticas y sugerencias, positivas o constructivas, para mejorar su rendimiento y habilidades." }
   ]
 }

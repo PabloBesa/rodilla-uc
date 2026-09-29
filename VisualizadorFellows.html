@@ -166,39 +166,6 @@
     letter-spacing: 0.05em;
   }
 
-  .eval-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 12px;
-    overflow: hidden;
-    cursor: pointer;
-  }
-  .eval-card-header {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .eval-meta { flex: 1; }
-  .eval-fecha { font-size: 0.72rem; color: rgba(26,39,68,0.5); margin-bottom: 2px; }
-  .eval-evaluador { font-size: 0.82rem; font-weight: 600; color: var(--navy); }
-  .chevron { font-size: 0.7rem; color: rgba(26,39,68,0.35); transition: transform 0.2s; }
-  .chevron.open { transform: rotate(180deg); }
-
-  .eval-card-body { padding: 12px 14px; }
-
-  .cal-badge {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    font-family: var(--font-display);
-    margin-bottom: 10px;
-  }
   .band-I  { background: var(--red-light);    color: var(--red-accent); }
   .band-LM { background: var(--orange-light); color: var(--orange); }
   .band-LP { background: var(--green-light);  color: var(--green); }
@@ -226,30 +193,6 @@
     margin-bottom: 4px;
   }
 
-  .eval-detail { display: none; border-top: 1px solid var(--border); }
-  .eval-detail.open { display: block; }
-  .eval-detail-inner { padding: 10px 14px 14px; }
-  .detail-item {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 7px 0;
-    border-bottom: 1px solid var(--warm-gray);
-    font-size: 0.78rem;
-    line-height: 1.4;
-  }
-  .detail-item:last-child { border-bottom: none; }
-  .detail-titulo { flex: 1; color: var(--navy); }
-  .detail-resultado {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 2px 9px;
-    border-radius: 10px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
   .refresh-btn {
     width: 100%;
     padding: 11px;
@@ -262,6 +205,81 @@
     cursor: pointer;
     margin-top: 24px;
   }
+
+  /* GRADES LIST */
+  .grades-list {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .grade-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--warm-gray);
+  }
+  .grade-row:last-child { border-bottom: none; }
+  .grade-evaluador { font-size: 0.82rem; color: var(--navy); font-weight: 600; }
+  .grade-fecha { font-size: 0.68rem; color: rgba(26,39,68,0.45); margin-top: 1px; }
+  .grade-val {
+    font-family: var(--font-display); font-weight: 700; font-size: 0.85rem;
+    padding: 3px 11px; border-radius: 14px; flex-shrink: 0;
+  }
+
+  /* RADAR */
+  .radar-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px 10px;
+    margin-bottom: 14px;
+  }
+  .radar-card h3 {
+    font-family: var(--font-display);
+    font-size: 0.92rem;
+    color: var(--navy);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .radar-svg { display: block; width: 100%; height: auto; }
+  .radar-grid { fill: none; stroke: var(--border); stroke-width: 1; }
+  .radar-axis { stroke: var(--border); stroke-width: 1; }
+  .radar-data { fill: rgba(200,151,58,0.28); stroke: var(--gold); stroke-width: 2; stroke-linejoin: round; }
+  .radar-dot { fill: var(--navy); }
+  .radar-label {
+    font-family: var(--font-body); font-size: 9px; font-weight: 700;
+    fill: var(--navy); text-anchor: middle; dominant-baseline: middle;
+  }
+  .radar-val {
+    font-family: var(--font-display); font-size: 9px; font-weight: 700;
+    fill: #7a5a1a; text-anchor: middle; dominant-baseline: middle;
+  }
+  .radar-legend { margin-top: 6px; }
+  .radar-legend-item {
+    display: flex; align-items: baseline; gap: 7px;
+    font-size: 0.72rem; color: rgba(26,39,68,0.65);
+    padding: 3px 0;
+  }
+  .radar-legend-num {
+    font-family: var(--font-display); font-weight: 700; color: var(--gold);
+    flex-shrink: 0; width: 14px;
+  }
+
+  /* COMMENTS */
+  .comment-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .comment-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .comment-evaluador { font-size: 0.8rem; font-weight: 600; color: var(--navy); }
+  .comment-fecha { font-size: 0.68rem; color: rgba(26,39,68,0.45); }
 </style>
 </head>
 <body>
@@ -330,6 +348,8 @@ function fechaLegible(fecha){
   return fecha || '';
 }
 
+let COHORTE_META = { grupos: [], categorias: [] };
+
 async function loadFellow() {
   const fellow = document.getElementById('fellowSelect').value;
   const content = document.getElementById('mainContent');
@@ -353,6 +373,73 @@ async function loadFellow() {
   }
 }
 
+/* ===== Radar (gráfico araña) ===== */
+function polarPoint(cx, cy, r, angleDeg) {
+  const rad = (angleDeg - 90) * Math.PI / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function buildRadarSVG(categorias, avgByTitulo) {
+  const n = categorias.length;
+  const size = 260, cx = 130, cy = 130, maxR = 88;
+  const step = 360 / n;
+
+  let svg = `<svg viewBox="0 0 ${size} ${size}" class="radar-svg">`;
+
+  [0.33, 0.66, 1.0].forEach(frac => {
+    const pts = categorias.map((c, i) => {
+      const p = polarPoint(cx, cy, maxR * frac, i * step);
+      return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+    }).join(' ');
+    svg += `<polygon points="${pts}" class="radar-grid" />`;
+  });
+
+  categorias.forEach((c, i) => {
+    const p = polarPoint(cx, cy, maxR, i * step);
+    svg += `<line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(1)}" y2="${p.y.toFixed(1)}" class="radar-axis" />`;
+  });
+
+  const dataPts = categorias.map((c, i) => {
+    const v = avgByTitulo[c.titulo];
+    const r = (v != null) ? ((v - 1) / 6) * maxR : 0;
+    return polarPoint(cx, cy, Math.max(r, 0), i * step);
+  });
+  const dataStr = dataPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  svg += `<polygon points="${dataStr}" class="radar-data" />`;
+
+  categorias.forEach((c, i) => {
+    const dp = dataPts[i];
+    svg += `<circle cx="${dp.x.toFixed(1)}" cy="${dp.y.toFixed(1)}" r="3.2" class="radar-dot" />`;
+
+    const lp = polarPoint(cx, cy, maxR + 20, i * step);
+    svg += `<text x="${lp.x.toFixed(1)}" y="${lp.y.toFixed(1)}" class="radar-label">${i + 1}</text>`;
+
+    const v = avgByTitulo[c.titulo];
+    if (v != null) {
+      const vr = Math.min(((v - 1) / 6) * maxR + 10, maxR - 6);
+      const vp = polarPoint(cx, cy, vr, i * step);
+      svg += `<text x="${vp.x.toFixed(1)}" y="${vp.y.toFixed(1)}" class="radar-val">${v.toFixed(1).replace('.', ',')}</text>`;
+    }
+  });
+
+  svg += '</svg>';
+  return svg;
+}
+
+function radarCardHTML(grupoIdx, grupo, categorias, avgByTitulo) {
+  const svg = buildRadarSVG(categorias, avgByTitulo);
+  const legend = categorias.map((c, i) => {
+    const v = avgByTitulo[c.titulo];
+    return `<div class="radar-legend-item"><span class="radar-legend-num">${i + 1}</span><span>${c.titulo}${v != null ? ' — ' + v.toFixed(1).replace('.', ',') : ''}</span></div>`;
+  }).join('');
+  return `
+    <div class="radar-card">
+      <h3>${grupoIdx + 1}. ${grupo.titulo}</h3>
+      ${svg}
+      <div class="radar-legend">${legend}</div>
+    </div>`;
+}
+
 function renderFellow(fellow, rows) {
   const content = document.getElementById('mainContent');
 
@@ -372,66 +459,61 @@ function renderFellow(fellow, rows) {
 
   let html = `<div class="stats-row">
     <div class="stat-card">
-      <div class="stat-number">${rows.length}</div>
-      <div class="stat-label">Evaluaciones</div>
-    </div>
-    <div class="stat-card">
       <div class="stat-number">${promedio !== null ? promedio.toFixed(1).replace('.', ',') : '—'}</div>
       <div class="stat-label">Promedio general</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-number">${rows.length}</div>
+      <div class="stat-label">Evaluaciones</div>
+    </div>
   </div>`;
 
-  rows.forEach((row, idx) => {
-    const cardId = 'card-' + idx;
-    const generalBand = bandFor(row['Calificación General']);
-    const calLabel = row['No observado'] ? 'No observado' : (row['Calificación General'] !== undefined ? String(row['Calificación General']).replace('.', ',') : '—');
-
-    const catKeys = Object.keys(row).filter(k =>
-      !['Fecha','Evaluador','Fellow','Calificación General','Fortalezas','Oportunidades','No observado'].includes(k)
-    );
-
-    let detailHtml = '<div class="eval-detail-inner">';
-    if (row['No observado']) {
-      detailHtml += '<div style="font-size:0.8rem;color:rgba(26,39,68,0.45);font-style:italic;">No alcanzó a ser evaluado en este período.</div>';
-    } else {
-      catKeys.forEach(k => {
-        const band = bandFor(row[k]);
-        detailHtml += `<div class="detail-item">
-          <div class="detail-titulo">${k}</div>
-          <span class="detail-resultado band-${band.key}">${row[k] ?? '—'} · ${band.label}</span>
-        </div>`;
-      });
-      if (row['Fortalezas']) detailHtml += `<div class="comentarios-block"><span class="comentarios-label">Fortalezas</span>${row['Fortalezas']}</div>`;
-      if (row['Oportunidades']) detailHtml += `<div class="comentarios-block"><span class="comentarios-label">Oportunidades de mejora</span>${row['Oportunidades']}</div>`;
-    }
-    detailHtml += '</div>';
-
-    html += `<div class="eval-card" onclick="toggleDetail('${cardId}')">
-      <div class="eval-card-header">
-        <div class="eval-meta">
-          <div class="eval-fecha">${fechaLegible(row['Fecha'])}</div>
-          <div class="eval-evaluador">${row['Evaluador'] || ''}</div>
-        </div>
-        <span class="chevron" id="chev-${cardId}">▼</span>
+  // Notas por evaluador — lista compacta
+  html += '<div class="grades-list">';
+  rows.forEach(row => {
+    const band = row['No observado'] ? { key: 'na', label: '' } : bandFor(row['Calificación General']);
+    const label = row['No observado'] ? 'No obs.' : (row['Calificación General'] !== undefined ? String(row['Calificación General']).replace('.', ',') : '—');
+    html += `<div class="grade-row">
+      <div>
+        <div class="grade-evaluador">${row['Evaluador'] || ''}</div>
+        <div class="grade-fecha">${fechaLegible(row['Fecha'])}</div>
       </div>
-      <div class="eval-card-body">
-        <span class="cal-badge band-${row['No observado'] ? 'na' : generalBand.key}">${calLabel}</span>
-      </div>
-      <div class="eval-detail" id="${cardId}">${detailHtml}</div>
+      <span class="grade-val band-${band.key}">${label}</span>
     </div>`;
   });
+  html += '</div>';
+
+  // Radares por grupo — promedio de cada categoría entre evaluadores que sí observaron
+  if (COHORTE_META.grupos && COHORTE_META.grupos.length && observadas.length) {
+    const avgByTitulo = {};
+    COHORTE_META.categorias.forEach(c => {
+      const vals = observadas.map(r => parseFloat(r[c.titulo])).filter(v => !isNaN(v));
+      avgByTitulo[c.titulo] = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : null;
+    });
+    COHORTE_META.grupos.forEach((g, gi) => {
+      const cats = COHORTE_META.categorias.filter(c => c.grupo === g.id);
+      html += radarCardHTML(gi, g, cats, avgByTitulo);
+    });
+  }
+
+  // Comentarios
+  const conComentarios = rows.filter(r => !r['No observado'] && (r['Fortalezas'] || r['Oportunidades']));
+  if (conComentarios.length) {
+    html += '<div class="pauta-block-title" style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(26,39,68,0.5);margin:18px 0 10px;">Comentarios</div>';
+    conComentarios.forEach(row => {
+      html += `<div class="comment-card">
+        <div class="comment-meta">
+          <span class="comment-evaluador">${row['Evaluador'] || ''}</span>
+          <span class="comment-fecha">${fechaLegible(row['Fecha'])}</span>
+        </div>
+        ${row['Fortalezas'] ? `<div class="comentarios-block"><span class="comentarios-label">Fortalezas</span>${row['Fortalezas']}</div>` : ''}
+        ${row['Oportunidades'] ? `<div class="comentarios-block"><span class="comentarios-label">Oportunidades de mejora</span>${row['Oportunidades']}</div>` : ''}
+      </div>`;
+    });
+  }
 
   html += `<button class="refresh-btn" onclick="loadFellow()">Actualizar datos</button>`;
   content.innerHTML = html;
-}
-
-function toggleDetail(cardId) {
-  const detail = document.getElementById(cardId);
-  const chev = document.getElementById('chev-' + cardId);
-  if (!detail) return;
-  const isOpen = detail.classList.contains('open');
-  detail.classList.toggle('open', !isOpen);
-  if (chev) chev.classList.toggle('open', !isOpen);
 }
 
 (async function () {
@@ -441,6 +523,7 @@ function toggleDetail(cardId) {
     if (!r.ok) return;
     cohorte = await r.json();
   } catch (e) { return; }
+  COHORTE_META = cohorte;
   const sel = document.getElementById('fellowSelect');
   if (!sel) return;
   const nombres = (cohorte.fellows || []).map(x => x.nombre);
