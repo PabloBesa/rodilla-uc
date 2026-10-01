@@ -317,7 +317,7 @@ function construirSeccionResidente(cohorte, feriados, residente, idx) {
     <div class="keydates">
       <div class="kd-row"><span class="kd-label">Rotaci&oacute;n</span><span class="kd-val">Horario ${residente.horario_inicial.slice(1)} (hasta ${fechaCorta(cohorte.cambio_horario_fecha).split(' ').slice(1).join(' ')}) &rarr; Horario ${otroHorario.slice(1)} (desde ${fechaCorta(cohorte.cambio_horario_fecha)})</span></div>
       <div class="kd-row"><span class="kd-label">Presentaci&oacute;n</span><span class="kd-val">${presentTxt}</span></div>
-      <div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">${fechaCorta(cohorte.sesiones.mitad_fecha)} (mitad) y ${fechaCorta(cohorte.sesiones.final_fecha)} (final) &middot; ${horaMitad} hrs</span></div>
+      <div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">${cohorte.sesiones.mitad_fecha ? fechaCorta(cohorte.sesiones.mitad_fecha) + ' (mitad) y ' : ''}${fechaCorta(cohorte.sesiones.final_fecha)} (final) &middot; ${horaMitad} hrs</span></div>
       <div class="kd-row"><span class="kd-label">Pautas</span><span class="kd-val">2 pabell&oacute;n &middot; 2 policl&iacute;nico &middot; visitas &middot; presentaci&oacute;n — coordina con los evaluadores durante el mes</span></div>
     </div>
     <div class="legend">

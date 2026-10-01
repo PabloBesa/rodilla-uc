@@ -1,15 +1,14 @@
 {
-  "mes": "Septiembre 2026",
+  "mes": "Octubre 2026",
   "anio": 2026,
-  "mes_num": 9,
+  "mes_num": 10,
   "sesiones": {
-    "mitad": "Mar 15 sep · 12:00–12:40",
-    "final": "Mar 29 sep · 12:00–12:40",
-    "mitad_fecha": "2026-09-15",
-    "final_fecha": "2026-09-29",
+    "final": "Mar 27 oct · 12:00–12:40",
+    "final_fecha": "2026-10-27",
     "hora_base": "12:00"
   },
-  "cambio_horario_fecha": "2026-09-15",
+  "cambio_horario_fecha": "2026-10-19",
+  "reunion_investigacion_fecha": "2026-10-13",
   "horarios": {
     "H1": {
       "lun": { "full": "Pabellón Vega", "short": "Pab. Vega" },
@@ -28,9 +27,8 @@
   },
   "eventos_equipo": [],
   "residentes": [
-    { "nombre": "Paula Münzenmayer", "anio": "R2", "horario_inicial": "H2", "presentacion": { "fecha": "2026-09-22", "tutor": "Dr. Besa" } },
-    { "nombre": "Fernanda Torres", "anio": "R3", "horario_inicial": "H1", "presentacion": { "fecha": "2026-09-15", "tutor": "Dr. Vial" } },
-    { "nombre": "Joaquín Reyes", "anio": "R1", "horario_inicial": "H1", "presentacion": { "fecha": "2026-09-29", "tutor": "Dr. Ruz" } }
+    { "nombre": "Pilar Villalobos", "anio": "R3", "horario_inicial": "H1", "presentacion": { "fecha": "2026-10-20", "tutor": "Dr. Vial" } },
+    { "nombre": "Eithan Goldbaum", "anio": "R1", "horario_inicial": "H2", "presentacion": { "fecha": "2026-10-27", "tutor": "Dr. Ruz" } }
   ],
   "evaluadores": [
     "Dr. Vega",
