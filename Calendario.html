@@ -193,6 +193,28 @@ function horaConOffset(horaBase, indice, minutosPaso) {
   return `${pad2(Math.floor(total / 60))}:${pad2(total % 60)}`;
 }
 
+function horarioActivoEnFecha(cohorte, residente, fechaISO) {
+  const cambio = cohorte.cambio_horario_fecha;
+  const otroHorario = residente.horario_inicial === 'H1' ? 'H2' : 'H1';
+  return fechaISO < cambio ? residente.horario_inicial : otroHorario;
+}
+
+// Horario 2 -> 10:00 (bloque protegido), Horario 1 -> 10:15,
+// cualquier residente adicional (de cualquier horario) -> 10:30 en adelante.
+function calcularHorariosFeedback(cohorte, fechaISO) {
+  const horas = {};
+  const h2 = [];
+  const h1 = [];
+  cohorte.residentes.forEach(r => {
+    (horarioActivoEnFecha(cohorte, r, fechaISO) === 'H2' ? h2 : h1).push(r.nombre);
+  });
+  const overflow = [];
+  if (h2.length) { horas[h2[0]] = '10:00'; overflow.push(...h2.slice(1)); }
+  if (h1.length) { horas[h1[0]] = '10:15'; overflow.push(...h1.slice(1)); }
+  overflow.forEach((nombre, i) => { horas[nombre] = horaConOffset('10:30', i, 15); });
+  return horas;
+}
+
 function construirGrid(cohorte, feriados, residente, chipClass) {
   const [anio, mesNum] = [cohorte.anio, cohorte.mes_num];
   const ultimoDia = new Date(anio, mesNum, 0).getDate();
@@ -234,11 +256,15 @@ function construirGrid(cohorte, feriados, residente, chipClass) {
       if (esCambio) clases.push('switch-day');
       if (esCambio) chips.push(`<span class="chip chip-feedback">&harr; Cambio a ${horarioActivo}</span>`);
       if (fechaISO === reunionFecha) chips.push(`<span class="chip chip-research">Reunión investig.</span>`);
+      if (cohorte.simulacion && DIAS[diaSemana] === cohorte.simulacion.dia) {
+        chips.push(`<span class="chip chip-research">Simulación ${cohorte.simulacion.hora}</span>`);
+      }
       if (residente.presentacion && residente.presentacion.fecha === fechaISO) {
         chips.push(`<span class="chip chip-presentation">Present. · ${firstNameInitial(residente.presentacion.tutor)}</span>`);
       }
       if (cohorte.sesiones.mitad_fecha === fechaISO || cohorte.sesiones.final_fecha === fechaISO) {
-        chips.push(`<span class="chip chip-feedback">Feedback ${residente._horaFeedback}</span>`);
+        const horaFeedback = calcularHorariosFeedback(cohorte, fechaISO)[residente.nombre];
+        chips.push(`<span class="chip chip-feedback">Feedback ${horaFeedback}</span>`);
       }
     }
 
@@ -304,8 +330,10 @@ function construirSeccionGeneral(cohorte, feriados) {
 
 function construirSeccionResidente(cohorte, feriados, residente, idx) {
   const chipClass = CHIP_CLASSES[idx % CHIP_CLASSES.length];
-  const horaMitad = horaConOffset(cohorte.sesiones.hora_base, idx, 20);
-  residente._horaFeedback = horaMitad;
+  const horaFinal = calcularHorariosFeedback(cohorte, cohorte.sesiones.final_fecha)[residente.nombre];
+  const horaMitadTxt = cohorte.sesiones.mitad_fecha
+    ? `${fechaCorta(cohorte.sesiones.mitad_fecha)} (mitad) · ${calcularHorariosFeedback(cohorte, cohorte.sesiones.mitad_fecha)[residente.nombre]} hrs y `
+    : '';
 
   const otroHorario = residente.horario_inicial === 'H1' ? 'H2' : 'H1';
   const presentTxt = residente.presentacion
@@ -317,7 +345,7 @@ function construirSeccionResidente(cohorte, feriados, residente, idx) {
     <div class="keydates">
       <div class="kd-row"><span class="kd-label">Rotaci&oacute;n</span><span class="kd-val">Horario ${residente.horario_inicial.slice(1)} (hasta ${fechaCorta(cohorte.cambio_horario_fecha).split(' ').slice(1).join(' ')}) &rarr; Horario ${otroHorario.slice(1)} (desde ${fechaCorta(cohorte.cambio_horario_fecha)})</span></div>
       <div class="kd-row"><span class="kd-label">Presentaci&oacute;n</span><span class="kd-val">${presentTxt}</span></div>
-      <div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">${cohorte.sesiones.mitad_fecha ? fechaCorta(cohorte.sesiones.mitad_fecha) + ' (mitad) y ' : ''}${fechaCorta(cohorte.sesiones.final_fecha)} (final) &middot; ${horaMitad} hrs</span></div>
+      <div class="kd-row"><span class="kd-label">Feedback</span><span class="kd-val">${horaMitadTxt}${fechaCorta(cohorte.sesiones.final_fecha)} (final) &middot; ${horaFinal} hrs</span></div>
       <div class="kd-row"><span class="kd-label">Pautas</span><span class="kd-val">2 pabell&oacute;n &middot; 2 policl&iacute;nico &middot; visitas &middot; presentaci&oacute;n — coordina con los evaluadores durante el mes</span></div>
     </div>
     <div class="legend">
