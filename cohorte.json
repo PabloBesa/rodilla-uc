@@ -1,17 +1,15 @@
 {
-  "mes": "Octubre 2026",
+  "mes": "Noviembre 2026",
   "anio": 2026,
-  "mes_num": 10,
+  "mes_num": 11,
   "sesiones": {
-    "final": "Mar 27 oct · 12:00–12:40",
-    "final_fecha": "2026-10-27",
-    "hora_base": "12:00"
+    "mitad_fecha": "2026-11-16",
+    "final_fecha": "2026-11-30"
   },
-  "cambio_horario_fecha": "2026-10-19",
-  "reunion_investigacion_fecha": "2026-10-13",
+  "cambio_horario_fecha": "2026-11-16",
   "simulacion": [
-    { "dia": "lun", "hora": "09:30", "tutor": "Matías Cortes" },
-    { "dia": "mar", "hora": "12:00", "tutor": "Catalina Von Chrismar" }
+    { "dia": "lun", "hora": "09:30", "tutor": "Matías Cortes", "horario": "H2" },
+    { "dia": "mar", "hora": "12:00", "tutor": "Catalina Von Chrismar", "horario": "H1" }
   ],
   "horarios": {
     "H1": {
@@ -29,10 +27,12 @@
       "vie": { "full": "Cuenta Santa Lucía", "short": "Cta SL" }
     }
   },
-  "eventos_equipo": [],
+  "eventos_equipo": [
+    { "etiqueta": "Congreso", "texto": "19–21 nov — Congreso Chileno de Ortopedia y Traumatología (SCHOT)" }
+  ],
   "residentes": [
-    { "nombre": "Pilar Villalobos", "anio": "R3", "horario_inicial": "H1", "presentacion": { "fecha": "2026-10-20", "tutor": "Dr. Vial" } },
-    { "nombre": "Eithan Goldbaum", "anio": "R1", "horario_inicial": "H2", "presentacion": { "fecha": "2026-10-27", "tutor": "Dr. Ruz" } }
+    { "nombre": "Tomás Figueroa", "anio": "R2", "horario_inicial": "H1", "presentacion": { "fecha": "2026-11-17", "tutor": "Dr. Vial" } },
+    { "nombre": "Beatriz Vallejos", "anio": "R1", "horario_inicial": "H2", "presentacion": { "fecha": "2026-11-24", "tutor": "Dr. Ruz" } }
   ],
   "evaluadores": [
     "Dr. Vega",

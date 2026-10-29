@@ -257,7 +257,7 @@ function construirGrid(cohorte, feriados, residente, chipClass) {
       if (esCambio) chips.push(`<span class="chip chip-feedback">&harr; Cambio a ${horarioActivo}</span>`);
       if (fechaISO === reunionFecha) chips.push(`<span class="chip chip-research">Reunión investig.</span>`);
       (cohorte.simulacion || []).forEach(s => {
-        if (DIAS[diaSemana] === s.dia) chips.push(`<span class="chip chip-research">Simulación ${s.hora}</span>`);
+        if (DIAS[diaSemana] === s.dia && s.horario === horarioActivo) chips.push(`<span class="chip chip-research">Simulación ${s.hora}</span>`);
       });
       if (residente.presentacion && residente.presentacion.fecha === fechaISO) {
         chips.push(`<span class="chip chip-presentation">Present. · ${firstNameInitial(residente.presentacion.tutor)}</span>`);
@@ -303,7 +303,7 @@ function construirSeccionGeneral(cohorte, feriados) {
   equipoRows += `<div class="kd-row"><span class="kd-label">Reunión equipo</span><span class="kd-val">${fechaCorta(fechaReunionInvestigacion(cohorte))} — reunión de investigación (sin presentaciones ese día)</span></div>`;
   const DIA_NOMBRE = { lun: 'Lunes', mar: 'Martes', mie: 'Miércoles', jue: 'Jueves', vie: 'Viernes' };
   (cohorte.simulacion || []).forEach(s => {
-    equipoRows += `<div class="kd-row"><span class="kd-label">Simulación</span><span class="kd-val">${DIA_NOMBRE[s.dia]} ${s.hora}${s.tutor ? ' — supervisa ' + s.tutor : ''}</span></div>`;
+    equipoRows += `<div class="kd-row"><span class="kd-label">Simulación</span><span class="kd-val">${DIA_NOMBRE[s.dia]} ${s.hora} — Horario ${s.horario.slice(1)}${s.tutor ? ' · supervisa ' + s.tutor : ''}</span></div>`;
   });
   (cohorte.eventos_equipo || []).forEach(ev => {
     equipoRows += `<div class="kd-row"><span class="kd-label">${ev.etiqueta || 'Aviso'}</span><span class="kd-val">${ev.texto}</span></div>`;
