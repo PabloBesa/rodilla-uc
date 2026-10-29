@@ -9,6 +9,10 @@
   },
   "cambio_horario_fecha": "2026-10-19",
   "reunion_investigacion_fecha": "2026-10-13",
+  "simulacion": [
+    { "dia": "lun", "hora": "09:30", "tutor": "Matías Cortes" },
+    { "dia": "mar", "hora": "12:00", "tutor": "Catalina Von Chrismar" }
+  ],
   "horarios": {
     "H1": {
       "lun": { "full": "Pabellón Vega", "short": "Pab. Vega" },
