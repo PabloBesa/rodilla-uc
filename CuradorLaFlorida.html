@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Panel de Curación · Hospital La Florida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a2744;
+    --gold:#c8973a;
+    --gold-pale:#f5e9cc;
+    --cream:#faf8f3;
+    --warm-gray:#f0ece3;
+    --green:#2a6041;
+    --green-light:#e8f2ec;
+    --border:#d4c9b0;
+    --line:#e8e2d4;
+    --red-accent:#8b2e2e;
+    --red-light:#f5eaea;
+    --ink:#2a2f3a;
+    --muted:#6c6f78;
+    --font-display:"Playfair Display",serif;
+    --font-body:"Source Serif 4",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--font-body);background:#fdfcf9;color:var(--ink);
+    max-width:480px;margin:0 auto;min-height:100vh;font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app-header{background:var(--navy);padding:20px 20px 16px;}
+  .app-header h1{font-family:var(--font-display);color:var(--gold);font-size:1.15rem;font-weight:700;}
+  .app-header p{color:rgba(255,255,255,0.5);font-size:0.75rem;font-style:italic;margin-top:2px;}
+
+  /* PIN */
+  .pin-screen{padding:52px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;}
+  .pin-icon{width:64px;height:64px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
+  .pin-screen h2{font-family:var(--font-display);font-size:1.3rem;color:var(--navy);text-align:center;}
+  .pin-screen p{font-size:0.82rem;color:rgba(26,39,68,0.5);text-align:center;font-style:italic;}
+  .pin-input{
+    width:100%;padding:14px 16px;border:1px solid var(--border);border-radius:10px;background:#fff;
+    font-family:var(--font-body);font-size:1.6rem;color:var(--navy);text-align:center;
+    letter-spacing:.4em;outline:none;transition:border-color .2s;
+  }
+  .pin-input:focus{border-color:var(--gold);}
+  .pin-input.error{border-color:var(--red-accent);background:var(--red-light);}
+  .pin-btn{
+    width:100%;padding:14px;background:var(--navy);color:var(--gold);border:none;border-radius:10px;
+    font-family:var(--font-display);font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.02em;
+  }
+  .pin-error{font-size:.8rem;color:var(--red-accent);font-style:italic;display:none;}
+
+  .main-screen{display:none;padding:20px 16px 60px;}
+  .loading{text-align:center;color:var(--muted);padding:50px 0;font-style:italic;}
+
+  .field-label{display:block;font-weight:600;color:var(--navy);font-size:14px;margin:0 0 8px;}
+  select.resident-pick{
+    width:100%;padding:13px 14px;font-family:inherit;font-size:16px;color:var(--ink);
+    background:#fff;border:1px solid var(--line);border-radius:8px;appearance:none;margin-bottom:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23c8973a' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat;background-position:right 16px center;
+  }
+
+  .stat-row{display:flex;gap:10px;margin-bottom:20px;}
+  .stat-box{
+    flex:1;background:var(--cream);border:1px solid var(--line);border-radius:8px;
+    padding:12px 10px;text-align:center;
+  }
+  .stat-box .n{font-family:var(--font-display);font-weight:700;font-size:22px;color:var(--navy);}
+  .stat-box .l{font-size:11px;color:var(--muted);margin-top:2px;}
+
+  .section-label{
+    font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    color:rgba(26,39,68,.5);margin:22px 0 10px;
+  }
+
+  .comment-item{
+    display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--line);
+    border-radius:8px;padding:11px 12px;margin-bottom:8px;cursor:pointer;
+  }
+  .comment-item input{width:18px;height:18px;margin-top:2px;accent-color:var(--gold);flex-shrink:0;}
+  .comment-by{font-size:11px;font-weight:700;color:var(--gold);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:.03em;}
+  .comment-text{font-size:14px;color:var(--ink);line-height:1.4;}
+  .no-comments{font-size:13px;color:var(--muted);font-style:italic;padding:4px 0 10px;}
+
+  .scoreline{display:flex;align-items:center;gap:12px;margin:8px 0 4px;}
+  .score-val{font-family:var(--font-display);font-weight:700;font-size:28px;color:var(--navy);min-width:54px;text-align:center;}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;flex:1;
+    background:linear-gradient(90deg,var(--gold) 0%,var(--gold) 50%,#e3dcc9 50%,#e3dcc9 100%);outline:none;margin:0;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;
+    background:var(--navy);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:22px;height:22px;border-radius:50%;background:var(--navy);border:3px solid #fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+  }
+  .hint{font-size:12.5px;color:var(--muted);font-style:italic;margin:4px 0 10px;}
+
+  textarea{
+    width:100%;min-height:90px;padding:11px 12px;font-family:inherit;font-size:15px;color:var(--ink);
+    background:#fff;border:1px solid var(--line);border-radius:7px;resize:vertical;line-height:1.45;
+  }
+  textarea:focus{outline:none;border-color:var(--gold);}
+
+  button.generate{
+    width:100%;padding:16px;font-family:var(--font-display);font-size:17px;font-weight:600;
+    color:#fff;background:var(--navy);border:none;border-radius:9px;cursor:pointer;margin-top:24px;
+  }
+  button.back{
+    width:100%;padding:12px;background:transparent;color:rgba(26,39,68,.5);border:1px solid var(--border);
+    border-radius:8px;font-family:var(--font-body);font-size:.85rem;cursor:pointer;margin-top:18px;
+  }
+
+  /* ===== TARJETA (screenshotable) ===== */
+  .card-screen{display:none;padding:0 0 40px;}
+  .fl-card{
+    background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    margin:16px 16px 0;box-shadow:0 2px 18px rgba(26,39,68,.08);
+  }
+  .fl-card-band{background:var(--navy);padding:22px 22px 18px;text-align:center;}
+  .fl-card-band .kicker{color:var(--gold);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;}
+  .fl-card-band h2{color:#fff;font-family:var(--font-display);font-size:19px;font-weight:700;margin-top:6px;}
+  .fl-card-body{padding:24px 22px 26px;}
+  .fl-resident{text-align:center;margin-bottom:18px;}
+  .fl-resident .name{font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--navy);}
+  .fl-resident .meta{font-size:13px;color:var(--muted);font-style:italic;margin-top:3px;}
+  .fl-grade-badge{
+    width:92px;height:92px;border-radius:50%;background:var(--gold-pale);border:2px solid var(--gold);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 22px;
+  }
+  .fl-grade-badge .n{font-family:var(--font-display);font-weight:700;font-size:28px;color:var(--navy);}
+  .fl-grade-badge .d{font-size:10px;color:var(--muted);}
+  .fl-section{margin-bottom:18px;}
+  .fl-section .lbl{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+  .fl-section .txt{font-size:14.5px;color:var(--ink);line-height:1.55;white-space:pre-wrap;}
+  .fl-sig{
+    border-top:1px solid var(--line);margin-top:16px;padding-top:14px;text-align:center;
+    font-size:12px;color:var(--muted);font-style:italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>Panel de Curación</h1>
+  <p>Equipo Rodilla Hospital La Florida</p>
+</div>
+
+<div class="pin-screen" id="pinScreen">
+  <div class="pin-icon">🔐</div>
+  <h2>Acceso privado</h2>
+  <p>Solo para Cristián Ruz</p>
+  <input type="password" class="pin-input" id="pinInput" placeholder="····" maxlength="4" inputmode="numeric">
+  <div class="pin-error" id="pinError">PIN incorrecto</div>
+  <button class="pin-btn" onclick="checkPin()">Ingresar</button>
+</div>
+
+<div class="main-screen" id="mainScreen">
+  <div class="loading" id="loading">Cargando…</div>
+  <div id="editorArea"></div>
+</div>
+
+<div class="card-screen" id="cardScreen"></div>
+
+<script>
+const PIN = '2468';
+const SCRIPT_URL = 'PENDIENTE_DEPLOY_URL';
+const COHORTE_URL = 'cohorte_laflorida.json';
+
+let COHORTE = null;
+let ROWS = [];
+let currentIdx = 0;
+
+function checkPin(){
+  const val = document.getElementById('pinInput').value.trim();
+  const input = document.getElementById('pinInput');
+  const err = document.getElementById('pinError');
+  if(val === PIN){
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('mainScreen').style.display = 'block';
+    init();
+  }else{
+    input.classList.add('error');
+    err.style.display = 'block';
+    input.value = '';
+    setTimeout(()=>{ input.classList.remove('error'); err.style.display = 'none'; }, 2500);
+  }
+}
+document.getElementById('pinInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') checkPin();
+});
+
+async function init(){
+  try{
+    const [cRes, rRes] = await Promise.all([
+      fetch(COHORTE_URL + '?t=' + Date.now(), {cache:'no-store'}),
+      fetch(SCRIPT_URL + '?t=' + Date.now(), {cache:'no-store'})
+    ]);
+    COHORTE = await cRes.json();
+    ROWS = await rRes.json();
+  }catch(e){
+    document.getElementById('loading').textContent = 'No se pudo cargar la información. Revisa tu conexión.';
+    return;
+  }
+  document.getElementById('loading').style.display = 'none';
+  renderEditor();
+}
+
+function rowsFor(nombre){
+  return ROWS.filter(r => r['Residente'] === nombre);
+}
+function promedio(rows){
+  const vals = rows.filter(r => r['No observado'] !== 'Sí' && r['Calificación'] !== '' && r['Calificación'] != null)
+                   .map(r => parseFloat(r['Calificación']));
+  if(!vals.length) return null;
+  return vals.reduce((a,b)=>a+b,0)/vals.length;
+}
+function fmt(v){ return v.toFixed(1).replace('.', ','); }
+
+function renderEditor(){
+  const area = document.getElementById('editorArea');
+  const residente = COHORTE.residentes[currentIdx];
+  const rows = rowsFor(residente.nombre);
+  const prom = promedio(rows);
+  const n = rows.filter(r => r['No observado'] !== 'Sí').length;
+
+  const opts = COHORTE.residentes.map((r,i)=>`<option value="${i}" ${i===currentIdx?'selected':''}>${r.nombre} · ${r.anio}</option>`).join('');
+
+  const fortItems = rows.filter(r => r['Fortalezas']).map((r,i)=>
+    `<label class="comment-item"><input type="checkbox" onchange="addToDraft('fort', this)" data-text="${escAttr(r['Fortalezas'])}">
+      <div><span class="comment-by">${r['Evaluador']}</span><div class="comment-text">${escHtml(r['Fortalezas'])}</div></div>
+    </label>`
+  ).join('') || '<div class="no-comments">Sin fortalezas registradas todavía.</div>';
+
+  const oporItems = rows.filter(r => r['Oportunidades']).map((r,i)=>
+    `<label class="comment-item"><input type="checkbox" onchange="addToDraft('opor', this)" data-text="${escAttr(r['Oportunidades'])}">
+      <div><span class="comment-by">${r['Evaluador']}</span><div class="comment-text">${escHtml(r['Oportunidades'])}</div></div>
+    </label>`
+  ).join('') || '<div class="no-comments">Sin oportunidades registradas todavía.</div>';
+
+  area.innerHTML = `
+    <label class="field-label">Residente</label>
+    <select class="resident-pick" id="residentPick">${opts}</select>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="n">${n}</div><div class="l">evaluaciones</div></div>
+      <div class="stat-box"><div class="n">${prom!==null ? fmt(prom) : '—'}</div><div class="l">promedio</div></div>
+    </div>
+
+    <label class="field-label">Nota final</label>
+    <div class="scoreline">
+      <div class="score-val" id="gradeVal">${prom!==null ? fmt(prom) : '5,0'}</div>
+      <input type="range" min="1" max="7" step="0.1" id="gradeSlider" value="${prom!==null ? prom.toFixed(1) : '5.0'}">
+    </div>
+    <div class="hint">Parte desde el promedio de los tutores — ajústala si no refleja tu propia impresión.</div>
+
+    <div class="section-label">Fortalezas recibidas — marca las que quieras incluir</div>
+    ${fortItems}
+    <textarea id="fortDraft" placeholder="Se agregan aquí al marcarlas arriba. Edita libremente."></textarea>
+
+    <div class="section-label">Oportunidades recibidas — marca las que quieras incluir</div>
+    ${oporItems}
+    <textarea id="oporDraft" placeholder="Se agregan aquí al marcarlas arriba. Edita libremente."></textarea>
+
+    <button class="generate" onclick="generarTarjeta()">Generar tarjeta</button>
+  `;
+
+  document.getElementById('residentPick').addEventListener('change', e=>{
+    currentIdx = parseInt(e.target.value);
+    renderEditor();
+  });
+  document.getElementById('gradeSlider').addEventListener('input', e=>{
+    document.getElementById('gradeVal').textContent = fmt(parseFloat(e.target.value));
+  });
+}
+
+function addToDraft(kind, checkbox){
+  if(!checkbox.checked) return;
+  const ta = document.getElementById(kind === 'fort' ? 'fortDraft' : 'oporDraft');
+  const text = checkbox.getAttribute('data-text');
+  ta.value = ta.value.trim() ? ta.value.trim() + '\n\n' + text : text;
+}
+
+function escHtml(s){ return (s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function escAttr(s){ return escHtml(s).replace(/"/g, '&quot;'); }
+
+function generarTarjeta(){
+  const residente = COHORTE.residentes[currentIdx];
+  const grade = fmt(parseFloat(document.getElementById('gradeSlider').value));
+  const fort = document.getElementById('fortDraft').value.trim();
+  const opor = document.getElementById('oporDraft').value.trim();
+
+  const cardScreen = document.getElementById('cardScreen');
+  cardScreen.innerHTML = `
+    <div class="fl-card">
+      <div class="fl-card-band">
+        <div class="kicker">${COHORTE.centro || 'Hospital La Florida'}</div>
+        <h2>Devolución de Rotación</h2>
+      </div>
+      <div class="fl-card-body">
+        <div class="fl-resident">
+          <div class="name">${residente.nombre}</div>
+          <div class="meta">${residente.anio} &middot; ${COHORTE.mes}</div>
+        </div>
+        <div class="fl-grade-badge">
+          <div class="n">${grade}</div>
+          <div class="d">/ 7</div>
+        </div>
+        ${fort ? `<div class="fl-section"><div class="lbl">Fortalezas</div><div class="txt">${escHtml(fort)}</div></div>` : ''}
+        ${opor ? `<div class="fl-section"><div class="lbl">Oportunidades de mejora</div><div class="txt">${escHtml(opor)}</div></div>` : ''}
+        <div class="fl-sig">Dr. Cristián Ruz &middot; ${new Date().toLocaleDateString('es-CL', {day:'numeric', month:'long', year:'numeric'})}</div>
+      </div>
+    </div>
+    <button class="back" style="margin:18px 16px 0;width:calc(100% - 32px);" onclick="volverEditor()">&larr; Volver a editar</button>
+  `;
+  document.getElementById('mainScreen').style.display = 'none';
+  cardScreen.style.display = 'block';
+}
+
+function volverEditor(){
+  document.getElementById('cardScreen').style.display = 'none';
+  document.getElementById('mainScreen').style.display = 'block';
+}
+</script>
+</body>
+</html>

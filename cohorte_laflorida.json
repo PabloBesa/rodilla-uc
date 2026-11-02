@@ -1,0 +1,15 @@
+{
+  "centro": "Equipo Rodilla Hospital La Florida",
+  "mes": "PENDIENTE",
+  "residentes": [
+    { "nombre": "PENDIENTE — completar roster", "anio": "R?" }
+  ],
+  "evaluadores": [
+    "Dr. Diego Edwards",
+    "Dr. Daniel Cerda",
+    "Dr. Felipe Marín",
+    "Dr. Gerardo Zelaya",
+    "Dr. Julián Alonso",
+    "Dr. Cristián Ruz"
+  ]
+}
